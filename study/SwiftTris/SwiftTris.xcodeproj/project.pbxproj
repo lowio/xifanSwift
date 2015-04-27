@@ -1,0 +1,530 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B5FA8331A7F89D200050EEB /* NodeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5FA8321A7F89D200050EEB /* NodeDisplay.swift */; };
+		1BE39CE71A7A1D12000396F8 /* SwiftTrisManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE39CE61A7A1D12000396F8 /* SwiftTrisManager.swift */; };
+		1BE3BEB61A7B5BE9009DB475 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE3BEB51A7B5BE9009DB475 /* Node.swift */; };
+		1BE3BEB81A7B62FB009DB475 /* NodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE3BEB71A7B62FB009DB475 /* NodeForm.swift */; };
+		1BE3BEBA1A7B7139009DB475 /* NodeFormTemplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE3BEB91A7B7139009DB475 /* NodeFormTemplete.swift */; };
+		1BE3BEBC1A7B805A009DB475 /* NodeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE3BEBB1A7B805A009DB475 /* NodeLayer.swift */; };
+		1BE66D291A78D02A005443BD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66D281A78D02A005443BD /* AppDelegate.swift */; };
+		1BE66D2D1A78D02A005443BD /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66D2C1A78D02A005443BD /* GameScene.swift */; };
+		1BE66D2F1A78D02A005443BD /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66D2E1A78D02A005443BD /* GameViewController.swift */; };
+		1BE66D321A78D02A005443BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D301A78D02A005443BD /* Main.storyboard */; };
+		1BE66D341A78D02A005443BD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D331A78D02A005443BD /* Images.xcassets */; };
+		1BE66D371A78D02A005443BD /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D351A78D02A005443BD /* LaunchScreen.xib */; };
+		1BE66D431A78D02A005443BD /* SwiftTrisTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66D421A78D02A005443BD /* SwiftTrisTests.swift */; };
+		1BE66D521A78DDB8005443BD /* bomb.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D4D1A78DDB8005443BD /* bomb.mp3 */; };
+		1BE66D531A78DDB8005443BD /* drop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D4E1A78DDB8005443BD /* drop.mp3 */; };
+		1BE66D541A78DDB8005443BD /* gameover.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D4F1A78DDB8005443BD /* gameover.mp3 */; };
+		1BE66D551A78DDB8005443BD /* levelup.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D501A78DDB8005443BD /* levelup.mp3 */; };
+		1BE66D561A78DDB8005443BD /* theme.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D511A78DDB8005443BD /* theme.mp3 */; };
+		1BE66D581A78DE53005443BD /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D571A78DE53005443BD /* Sprites.atlas */; };
+		1BE66D5F1A78DF24005443BD /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D591A78DF24005443BD /* background.png */; };
+		1BE66D601A78DF24005443BD /* background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D5A1A78DF24005443BD /* background@2x.png */; };
+		1BE66D611A78DF24005443BD /* gameboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D5B1A78DF24005443BD /* gameboard.png */; };
+		1BE66D621A78DF24005443BD /* gameboard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D5C1A78DF24005443BD /* gameboard@2x.png */; };
+		1BE66D631A78DF24005443BD /* whitebg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D5D1A78DF24005443BD /* whitebg.png */; };
+		1BE66D641A78DF24005443BD /* whitebg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BE66D5E1A78DF24005443BD /* whitebg@2x.png */; };
+		1BE66D661A78E700005443BD /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66D651A78E700005443BD /* Array2D.swift */; };
+		1BE9181F1A807CC900482E1C /* SwiftTrisDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE9181E1A807CC900482E1C /* SwiftTrisDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1BE66D3D1A78D02A005443BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BE66D1B1A78D02A005443BD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BE66D221A78D02A005443BD;
+			remoteInfo = SwiftTris;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1B5FA8321A7F89D200050EEB /* NodeDisplay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeDisplay.swift; sourceTree = "<group>"; };
+		1BE39CE61A7A1D12000396F8 /* SwiftTrisManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTrisManager.swift; sourceTree = "<group>"; };
+		1BE3BEB51A7B5BE9009DB475 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		1BE3BEB71A7B62FB009DB475 /* NodeForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeForm.swift; sourceTree = "<group>"; };
+		1BE3BEB91A7B7139009DB475 /* NodeFormTemplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeFormTemplete.swift; sourceTree = "<group>"; };
+		1BE3BEBB1A7B805A009DB475 /* NodeLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeLayer.swift; sourceTree = "<group>"; };
+		1BE66D231A78D02A005443BD /* SwiftTris.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftTris.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BE66D271A78D02A005443BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BE66D281A78D02A005443BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1BE66D2C1A78D02A005443BD /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		1BE66D2E1A78D02A005443BD /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		1BE66D311A78D02A005443BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1BE66D331A78D02A005443BD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1BE66D361A78D02A005443BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		1BE66D3C1A78D02A005443BD /* SwiftTrisTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftTrisTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BE66D411A78D02A005443BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BE66D421A78D02A005443BD /* SwiftTrisTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTrisTests.swift; sourceTree = "<group>"; };
+		1BE66D4D1A78DDB8005443BD /* bomb.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bomb.mp3; sourceTree = "<group>"; };
+		1BE66D4E1A78DDB8005443BD /* drop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drop.mp3; sourceTree = "<group>"; };
+		1BE66D4F1A78DDB8005443BD /* gameover.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = gameover.mp3; sourceTree = "<group>"; };
+		1BE66D501A78DDB8005443BD /* levelup.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = levelup.mp3; sourceTree = "<group>"; };
+		1BE66D511A78DDB8005443BD /* theme.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = theme.mp3; sourceTree = "<group>"; };
+		1BE66D571A78DE53005443BD /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
+		1BE66D591A78DF24005443BD /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		1BE66D5A1A78DF24005443BD /* background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background@2x.png"; sourceTree = "<group>"; };
+		1BE66D5B1A78DF24005443BD /* gameboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gameboard.png; sourceTree = "<group>"; };
+		1BE66D5C1A78DF24005443BD /* gameboard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gameboard@2x.png"; sourceTree = "<group>"; };
+		1BE66D5D1A78DF24005443BD /* whitebg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitebg.png; sourceTree = "<group>"; };
+		1BE66D5E1A78DF24005443BD /* whitebg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whitebg@2x.png"; sourceTree = "<group>"; };
+		1BE66D651A78E700005443BD /* Array2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array2D.swift; sourceTree = "<group>"; };
+		1BE9181E1A807CC900482E1C /* SwiftTrisDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTrisDelegate.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1BE66D201A78D02A005443BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BE66D391A78D02A005443BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1BE3BEB31A7B5BAE009DB475 /* com */ = {
+			isa = PBXGroup;
+			children = (
+				1BE3BEB41A7B5BBD009DB475 /* yeah */,
+			);
+			name = com;
+			sourceTree = "<group>";
+		};
+		1BE3BEB41A7B5BBD009DB475 /* yeah */ = {
+			isa = PBXGroup;
+			children = (
+				1BE66D651A78E700005443BD /* Array2D.swift */,
+				1BE39CE61A7A1D12000396F8 /* SwiftTrisManager.swift */,
+				1BE3BEB51A7B5BE9009DB475 /* Node.swift */,
+				1BE3BEB71A7B62FB009DB475 /* NodeForm.swift */,
+				1BE3BEB91A7B7139009DB475 /* NodeFormTemplete.swift */,
+				1BE3BEBB1A7B805A009DB475 /* NodeLayer.swift */,
+				1B5FA8321A7F89D200050EEB /* NodeDisplay.swift */,
+				1BE9181E1A807CC900482E1C /* SwiftTrisDelegate.swift */,
+			);
+			name = yeah;
+			sourceTree = "<group>";
+		};
+		1BE66D1A1A78D02A005443BD = {
+			isa = PBXGroup;
+			children = (
+				1BE66D251A78D02A005443BD /* SwiftTris */,
+				1BE66D3F1A78D02A005443BD /* SwiftTrisTests */,
+				1BE66D241A78D02A005443BD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1BE66D241A78D02A005443BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1BE66D231A78D02A005443BD /* SwiftTris.app */,
+				1BE66D3C1A78D02A005443BD /* SwiftTrisTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1BE66D251A78D02A005443BD /* SwiftTris */ = {
+			isa = PBXGroup;
+			children = (
+				1BE3BEB31A7B5BAE009DB475 /* com */,
+				1BE66D281A78D02A005443BD /* AppDelegate.swift */,
+				1BE66D2C1A78D02A005443BD /* GameScene.swift */,
+				1BE66D2E1A78D02A005443BD /* GameViewController.swift */,
+				1BE66D301A78D02A005443BD /* Main.storyboard */,
+				1BE66D331A78D02A005443BD /* Images.xcassets */,
+				1BE66D351A78D02A005443BD /* LaunchScreen.xib */,
+				1BE66D261A78D02A005443BD /* Supporting Files */,
+			);
+			path = SwiftTris;
+			sourceTree = "<group>";
+		};
+		1BE66D261A78D02A005443BD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1BE66D591A78DF24005443BD /* background.png */,
+				1BE66D5A1A78DF24005443BD /* background@2x.png */,
+				1BE66D5B1A78DF24005443BD /* gameboard.png */,
+				1BE66D5C1A78DF24005443BD /* gameboard@2x.png */,
+				1BE66D5D1A78DF24005443BD /* whitebg.png */,
+				1BE66D5E1A78DF24005443BD /* whitebg@2x.png */,
+				1BE66D571A78DE53005443BD /* Sprites.atlas */,
+				1BE66D4C1A78DDB8005443BD /* Sounds */,
+				1BE66D271A78D02A005443BD /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1BE66D3F1A78D02A005443BD /* SwiftTrisTests */ = {
+			isa = PBXGroup;
+			children = (
+				1BE66D421A78D02A005443BD /* SwiftTrisTests.swift */,
+				1BE66D401A78D02A005443BD /* Supporting Files */,
+			);
+			path = SwiftTrisTests;
+			sourceTree = "<group>";
+		};
+		1BE66D401A78D02A005443BD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1BE66D411A78D02A005443BD /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1BE66D4C1A78DDB8005443BD /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				1BE66D4D1A78DDB8005443BD /* bomb.mp3 */,
+				1BE66D4E1A78DDB8005443BD /* drop.mp3 */,
+				1BE66D4F1A78DDB8005443BD /* gameover.mp3 */,
+				1BE66D501A78DDB8005443BD /* levelup.mp3 */,
+				1BE66D511A78DDB8005443BD /* theme.mp3 */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1BE66D221A78D02A005443BD /* SwiftTris */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BE66D461A78D02A005443BD /* Build configuration list for PBXNativeTarget "SwiftTris" */;
+			buildPhases = (
+				1BE66D1F1A78D02A005443BD /* Sources */,
+				1BE66D201A78D02A005443BD /* Frameworks */,
+				1BE66D211A78D02A005443BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwiftTris;
+			productName = SwiftTris;
+			productReference = 1BE66D231A78D02A005443BD /* SwiftTris.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1BE66D3B1A78D02A005443BD /* SwiftTrisTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BE66D491A78D02A005443BD /* Build configuration list for PBXNativeTarget "SwiftTrisTests" */;
+			buildPhases = (
+				1BE66D381A78D02A005443BD /* Sources */,
+				1BE66D391A78D02A005443BD /* Frameworks */,
+				1BE66D3A1A78D02A005443BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1BE66D3E1A78D02A005443BD /* PBXTargetDependency */,
+			);
+			name = SwiftTrisTests;
+			productName = SwiftTrisTests;
+			productReference = 1BE66D3C1A78D02A005443BD /* SwiftTrisTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1BE66D1B1A78D02A005443BD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "叶贤辉";
+				TargetAttributes = {
+					1BE66D221A78D02A005443BD = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					1BE66D3B1A78D02A005443BD = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = 1BE66D221A78D02A005443BD;
+					};
+				};
+			};
+			buildConfigurationList = 1BE66D1E1A78D02A005443BD /* Build configuration list for PBXProject "SwiftTris" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1BE66D1A1A78D02A005443BD;
+			productRefGroup = 1BE66D241A78D02A005443BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1BE66D221A78D02A005443BD /* SwiftTris */,
+				1BE66D3B1A78D02A005443BD /* SwiftTrisTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1BE66D211A78D02A005443BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BE66D371A78D02A005443BD /* LaunchScreen.xib in Resources */,
+				1BE66D601A78DF24005443BD /* background@2x.png in Resources */,
+				1BE66D631A78DF24005443BD /* whitebg.png in Resources */,
+				1BE66D621A78DF24005443BD /* gameboard@2x.png in Resources */,
+				1BE66D611A78DF24005443BD /* gameboard.png in Resources */,
+				1BE66D5F1A78DF24005443BD /* background.png in Resources */,
+				1BE66D531A78DDB8005443BD /* drop.mp3 in Resources */,
+				1BE66D641A78DF24005443BD /* whitebg@2x.png in Resources */,
+				1BE66D561A78DDB8005443BD /* theme.mp3 in Resources */,
+				1BE66D541A78DDB8005443BD /* gameover.mp3 in Resources */,
+				1BE66D341A78D02A005443BD /* Images.xcassets in Resources */,
+				1BE66D551A78DDB8005443BD /* levelup.mp3 in Resources */,
+				1BE66D581A78DE53005443BD /* Sprites.atlas in Resources */,
+				1BE66D521A78DDB8005443BD /* bomb.mp3 in Resources */,
+				1BE66D321A78D02A005443BD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BE66D3A1A78D02A005443BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1BE66D1F1A78D02A005443BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B5FA8331A7F89D200050EEB /* NodeDisplay.swift in Sources */,
+				1BE66D2D1A78D02A005443BD /* GameScene.swift in Sources */,
+				1BE66D661A78E700005443BD /* Array2D.swift in Sources */,
+				1BE3BEB61A7B5BE9009DB475 /* Node.swift in Sources */,
+				1BE3BEBA1A7B7139009DB475 /* NodeFormTemplete.swift in Sources */,
+				1BE3BEB81A7B62FB009DB475 /* NodeForm.swift in Sources */,
+				1BE66D2F1A78D02A005443BD /* GameViewController.swift in Sources */,
+				1BE3BEBC1A7B805A009DB475 /* NodeLayer.swift in Sources */,
+				1BE39CE71A7A1D12000396F8 /* SwiftTrisManager.swift in Sources */,
+				1BE66D291A78D02A005443BD /* AppDelegate.swift in Sources */,
+				1BE9181F1A807CC900482E1C /* SwiftTrisDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BE66D381A78D02A005443BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BE66D431A78D02A005443BD /* SwiftTrisTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1BE66D3E1A78D02A005443BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BE66D221A78D02A005443BD /* SwiftTris */;
+			targetProxy = 1BE66D3D1A78D02A005443BD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1BE66D301A78D02A005443BD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1BE66D311A78D02A005443BD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		1BE66D351A78D02A005443BD /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1BE66D361A78D02A005443BD /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1BE66D441A78D02A005443BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1BE66D451A78D02A005443BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1BE66D471A78D02A005443BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = SwiftTris/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1BE66D481A78D02A005443BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = SwiftTris/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1BE66D4A1A78D02A005443BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SwiftTrisTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftTris.app/SwiftTris";
+			};
+			name = Debug;
+		};
+		1BE66D4B1A78D02A005443BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SwiftTrisTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftTris.app/SwiftTris";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1BE66D1E1A78D02A005443BD /* Build configuration list for PBXProject "SwiftTris" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BE66D441A78D02A005443BD /* Debug */,
+				1BE66D451A78D02A005443BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BE66D461A78D02A005443BD /* Build configuration list for PBXNativeTarget "SwiftTris" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BE66D471A78D02A005443BD /* Debug */,
+				1BE66D481A78D02A005443BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BE66D491A78D02A005443BD /* Build configuration list for PBXNativeTarget "SwiftTrisTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BE66D4A1A78D02A005443BD /* Debug */,
+				1BE66D4B1A78D02A005443BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1BE66D1B1A78D02A005443BD /* Project object */;
+}

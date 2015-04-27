@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LVB-YS-i5n">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+    </dependencies>
+    <scenes>
+        <!--Game View Controller-->
+        <scene sceneID="CtS-rA-C9T">
+            <objects>
+                <viewController id="LVB-YS-i5n" customClass="GameViewController" customModule="SwiftTris" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="PCf-gQ-wO7"/>
+                        <viewControllerLayoutGuide type="bottom" id="b3d-qh-BLL"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="bdc-N1-crn" customClass="SKView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="VSZ-Jx-eoh" appends="YES" id="pSb-sr-R6X"/>
+                            <outletCollection property="gestureRecognizers" destination="yFa-YE-xzY" appends="YES" id="mdQ-y6-Zeh"/>
+                            <outletCollection property="gestureRecognizers" destination="bMi-2I-r83" appends="YES" id="uAB-2a-RHA"/>
+                            <outletCollection property="gestureRecognizers" destination="mhD-Dq-eoN" appends="YES" id="mdi-qH-AiX"/>
+                        </connections>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="btX-cZ-eVz" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="VSZ-Jx-eoh">
+                    <connections>
+                        <action selector="didTap:" destination="LVB-YS-i5n" id="MeL-U7-VNw"/>
+                        <outlet property="delegate" destination="LVB-YS-i5n" id="tT3-B1-liD"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <swipeGestureRecognizer direction="down" id="yFa-YE-xzY" userLabel="Swipe dwon">
+                    <connections>
+                        <action selector="didSwipe:" destination="LVB-YS-i5n" id="Kc5-2M-XP3"/>
+                        <outlet property="delegate" destination="LVB-YS-i5n" id="blb-ku-Eai"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <swipeGestureRecognizer direction="right" id="bMi-2I-r83" userLabel="Swipe right">
+                    <connections>
+                        <action selector="swipeRight:" destination="LVB-YS-i5n" id="p3j-eW-atw"/>
+                        <outlet property="delegate" destination="LVB-YS-i5n" id="bIP-JV-44J"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <swipeGestureRecognizer direction="left" id="mhD-Dq-eoN" userLabel="Swipe left">
+                    <connections>
+                        <action selector="swipLeft:" destination="LVB-YS-i5n" id="Xhj-A7-ILM"/>
+                        <outlet property="delegate" destination="LVB-YS-i5n" id="7Lh-mJ-gjv"/>
+                    </connections>
+                </swipeGestureRecognizer>
+            </objects>
+        </scene>
+    </scenes>
+</document>
