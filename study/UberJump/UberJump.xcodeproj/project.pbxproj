@@ -56,12 +56,11 @@
 		1BD2D0A31AE65E1E0017027E /* Background19@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BD2D0791AE65E1E0017027E /* Background19@2x.png */; };
 		1BD2D0A41AE65E1E0017027E /* Background20.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BD2D07A1AE65E1E0017027E /* Background20.png */; };
 		1BD2D0A51AE65E1E0017027E /* Background20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BD2D07B1AE65E1E0017027E /* Background20@2x.png */; };
+		1BE9BC391AEEA05000CE7708 /* GameObjectNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE9BC371AEEA05000CE7708 /* GameObjectNode.swift */; };
+		1BE9BC3A1AEEA05000CE7708 /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE9BC381AEEA05000CE7708 /* Level.swift */; };
 		1BEFC3B01AE7A4020065A057 /* Assets.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFC3AF1AE7A4020065A057 /* Assets.atlas */; };
-		1BEFC3B31AE7A8720065A057 /* GameObjectNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BEFC3B21AE7A8720065A057 /* GameObjectNode.swift */; };
 		1BFADD651AE8D3F3007577F1 /* Level01.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1BFADD641AE8D3F3007577F1 /* Level01.plist */; };
 		1BFADD661AE8D3F3007577F1 /* Level01.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1BFADD641AE8D3F3007577F1 /* Level01.plist */; };
-		1BFADD681AE8D6D3007577F1 /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFADD671AE8D6D3007577F1 /* Level.swift */; };
-		1BFADD691AE8D6D3007577F1 /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFADD671AE8D6D3007577F1 /* Level.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +85,6 @@
 		1B38F5E71AE63E3300221D4E /* UberJumpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UberJumpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B38F5EC1AE63E3300221D4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B38F5ED1AE63E3300221D4E /* UberJumpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UberJumpTests.swift; sourceTree = "<group>"; };
-		1BD2CF9C1AE655950017027E /* ATest.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ATest.playground; sourceTree = "<group>"; };
 		1BD2D0521AE65E1E0017027E /* Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Background.png; path = UberJumpArt/Backgrounds/Background.png; sourceTree = "<group>"; };
 		1BD2D0531AE65E1E0017027E /* Background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Background@2x.png"; path = "UberJumpArt/Backgrounds/Background@2x.png"; sourceTree = "<group>"; };
 		1BD2D0541AE65E1E0017027E /* Background01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Background01.png; path = UberJumpArt/Backgrounds/Background01.png; sourceTree = "<group>"; };
@@ -129,10 +127,10 @@
 		1BD2D0791AE65E1E0017027E /* Background19@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Background19@2x.png"; path = "UberJumpArt/Backgrounds/Background19@2x.png"; sourceTree = "<group>"; };
 		1BD2D07A1AE65E1E0017027E /* Background20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Background20.png; path = UberJumpArt/Backgrounds/Background20.png; sourceTree = "<group>"; };
 		1BD2D07B1AE65E1E0017027E /* Background20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Background20@2x.png"; path = "UberJumpArt/Backgrounds/Background20@2x.png"; sourceTree = "<group>"; };
+		1BE9BC371AEEA05000CE7708 /* GameObjectNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GameObjectNode.swift; path = yeah/GameObjectNode.swift; sourceTree = "<group>"; };
+		1BE9BC381AEEA05000CE7708 /* Level.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Level.swift; path = yeah/Level.swift; sourceTree = "<group>"; };
 		1BEFC3AF1AE7A4020065A057 /* Assets.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = Assets.atlas; path = UberJumpArt/Assets.atlas; sourceTree = "<group>"; };
-		1BEFC3B21AE7A8720065A057 /* GameObjectNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameObjectNode.swift; sourceTree = "<group>"; };
 		1BFADD641AE8D3F3007577F1 /* Level01.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Level01.plist; sourceTree = "<group>"; };
-		1BFADD671AE8D6D3007577F1 /* Level.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,9 +272,8 @@
 		1BEFC3B11AE7A8340065A057 /* yeah */ = {
 			isa = PBXGroup;
 			children = (
-				1BD2CF9C1AE655950017027E /* ATest.playground */,
-				1BEFC3B21AE7A8720065A057 /* GameObjectNode.swift */,
-				1BFADD671AE8D6D3007577F1 /* Level.swift */,
+				1BE9BC371AEEA05000CE7708 /* GameObjectNode.swift */,
+				1BE9BC381AEEA05000CE7708 /* Level.swift */,
 			);
 			name = yeah;
 			sourceTree = "<group>";
@@ -428,8 +425,8 @@
 			files = (
 				1B38F5D81AE63E3300221D4E /* GameScene.swift in Sources */,
 				1B38F5DA1AE63E3300221D4E /* GameViewController.swift in Sources */,
-				1BEFC3B31AE7A8720065A057 /* GameObjectNode.swift in Sources */,
-				1BFADD681AE8D6D3007577F1 /* Level.swift in Sources */,
+				1BE9BC391AEEA05000CE7708 /* GameObjectNode.swift in Sources */,
+				1BE9BC3A1AEEA05000CE7708 /* Level.swift in Sources */,
 				1B38F5D41AE63E3300221D4E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,7 +435,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BFADD691AE8D6D3007577F1 /* Level.swift in Sources */,
 				1B38F5EE1AE63E3300221D4E /* UberJumpTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

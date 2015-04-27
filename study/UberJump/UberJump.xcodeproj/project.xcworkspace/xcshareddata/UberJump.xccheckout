@@ -10,31 +10,31 @@
 	<string>UberJump</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>94C4F81D949C8FEE2C223D531D84E5822657CF4C</key>
-		<string>https://github.com/xifanGame/mobile.git</string>
+		<key>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</key>
+		<string>https://github.com/xifanGame/xifanSwift.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>swift/projectStudy/UberJump/UberJump.xcodeproj</string>
+	<string>study/UberJump/UberJump.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>94C4F81D949C8FEE2C223D531D84E5822657CF4C</key>
-		<string>../../../../..</string>
+		<key>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</key>
+		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/xifanGame/mobile.git</string>
+	<string>https://github.com/xifanGame/xifanSwift.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>94C4F81D949C8FEE2C223D531D84E5822657CF4C</string>
+	<string>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>94C4F81D949C8FEE2C223D531D84E5822657CF4C</string>
+			<string>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</string>
 			<key>IDESourceControlWCCName</key>
-			<string>mobile</string>
+			<string>xifanSwift</string>
 		</dict>
 	</array>
 </dict>
