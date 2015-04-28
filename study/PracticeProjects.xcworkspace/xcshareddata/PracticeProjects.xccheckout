@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0FB96BDC-F74E-4D6B-8EF3-F5EE0AD9FBEA</string>
+	<key>IDESourceControlProjectName</key>
+	<string>PracticeProjects</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</key>
+		<string>https://github.com/xifanGame/xifanSwift.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>study/PracticeProjects.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/xifanGame/xifanSwift.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>xifanSwift</string>
+		</dict>
+	</array>
+</dict>
+</plist>

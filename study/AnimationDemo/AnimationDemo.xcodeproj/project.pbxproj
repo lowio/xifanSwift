@@ -413,6 +413,7 @@
 				1BFD823C1ABBCDD8005ABF35 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1BFD823D1ABBCDD8005ABF35 /* Build configuration list for PBXNativeTarget "AnimationDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -421,6 +422,7 @@
 				1BFD823F1ABBCDD8005ABF35 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

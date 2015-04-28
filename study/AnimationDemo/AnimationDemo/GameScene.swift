@@ -40,18 +40,18 @@ class GameScene: SKScene {
         bearNode.runAction(SKAction.repeatActionForever(SKAction.animateWithTextures(bearTextures, timePerFrame: 0.1, resize: false, restore: true)), withKey: walkingActionName);
     }
     
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        let tu = touches.anyObject() as UITouch;
-        let location = tu.locationInNode(self);
-        
-        var xs:CGFloat = 1;
-        if location.x > CGRectGetMidX(self.frame)
-        {
-            xs = -1;
-        }
-        
-        bearNode.xScale = fabs(bearNode.xScale) * xs;
-    }
+//    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+//        let tu = touches.anyObject() as! UITouch;
+//        let location = tu.locationInNode(self);
+//        
+//        var xs:CGFloat = 1;
+//        if location.x > CGRectGetMidX(self.frame)
+//        {
+//            xs = -1;
+//        }
+//        
+//        bearNode.xScale = fabs(bearNode.xScale) * xs;
+//    }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
