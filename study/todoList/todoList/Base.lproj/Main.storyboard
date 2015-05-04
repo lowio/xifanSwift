@@ -8,7 +8,7 @@
         <!--to-do-list-->
         <scene sceneID="7Hx-LU-Bd5">
             <objects>
-                <tableViewController id="c0O-qV-tkm" sceneMemberID="viewController">
+                <tableViewController id="c0O-qV-tkm" customClass="TodoListTableViewController" customModule="todoList" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hZV-H1-ATl">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -315,11 +315,20 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="add to-do item" id="k59-Dy-Ae5">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="9qz-GO-vri"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="Mvb-aJ-rZb"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="9qz-GO-vri">
+                            <connections>
+                                <segue destination="Dgy-GE-Xn3" kind="unwind" unwindAction="unwindTodoList:" id="gEW-jB-9Qn"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="Mvb-aJ-rZb">
+                            <connections>
+                                <segue destination="Dgy-GE-Xn3" kind="unwind" unwindAction="unwindTodoList:" id="ook-Q9-UzJ"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <exit id="Dgy-GE-Xn3" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1995" y="349"/>
         </scene>
