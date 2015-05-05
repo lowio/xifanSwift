@@ -8,7 +8,10 @@
 
 import UIKit
 
-class TodoListTableViewController: UITableViewController {
+class TodoListTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    
+    var toDoItems:[TodoItemCell]!;
     
     
     @IBAction
@@ -20,41 +23,78 @@ class TodoListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+        loadTodoItems();
+        
     }
+    
+    //加载数据源
+    private func loadTodoItems()
+    {
+        self.toDoItems = [];
+        
+        for i in 0..<5
+        {
+            toDoItems.append(TodoItemCell(itemName: "to-do name\(i)"));
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1;
+    }
 
     // MARK: - Table view data source
-
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
-        return 0
-    }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return 0
+        return self.toDoItems.count;
     }
 
-    /*
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as! UITableViewCell
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    {
+        let cell = tableView.dequeueReusableCellWithIdentifier("ListProtoTypeCell", forIndexPath: indexPath) as! UITableViewCell
 
         // Configure the cell...
-
-        return cell
+        let cellData = toDoItems[indexPath.row];
+        cell.textLabel?.text = cellData.itemName;
+        cell.accessoryType = cellData.isComplete ? .Checkmark : .None;
+        return cell;
     }
-    */
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: false);
+        
+        var tabCellData = self.toDoItems[indexPath.row];
+        tabCellData.isComplete = !tabCellData.isComplete;
+        
+        tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None);
+    }
+    
+//    override func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+//        
+//    }
+    
 
     /*
     // Override to support conditional editing of the table view.

@@ -13,6 +13,7 @@
 		65E67D331AF0CE3100561BFC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65E67D311AF0CE3100561BFC /* LaunchScreen.xib */; };
 		65E67D3F1AF0CE3100561BFC /* todoListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E67D3E1AF0CE3100561BFC /* todoListTests.swift */; };
 		65E67D491AF0E50400561BFC /* AddToDoItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E67D481AF0E50400561BFC /* AddToDoItemViewController.swift */; };
+		65ED1B121AF8C99B00EC4494 /* TodoItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ED1B111AF8C99B00EC4494 /* TodoItemCell.swift */; };
 		65ED5E281AF21F83003D3565 /* TodoListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ED5E271AF21F83003D3565 /* TodoListTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		65E67D3D1AF0CE3100561BFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65E67D3E1AF0CE3100561BFC /* todoListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = todoListTests.swift; sourceTree = "<group>"; };
 		65E67D481AF0E50400561BFC /* AddToDoItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddToDoItemViewController.swift; sourceTree = "<group>"; };
+		65ED1B111AF8C99B00EC4494 /* TodoItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoItemCell.swift; sourceTree = "<group>"; };
 		65ED5E271AF21F83003D3565 /* TodoListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoListTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,6 +84,7 @@
 				65ED5E271AF21F83003D3565 /* TodoListTableViewController.swift */,
 				65E67D481AF0E50400561BFC /* AddToDoItemViewController.swift */,
 				65E67D281AF0CE3100561BFC /* AppDelegate.swift */,
+				65ED1B111AF8C99B00EC4494 /* TodoItemCell.swift */,
 				65E67D2C1AF0CE3100561BFC /* Main.storyboard */,
 				65E67D2F1AF0CE3100561BFC /* Images.xcassets */,
 				65E67D311AF0CE3100561BFC /* LaunchScreen.xib */,
@@ -217,6 +220,7 @@
 			files = (
 				65E67D491AF0E50400561BFC /* AddToDoItemViewController.swift in Sources */,
 				65ED5E281AF21F83003D3565 /* TodoListTableViewController.swift in Sources */,
+				65ED1B121AF8C99B00EC4494 /* TodoItemCell.swift in Sources */,
 				65E67D291AF0CE3100561BFC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
