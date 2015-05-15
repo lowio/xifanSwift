@@ -79,12 +79,16 @@
                                 <segue destination="Dgy-GE-Xn3" kind="unwind" unwindAction="unwindTodoList:" id="gEW-jB-9Qn"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="Mvb-aJ-rZb">
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="Mvb-aJ-rZb">
                             <connections>
                                 <segue destination="Dgy-GE-Xn3" kind="unwind" unwindAction="unwindTodoList:" id="ook-Q9-UzJ"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="saveBtn" destination="Mvb-aJ-rZb" id="bfy-HY-ujL"/>
+                        <outlet property="textInput" destination="Uza-f1-Gtf" id="VD5-95-aIs"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <exit id="Dgy-GE-Xn3" userLabel="Exit" sceneMemberID="exit"/>

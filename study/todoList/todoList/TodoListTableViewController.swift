@@ -17,7 +17,11 @@ class TodoListTableViewController: UITableViewController, UITableViewDataSource,
     @IBAction
     func unwindTodoList(segue:UIStoryboardSegue)
     {
-        
+        if let newCellData = (segue.sourceViewController as? AddToDoItemViewController)?.newCellData
+        {
+            toDoItems.append(newCellData);
+            self.tableView.reloadData();
+        }
     }
 
     override func viewDidLoad() {

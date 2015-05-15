@@ -40,6 +40,7 @@
 		65E67D481AF0E50400561BFC /* AddToDoItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddToDoItemViewController.swift; sourceTree = "<group>"; };
 		65ED1B111AF8C99B00EC4494 /* TodoItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoItemCell.swift; sourceTree = "<group>"; };
 		65ED5E271AF21F83003D3565 /* TodoListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoListTableViewController.swift; sourceTree = "<group>"; };
+		65F66CAA1AF9C2BA00F7339F /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +90,7 @@
 				65E67D2F1AF0CE3100561BFC /* Images.xcassets */,
 				65E67D311AF0CE3100561BFC /* LaunchScreen.xib */,
 				65E67D261AF0CE3100561BFC /* Supporting Files */,
+				65F66CAA1AF9C2BA00F7339F /* MyPlayground.playground */,
 			);
 			path = todoList;
 			sourceTree = "<group>";
