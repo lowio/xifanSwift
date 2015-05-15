@@ -41,7 +41,7 @@ class StartScene: SKScene {
         let l = SKLabelNode(text: "Getting Start!");
         l.fontName = "Chalkduster";
         l.fontSize = 30;
-        l.name = "startNode";
+        l.name = "startNode"; 
         l.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame));
         return l;
     }
