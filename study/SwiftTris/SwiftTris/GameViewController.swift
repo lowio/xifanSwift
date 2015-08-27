@@ -20,7 +20,7 @@ class GameViewController: UIViewController ,UIGestureRecognizerDelegate, SwiftTr
         super.viewDidLoad()
 
         
-        let skView = view as SKView
+        let skView = view as! SKView
         skView.multipleTouchEnabled = false
         
         scene = GameScene(size: skView.bounds.size)

@@ -11,9 +11,7 @@ import SpriteKit
 
 class NodeDisplay: SKSpriteNode {
     
-    override init() {
-        super.init()
-    }
+    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
