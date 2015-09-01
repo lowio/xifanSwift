@@ -13,7 +13,7 @@ import Foundation
 /**
 优先队列
 */
-struct PriorityQueue <T> :Printable{
+struct XPriorityQueue <T> :Printable{
     
     //存储队列
     private var queue:[T]!;

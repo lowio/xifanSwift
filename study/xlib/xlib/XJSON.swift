@@ -1,5 +1,5 @@
 //
-//  JsonParser.swift
+//  XJSON.swift
 //  xlib
 //
 //  Created by 173 on 15/8/31.
@@ -10,28 +10,28 @@ import Foundation
 
 
 //JSON解析器
-enum JSONParser
+enum XJSON
 {
     case Num(NSNumber)                          //numbern
     case Str(NSString)                          //string
-    case Arr([JSONParser])                      //array
-    case Dic(Dictionary<String, JSONParser>)    //dictionary
+    case Arr([XJSON])                      //array
+    case Dic(Dictionary<String, XJSON>)    //dictionary
     case Null(NSError?)                         //error
     
-    //构造器（根据json原数据创建JSONParser)
+    //构造器（根据json原数据创建XJSON)
     init(data:NSData)
     {
         if let jsonData:AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil)
         {
-            self = JSONParser(jsonObject: jsonData);
+            self = XJSON(jsonObject: jsonData);
         }
         else
         {
-            self = JSONParser.Null(nil);
+            self = XJSON.Null(nil);
         }
     }
     
-    //构造器（根据初步解析数据创建JSONParser
+    //构造器（根据初步解析数据创建XJSON
     init(jsonObject data:AnyObject)
     {
         switch data
@@ -41,59 +41,59 @@ enum JSONParser
         case let str as NSString:
             self = .Str(str);
         case let arr as NSArray:
-            var jsonParserArr = [JSONParser]();
+            var XJSONArr = [XJSON]();
             for obj:AnyObject in arr{
-                jsonParserArr.append(JSONParser(jsonObject: obj));
+                XJSONArr.append(XJSON(jsonObject: obj));
             }
-            self = .Arr(jsonParserArr);
+            self = .Arr(XJSONArr);
         case let dic as NSDictionary:
-            var jsonParserDic = Dictionary<String, JSONParser>();
+            var XJSONDic = Dictionary<String, XJSON>();
             for obj in dic{
                 if let key = obj.key as? String
                 {
-                    jsonParserDic[key] = JSONParser(jsonObject: obj.value);
+                    XJSONDic[key] = XJSON(jsonObject: obj.value);
                 }
             }
-            self = .Dic(jsonParserDic);
+            self = .Dic(XJSONDic);
         default:
-            self = JSONParser.Null(nil);
+            self = XJSON.Null(nil);
         }
     }
 }
 
 //扩展下标
-extension JSONParser
+extension XJSON
 {
     
     //.Arr类型支持int下标
-    subscript(index:Int) -> JSONParser{
+    subscript(index:Int) -> XJSON{
         get{
             switch self
             {
             case .Arr(let arr) where arr.count < index && arr.count > -1:
                 return arr[index];
             default:
-                return .Null(NSError(domain: "i am not JSONParser.Arr", code: 0, userInfo: nil));
+                return .Null(NSError(domain: "i am not XJSON.Arr", code: 0, userInfo: nil));
             }
         }
     }
     
     //.Dic类型支持string下标
-    subscript(key:String) -> JSONParser{
+    subscript(key:String) -> XJSON{
         get{
             switch self
             {
             case .Dic(let dic) where dic[key] != nil:
                 return dic[key]!;
             default:
-                return .Null(NSError(domain: "i am not JSONParser.Dic", code: 0, userInfo: nil));
+                return .Null(NSError(domain: "i am not XJSON.Dic", code: 0, userInfo: nil));
             }
         }
     }
 }
 
 //扩展取值
-extension JSONParser
+extension XJSON
 {
     //获取原始数据 需要自己转换
     var originalValue:Any?{
@@ -113,7 +113,7 @@ extension JSONParser
     }
     
     //数组类型的数据
-    var arrayValue:Array<JSONParser>?{
+    var arrayValue:Array<XJSON>?{
         switch self
         {
         case .Arr(let arr):
@@ -124,7 +124,7 @@ extension JSONParser
     }
     
     //字典类型的数据
-    var dictionaryValue:Dictionary<String, JSONParser>?{
+    var dictionaryValue:Dictionary<String, XJSON>?{
         switch self
         {
         case .Dic(let dic):
@@ -136,7 +136,7 @@ extension JSONParser
 }
 
 //用于判断是否能被当成bool类型判断
-extension JSONParser:BooleanType
+extension XJSON:BooleanType
 {
     var boolValue:Bool{
         switch self{
@@ -154,8 +154,8 @@ extension JSONParser:BooleanType
     }
 }
 
-//最低级的jsonparser
-extension JSONParser
+//最低级的XJSON
+extension XJSON
 {
     //字符串
     var stringValue:String?{
@@ -203,19 +203,19 @@ extension JSONParser
 }
 
 //比较相关 比较麻烦暂时忽略 可以外部扩展
-//extension JSONParser: Comparable{
+//extension XJSON: Comparable{
 //    private var type:Int{
 //        switch self
 //        {
-//        case JSONParser.Num:
+//        case XJSON.Num:
 //            return 1;
-//        case JSONParser.Str:
+//        case XJSON.Str:
 //            return 2;
-//        case JSONParser.Arr:
+//        case XJSON.Arr:
 //            return 3;
-//        case JSONParser.Dic:
+//        case XJSON.Dic:
 //            return 4;
-//        case JSONParser.Null:
+//        case XJSON.Null:
 //            return 0;
 //        default:
 //            return -1;
@@ -225,7 +225,7 @@ extension JSONParser
 
 
 //打印相关
-extension JSONParser: Printable
+extension XJSON: Printable
 {
     var description: String {
         switch self{

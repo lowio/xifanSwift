@@ -11,7 +11,7 @@ import Foundation
 
 func testPriorityQueue()
 {
-    var q = PriorityQueue<(Int, Int)>(){$0.0.0 > $0.1.0}
+    var q = XPriorityQueue<(Int, Int)>(){$0.0.0 > $0.1.0}
     
     for i in 0...499
     {
@@ -31,19 +31,12 @@ func testPriorityQueue()
 func testJsonParser()
 {
     JsonLoader.getTopAppsDataFromFileWithSuccess(){
-        (data) -> Void in
-        getDataSuccess(jsData: data)
+        (jsd) -> Void in
+        let jsonParser = XJSON(data: jsd);
+        let d = jsonParser["feed"]["author"]["uri"]["label"] as XJSON
+//        let d = jsonParser["feed"]["author"] as JSONParser
+        let v = d.stringValue
+        println(d)
+        println(v)
     };
-}
-
-//获取数据成功
-private func getDataSuccess(jsData jsd : NSData)
-{
-    let jsonParser = JSONParser(data: jsd);
-    //        let d = jsonParser["feed"]["author"]["uri"]["label"] as JSONParser
-    let d = jsonParser["feed"]["author"] as JSONParser
-    let v = d.stringValue
-    println(d)
-    println(v)
-    
 }

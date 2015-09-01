@@ -26,8 +26,8 @@ class xlibTests: XCTestCase {
     }
     
     func testExample() {
-//        testJsonParser();
-        testPriorityQueue()
+        testJsonParser();
+//        testPriorityQueue()
         
         
         
@@ -35,32 +35,11 @@ class xlibTests: XCTestCase {
 //        XCTAssert(true, "Pass")
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
-//            testPriorityQueue()
-        }
-    }
-    
-//    func testPriorityQueue()
-//    {
-//        
-//        var q = PriorityQueue<(Int, Int)>(){$0.0.0 > $0.1.0}
-//
-//        for i in 0...49
-//        {
-//            //            let temp = Int(arc4random() % 100);
-//            let temp = 1;
-//            q.push((temp, i));
-//        }
-//        
-//        
-//        println(q)
-//        
-//        while(!q.empty)
-//        {
-//            println(q.pop());
+//    func testPerformanceExample() {
+//        // This is an example of a performance test case.
+//        self.measureBlock() {
+//            // Put the code you want to measure the time of here.
+////            testPriorityQueue()
 //        }
 //    }
     
