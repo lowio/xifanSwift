@@ -26,8 +26,8 @@ class xlibTests: XCTestCase {
     }
     
     func testExample() {
-        testJsonParser();
-//        testPriorityQueue()
+//        testJsonParser();
+        testPriorityQueue()
         
         
         

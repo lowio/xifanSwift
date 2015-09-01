@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		65E9C46F1B953A2800CDEB1E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65E9C46E1B953A2800CDEB1E /* TopApps.json */; };
+		65E9C4731B95900F00CDEB1E /* XPathFinderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */; };
+		65E9C4751B959AFF00CDEB1E /* XPathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */; };
 		65EFDBD11B94282C0004D53C /* xlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EFDBD01B94282C0004D53C /* xlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65EFDBD71B94282C0004D53C /* xlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EFDBCB1B94282C0004D53C /* xlib.framework */; };
 		65EFDBDE1B94282C0004D53C /* xlibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDBDD1B94282C0004D53C /* xlibTests.swift */; };
@@ -41,6 +43,9 @@
 
 /* Begin PBXFileReference section */
 		65E9C46E1B953A2800CDEB1E /* TopApps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TopApps.json; sourceTree = "<group>"; };
+		65E9C4701B9589C100CDEB1E /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
+		65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinderProtocol.swift; sourceTree = "<group>"; };
+		65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinder.swift; sourceTree = "<group>"; };
 		65EFDBCB1B94282C0004D53C /* xlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65EFDBCF1B94282C0004D53C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65EFDBD01B94282C0004D53C /* xlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xlib.h; sourceTree = "<group>"; };
@@ -89,6 +94,15 @@
 			name = assets;
 			sourceTree = "<group>";
 		};
+		65E9C4711B958FED00CDEB1E /* pathFinder */ = {
+			isa = PBXGroup;
+			children = (
+				65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */,
+				65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */,
+			);
+			name = pathFinder;
+			sourceTree = "<group>";
+		};
 		65EFDBC11B94282C0004D53C = {
 			isa = PBXGroup;
 			children = (
@@ -134,6 +148,7 @@
 				65EFDC1E1B945D680004D53C /* JsonTest.swift */,
 				65EFDBDD1B94282C0004D53C /* xlibTests.swift */,
 				65EFDBDB1B94282C0004D53C /* Supporting Files */,
+				65E9C4701B9589C100CDEB1E /* temp.playground */,
 			);
 			path = xlibTests;
 			sourceTree = "<group>";
@@ -149,6 +164,7 @@
 		65EFDBE71B9428550004D53C /* yeah */ = {
 			isa = PBXGroup;
 			children = (
+				65E9C4711B958FED00CDEB1E /* pathFinder */,
 				65EFDBEC1B9428FB0004D53C /* dataStruct */,
 				65EFDBEB1B9428E60004D53C /* json */,
 				65EFDBE81B94285D0004D53C /* common */,
@@ -317,7 +333,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				65EFDBEA1B9428AC0004D53C /* XJSON.swift in Sources */,
+				65E9C4751B959AFF00CDEB1E /* XPathFinder.swift in Sources */,
 				65EFDBEE1B94291F0004D53C /* XPriorityQueue.swift in Sources */,
+				65E9C4731B95900F00CDEB1E /* XPathFinderProtocol.swift in Sources */,
 				65EFDC1C1B945C860004D53C /* RunTest.swift in Sources */,
 				65EFDC1F1B945D680004D53C /* JsonTest.swift in Sources */,
 			);

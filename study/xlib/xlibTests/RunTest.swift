@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import xlib;
 
 func testPriorityQueue()
 {
