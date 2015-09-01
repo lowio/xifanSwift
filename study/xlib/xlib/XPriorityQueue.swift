@@ -9,29 +9,28 @@
 import Foundation
 
 
-
 /**
 优先队列
 */
 struct XPriorityQueue <T> :Printable{
     
-    //存储队列
-    private var queue:[T]!;
+    //存储队列
+    private var queue:[T];
     
     //排序函数 T1:当前element T2:待检测element
-    private var compare:(T,T)->Bool;
+    private var compare:(T, T)->Bool;
     
     //compare 排序函数 T1:当前element T2:待检测element;return true 互换位置 false 不予处理
-    init(compare:(T,T) -> Bool)
+    init(compare:(T, T) -> Bool)
     {
         self.compare = compare;
-        queue = [];
+        self.queue = [];
     }
     
     //放入element
     mutating func push(element:T)
     {
-        queue.append(element);
+        self.queue.append(element);
         bubbleUP(queue.count - 1);
     }
     
@@ -39,11 +38,11 @@ struct XPriorityQueue <T> :Printable{
     mutating func pop() -> T?
     {
         if(empty){ return nil; }
-        let first = queue[0];
-        let end = queue.removeLast();
-        if(!empty)
+        let first = self.queue[0];
+        let end = self.queue.removeLast();
+        if(!self.empty)
         {
-            queue[0] = end;
+            self.queue[0] = end;
             sinkDown(0);
         }
         return first;
@@ -63,8 +62,9 @@ struct XPriorityQueue <T> :Printable{
         while(index > 0)
         {
             let pIndex = ((index-1) >> 1);
-            if(compare(element, queue[pIndex])){break;}
-            queue[index] = queue[pIndex];
+            let ele = queue[pIndex];
+            if(compare(element, ele)){break;}
+            queue[index] = ele;
             queue[pIndex] = element;
             index = pIndex;
         }

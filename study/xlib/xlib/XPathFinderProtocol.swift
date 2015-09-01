@@ -13,7 +13,7 @@ import Foundation
 //path finder node
 protocol XPFNode
 {
-    //parent
+    //parent node
     var p:XPFNode?{get set}
     
     //exact cost from start node to self
@@ -22,45 +22,26 @@ protocol XPFNode
     //heuristic estimated cost from self to goal
     var h:CGFloat{get set}
     
-    //if scanned
-    var closed:Bool{get set}
-    
     //f; return g + h
     var f:CGFloat{get}
-    
-    //if visited; return p != nil;
-    var visited:Bool{get}
-}
-
-protocol XPFHeuristic
-{
-    //get heuristic estimated cost fromNode to toNode
-    func getHeuristicCost(fromNode fn:XPFNode, toNode tn:XPFNode) -> CGFloat;
-}
-
-protocol XPFNeighbors
-{
-    func pop() -> XPFNode?;
 }
 
 //path finder map
 protocol XPFMap
 {
+    //get heuristic estimated cost fromNode to toNode
+    func getHeuristicCost(fromNode fn:XPFNode, toNode tn:XPFNode) -> CGFloat;
+    
     //get exact cost between fromNode to toNode
     func getMovementCost(fromNode fn:XPFNode, toNode tn:XPFNode) -> CGFloat;
     
     //get neighbor nodes
-    func getNeighbors(atNode n:XPFNode) -> XPFNeighbors;
+    func getNeighbors(atNode n:XPFNode) -> XPFNode;
 }
 
 //path finder
 protocol XPF
 {
-    init(heristic:XPFHeuristic);
-    
-    //get heuristic estimated cost fromNode to toNode
-    var heuristic:XPFHeuristic{get set};
-    
     //path finder
     func pathFinder(startNode sn:XPFNode, goalNode gn:XPFNode, map:XPFMap, completion:([XPFNode])->());
 }
