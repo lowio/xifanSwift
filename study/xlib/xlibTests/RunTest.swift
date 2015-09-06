@@ -11,13 +11,27 @@ import xlib;
 
 func testPriorityQueue()
 {
-    var q = XPriorityQueue<Int>(){$0.0 > $0.1}
+    var q = XPriorityQueue<Int>(){$0.0 < $0.1}
     let c = 100;
+    
+//    var arr = [Int]();
+//    for i in 0...14
+//    {
+//        arr.append(Int(arc4random() % 1000));
+//    }
+//    println(arr);
+//    q.rebuild(arr);
+//    println(q)
+//    while(!q.isEmpty)
+//    {
+//        println(q.pop());
+//    }
+    
     
     for i in 0...c
     {
-        let temp = Int(arc4random() % 1000);
-//        let temp = i;
+//        let temp = Int(arc4random() % 1000);
+        let temp = i;
         let e = q.pop();
 //        println(e);
         for j in 0...3
@@ -26,6 +40,7 @@ func testPriorityQueue()
         }
     }
 
+    
 }
 
 

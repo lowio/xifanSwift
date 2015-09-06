@@ -25,6 +25,9 @@ protocol XPriorityQueueProtocol{
     //return element at index
     func getElement(atIndex:Int) -> XPQElement;
     
+    //rebuild queue
+    mutating func rebuild(source:[XPQElement])
+    
     //return array
     func toArray() -> [XPQElement];
     
@@ -100,6 +103,39 @@ extension XPriorityQueue: XPriorityQueueProtocol
             sinkDown(atIndex);
         }
         return element;
+    }
+    
+    mutating func rebuild(source: [XPQElement]) {
+        self.source = source;
+        let c = self.count;
+        if(c < 2){return;}
+        var i = self.count >> 1 - 1;
+        
+        while(i > -1)
+        {
+            var index = i;
+            let e = getElement(i);
+            let left = getChildIndex(i);
+            if(compare(e, getElement(left)))
+            {
+                index = left;
+            }
+            
+            let right = left + 1;
+            if(right < c && compare(getElement(index), getElement(right)))
+            {
+                index = right;
+            }
+            
+            if(index != i)
+            {
+                bubbleUP(index);
+//                self.source[i] = getElement(index);
+//                self.source[index] = e;
+            }
+            
+            i--;
+        }
     }
     
     var isEmpty:Bool { return self.source.isEmpty; }

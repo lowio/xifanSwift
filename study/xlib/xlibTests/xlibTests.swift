@@ -29,7 +29,7 @@ class xlibTests: XCTestCase {
         // This is an example of a functional test case.
 //        XCTAssert(true, "Pass")
         
-//        testPriorityQueue()
+        testPriorityQueue()
     }
     
     func testPerformanceExample() {
