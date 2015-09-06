@@ -9,9 +9,10 @@
 import Foundation
 import xlib;
 
+
 func testPriorityQueue()
 {
-    var q = XPriorityQueue<Int>(){$0.0 < $0.1}
+    var q = XPriorityQueue<Int>(){$0.0 > $0.1}
     let c = 100;
     
 //    var arr = [Int]();
@@ -30,8 +31,7 @@ func testPriorityQueue()
     
     for i in 0...c
     {
-//        let temp = Int(arc4random() % 1000);
-        let temp = i;
+        let temp = Int(arc4random() % 1000);
         let e = q.pop();
 //        println(e);
         for j in 0...3

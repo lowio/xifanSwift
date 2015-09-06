@@ -8,7 +8,7 @@
 
 import Foundation
 
-//priority quque protocol
+//MARK: priority queue protocol
 protocol XPriorityQueueProtocol{
     //element typealias
     typealias XPQElement;
@@ -39,7 +39,7 @@ protocol XPriorityQueueProtocol{
 }
 
 /**
-priority quque
+*MARK: store properties and init
 */
 struct XPriorityQueue <T>{
     
@@ -57,7 +57,7 @@ struct XPriorityQueue <T>{
     }
 }
 
-//extension printable
+//MARK: extension Printable
 extension XPriorityQueue: Printable
 {
     var description:String{
@@ -65,7 +65,7 @@ extension XPriorityQueue: Printable
     }
 }
 
-//extension XPriorityQueueProtocol
+//MARK: extension XPriorityQueueProtocol
 extension XPriorityQueue: XPriorityQueueProtocol
 {
     typealias XPQElement = T;
@@ -80,7 +80,7 @@ extension XPriorityQueue: XPriorityQueueProtocol
         if(isEmpty){return nil;}
         let first = self.source.first;
         let end = self.source.removeLast();
-        if(!isEmpty)
+        if !isEmpty
         {
             self.source[0] = end;
             sinkDown(0);
@@ -94,46 +94,27 @@ extension XPriorityQueue: XPriorityQueueProtocol
         self.source[atIndex] = element;
         let e = getElement(atIndex);
         let p_i = getParentIndex(atIndex);
-        if(!compare(e, getElement(p_i)))
-        {
-            bubbleUP(atIndex);
-        }
-        else
-        {
-            sinkDown(atIndex);
-        }
+        compare(e, getElement(p_i)) ? sinkDown(atIndex):bubbleUP(atIndex);
         return element;
     }
     
     mutating func rebuild(source: [XPQElement]) {
         self.source = source;
         let c = self.count;
-        if(c < 2){return;}
+        if c < 2 {return;}
         var i = self.count >> 1 - 1;
         
-        while(i > -1)
+        while i > -1
         {
             var index = i;
             let e = getElement(i);
             let left = getChildIndex(i);
-            if(compare(e, getElement(left)))
-            {
-                index = left;
-            }
+            if compare(e, getElement(left)) {index = left;}
             
             let right = left + 1;
-            if(right < c && compare(getElement(index), getElement(right)))
-            {
-                index = right;
-            }
+            if right < c && compare(getElement(index), getElement(right)){index = right;}
             
-            if(index != i)
-            {
-                bubbleUP(index);
-//                self.source[i] = getElement(index);
-//                self.source[index] = e;
-            }
-            
+            if index != i {bubbleUP(index);}
             i--;
         }
     }
@@ -144,15 +125,20 @@ extension XPriorityQueue: XPriorityQueueProtocol
         return source;
     }
     
-    
+}
+
+//MARK: private method
+//use private extension, not write private pre every private method
+private extension XPriorityQueue
+{
     //parent node index
-    private func getParentIndex(atIndex:Int) -> Int{return (atIndex - 1) >> 1;}
+    func getParentIndex(atIndex:Int) -> Int{return (atIndex - 1) >> 1;}
     
     //child node index(the left one, the mini index one)
-    private func getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
+    func getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
     
     //swap two element position
-    mutating private func swap(index:Int, withIndex:Int)
+    mutating func swap(index:Int, withIndex:Int)
     {
         let e = getElement(index);
         self.source[index] = self.source[withIndex];
@@ -160,11 +146,11 @@ extension XPriorityQueue: XPriorityQueueProtocol
     }
     
     //bubble up at index
-    private mutating func bubbleUP(atIndex:Int)
+    mutating func bubbleUP(atIndex:Int)
     {
         var i = atIndex;
         let e = self.getElement(i);
-        while(i > 0)
+        while i > 0
         {
             let p_i = self.getParentIndex(i);
             let p_e = self.getElement(p_i);
@@ -175,32 +161,31 @@ extension XPriorityQueue: XPriorityQueueProtocol
             i = p_i;
         }
     }
-
+    
     //sink down at index
-    private mutating func sinkDown(atIndex:Int)
+    mutating func sinkDown(atIndex:Int)
     {
         let c = self.count;
         var i = atIndex;
         let e = getElement(i);
         
-        while(true)
+        while true
         {
             var index = i;
             
             let left = self.getChildIndex(index);
-            if(left >= c){break;}
-            if(compare(e, getElement(left))){ index = left; }
+            if left >= c {break;}
+            if compare(e, getElement(left)) { index = left; }
             
             
             let right = left + 1;
-            if(right < c && compare(getElement(index), getElement(right))){ index = right; }
+            if right < c && compare(getElement(index), getElement(right)) { index = right; }
             
-            if(index == i){break;}
+            if index == i {break;}
             self.source[i] = getElement(index);
             self.source[index] = e;
 //            swap(i, withIndex: index);
             i = index;
         }
     }
-    
 }
