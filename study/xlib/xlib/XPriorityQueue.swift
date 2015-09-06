@@ -37,13 +37,13 @@ priority quque
 */
 struct XPriorityQueue <T>{
     
-    //存储队列
+    //array
     private var queue:[T];
     
-    //排序函数 T1:当前element T2:待检测element
+    //compare: return t1 > t2
     private var compare:(T, T)->Bool;
     
-    //compare 排序函数 T1:当前element T2:待检测element;return true 互换位置 false 不予处理
+    //compare: return t1 > t2
     init(compare:(T, T) -> Bool)
     {
         self.compare = compare;
@@ -109,6 +109,14 @@ extension XPriorityQueue: XPriorityQueueProtocol
     //child node index(the left one, the mini index one)
     private func getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
     
+    //swap two element position
+    mutating private func swap(index:Int, withIndex:Int)
+    {
+        let e = getElement(index);
+        self.queue[index] = self.queue[withIndex];
+        self.queue[withIndex] = e;
+    }
+    
     //bubble up at index
     private mutating func bubbleUP(atIndex:Int)
     {
@@ -121,6 +129,7 @@ extension XPriorityQueue: XPriorityQueueProtocol
             if(compare(e, p_e)){ break; }
             queue[i] = p_e;
             queue[p_i] = e;
+//            swap(i, withIndex: p_i);
             i = p_i;
         }
     }
@@ -147,6 +156,7 @@ extension XPriorityQueue: XPriorityQueueProtocol
             if(index == i){break;}
             self.queue[i] = getElement(index);
             self.queue[index] = e;
+//            swap(i, withIndex: index);
             i = index;
         }
     }

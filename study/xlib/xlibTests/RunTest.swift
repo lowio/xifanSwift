@@ -12,7 +12,7 @@ import xlib;
 func testPriorityQueue()
 {
     var q = XPriorityQueue<Int>(){$0.0 > $0.1}
-    let c = 50;
+    let c = 100;
     
     for i in 0...c
     {
