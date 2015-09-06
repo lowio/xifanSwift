@@ -8,11 +8,34 @@
 
 import Foundation
 
+//priority quque protocol
+protocol XPriorityQueueProtocol{
+    //element typealias
+    typealias XPQElement;
+    
+    //push element at end
+    mutating func push(element:XPQElement) -> XPQElement;
+    
+    //get first element and remove it
+    mutating func pop() -> XPQElement?;
+    
+    //update element at index
+    mutating func update(element:XPQElement, atIndex:Int) -> XPQElement;
+    
+    //return element at index
+    func getElement(atIndex:Int) -> XPQElement;
+    
+    //empty?
+    var isEmpty:Bool{get};
+    
+    //elemet count
+    var count:Int{get}
+}
 
 /**
-优先队列
+priority quque
 */
-struct XPriorityQueue <T> :Printable{
+struct XPriorityQueue <T>{
     
     //存储队列
     private var queue:[T];
@@ -26,21 +49,32 @@ struct XPriorityQueue <T> :Printable{
         self.compare = compare;
         self.queue = [];
     }
+}
+
+//extension printable
+extension XPriorityQueue: Printable
+{
+    var description:String{
+        return self.queue.description;
+    }
+}
+
+//extension XPriorityQueueProtocol
+extension XPriorityQueue: XPriorityQueueProtocol
+{
+    typealias XPQElement = T;
     
-    //放入element
-    mutating func push(element:T)
-    {
+    mutating func push(element: XPQElement) -> XPQElement {
         self.queue.append(element);
-        bubbleUP(queue.count - 1);
+        bubbleUP(self.count - 1);
+        return element;
     }
     
-    //获得优先的element
-    mutating func pop() -> T?
-    {
-        if(empty){ return nil; }
-        let first = self.queue[0];
+    mutating func pop() -> XPQElement? {
+        if(isEmpty){return nil;}
+        let first = self.queue.first;
         let end = self.queue.removeLast();
-        if(!self.empty)
+        if(!isEmpty)
         {
             self.queue[0] = end;
             sinkDown(0);
@@ -48,60 +82,73 @@ struct XPriorityQueue <T> :Printable{
         return first;
     }
     
-    //是否为空
-    var empty:Bool {
-        return queue.isEmpty;
+    func getElement(atIndex: Int) -> XPQElement {return self.queue[atIndex];}
+    
+    mutating func update(element: XPQElement, atIndex: Int) -> XPQElement {
+        self.queue[atIndex] = element;
+        let e = getElement(atIndex);
+        let p_i = getParentIndex(atIndex);
+        if(!compare(e, getElement(p_i)))
+        {
+            bubbleUP(atIndex);
+        }
+        else
+        {
+            sinkDown(atIndex);
+        }
+        return element;
     }
     
-    //向上冒泡
-    private mutating func bubbleUP(fromIndex:Int)
+    var isEmpty:Bool { return self.queue.isEmpty; }
+    var count:Int{ return self.queue.count; }
+    
+    
+    //parent node index
+    private func getParentIndex(atIndex:Int) -> Int{return (atIndex - 1) >> 1;}
+    
+    //child node index(the left one, the mini index one)
+    private func getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
+    
+    //bubble up at index
+    private mutating func bubbleUP(atIndex:Int)
     {
-        if(fromIndex < 1){return;}
-        var index = fromIndex;
-        let element = queue[index];
-        while(index > 0)
+        var i = atIndex;
+        let e = self.getElement(i);
+        while(i > 0)
         {
-            let pIndex = ((index-1) >> 1);
-            let ele = queue[pIndex];
-            if(compare(element, ele)){break;}
-            queue[index] = ele;
-            queue[pIndex] = element;
-            index = pIndex;
+            let p_i = self.getParentIndex(i);
+            let p_e = self.getElement(p_i);
+            if(compare(e, p_e)){ break; }
+            queue[i] = p_e;
+            queue[p_i] = e;
+            i = p_i;
         }
     }
-    
-    //下沉
-    private mutating func sinkDown(fromIndex:Int)
+
+    //sink down at index
+    private mutating func sinkDown(atIndex:Int)
     {
-        let len = queue.count;
-        let element = queue[fromIndex];
-        var index = fromIndex;
+        let c = self.count;
+        var i = atIndex;
+        let e = getElement(i);
+        
         while(true)
         {
-            var currentIndex = index;
-            let childIndex1 = (currentIndex << 1 + 1);
-            if(childIndex1 >= len){break;}
-            let childIndex2 = childIndex1 + 1;
-            if(compare(element, queue[childIndex1]))
-            {
-                currentIndex = childIndex1;
-            }
-            if(childIndex2 < len && compare(queue[childIndex1], queue[childIndex2]))
-            {
-                currentIndex = childIndex2;
-            }
+            var index = i;
             
-            if(currentIndex != index)
-            {
-                queue[index] = queue[currentIndex];
-                queue[currentIndex] = element;
-                index = currentIndex;
-            }
-            else{break;}
+            let left = self.getChildIndex(index);
+            if(left >= c){break;}
+            if(compare(e, getElement(left))){ index = left; }
+            
+            
+            let right = left + 1;
+            if(right < c && compare(getElement(index), getElement(right))){ index = right; }
+            
+            if(index == i){break;}
+            self.queue[i] = getElement(index);
+            self.queue[index] = e;
+            i = index;
         }
     }
     
-    var description:String{
-        return queue.description;
-    }
 }

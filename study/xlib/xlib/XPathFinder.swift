@@ -19,28 +19,28 @@ extension XPathFinder:XPF
         var currentNode = sn;
         var openHeap = XPriorityQueue<XPFNode>(){$0.0.f > $0.1.f}
 //        currentNode.visited = true;
-        openHeap.push(currentNode);
-        while(!openHeap.empty)
-        {
-            currentNode = openHeap.pop()!;
-            if(pathFinded(currentNode: currentNode, goalNode: gn)){break;}
-            
-            var neighbors = map.getNeighbors(atNode: currentNode);
-            var neighbor = neighbors.pop();
-            while(neighbor != nil)
-            {
-                if(neighbor!.closed){continue;}
-                if(!neighbor!.visited)
-                {
-                    
-                }
-                else
-                {
-                    
-                }
-                neighbor = neighbors.pop();
-            }
-        }
+//        openHeap.push(currentNode);
+//        while(!openHeap.empty)
+//        {
+//            currentNode = openHeap.pop()!;
+//            if(pathFinded(currentNode: currentNode, goalNode: gn)){break;}
+//            
+//            var neighbors = map.getNeighbors(atNode: currentNode);
+//            var neighbor = neighbors.pop();
+//            while(neighbor != nil)
+//            {
+//                if(neighbor!.closed){continue;}
+//                if(!neighbor!.visited)
+//                {
+//                    
+//                }
+//                else
+//                {
+//                    
+//                }
+//                neighbor = neighbors.pop();
+//            }
+//        }
         
         let path = rebuildPath(atNode: currentNode);
         completion(path);
