@@ -32,10 +32,12 @@ class xlibTests: XCTestCase {
     
     func testExample() {
 //        jsonTest();
-        priorityQueueTest();
+//        priorityQueueTest();
+        pathFindTest();
     }
     
     
+   
     
     
     //XPriorityQueue test

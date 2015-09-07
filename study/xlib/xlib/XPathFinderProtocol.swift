@@ -6,13 +6,15 @@
 //  Copyright (c) 2015年 yeah. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 //PF = path finder
 
-//path finder grid priority
-protocol XPFGridPrioriyProtocol
+//MARK: map grid protocol
+protocol XPFGridProtocol
 {
+    var x:Int{get set};
+    var y:Int{get set};
     //exact cost from start node to self
     var g:CGFloat{get set}
     
@@ -22,16 +24,10 @@ protocol XPFGridPrioriyProtocol
     //f; return g + h
     var f:CGFloat{get}
     
-    //is closed
-    var isClosed:Bool{get set}
-}
-
-//MARK: map grid protocol
-protocol XPFGridProtocol
-{
-    var x:Int{get set};
-    var y:Int{get set};
+    //parent
     var p:XPFGridProtocol?{get set};
+    var isClosed:Bool{get set}
+    var isOpened:Bool{get set}
 }
 
 //MARK: map protocol

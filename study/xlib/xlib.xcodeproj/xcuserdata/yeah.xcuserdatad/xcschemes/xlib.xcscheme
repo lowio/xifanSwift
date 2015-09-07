@@ -66,16 +66,6 @@
                ReferencedContainer = "container:xlib.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "65EFDC0E1B945A8D0004D53C"
-               BuildableName = "priorityQueueTests.xctest"
-               BlueprintName = "priorityQueueTests"
-               ReferencedContainer = "container:xlib.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BF676E41B9DEDF800CA7C01 /* TestPathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF676E31B9DEDF800CA7C01 /* TestPathFinder.swift */; };
+		1BF676E51B9DEEE200CA7C01 /* XPathFinderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */; };
+		1BF676E61B9DEF1900CA7C01 /* XPathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */; };
+		1BF676E81B9DF4F500CA7C01 /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF676E71B9DF4F500CA7C01 /* Array2D.swift */; };
+		1BF676E91B9DF4F500CA7C01 /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF676E71B9DF4F500CA7C01 /* Array2D.swift */; };
 		65E9C46F1B953A2800CDEB1E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65E9C46E1B953A2800CDEB1E /* TopApps.json */; };
 		65E9C4731B95900F00CDEB1E /* XPathFinderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */; };
 		65E9C4751B959AFF00CDEB1E /* XPathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */; };
@@ -32,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1BF676E31B9DEDF800CA7C01 /* TestPathFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestPathFinder.swift; sourceTree = "<group>"; };
+		1BF676E71B9DF4F500CA7C01 /* Array2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array2D.swift; sourceTree = "<group>"; };
 		65E9C46E1B953A2800CDEB1E /* TopApps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TopApps.json; sourceTree = "<group>"; };
 		65E9C4701B9589C100CDEB1E /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinderProtocol.swift; sourceTree = "<group>"; };
@@ -124,6 +131,7 @@
 			children = (
 				65E9C46D1B9539CD00CDEB1E /* assets */,
 				65EFDC1E1B945D680004D53C /* TestUtils.swift */,
+				1BF676E31B9DEDF800CA7C01 /* TestPathFinder.swift */,
 				65EFDBDD1B94282C0004D53C /* xlibTests.swift */,
 				65EFDBDB1B94282C0004D53C /* Supporting Files */,
 				65E9C4701B9589C100CDEB1E /* temp.playground */,
@@ -168,6 +176,7 @@
 		65EFDBEC1B9428FB0004D53C /* dataStruct */ = {
 			isa = PBXGroup;
 			children = (
+				1BF676E71B9DF4F500CA7C01 /* Array2D.swift */,
 				65EFDBED1B94291F0004D53C /* XPriorityQueue.swift */,
 			);
 			name = dataStruct;
@@ -282,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65EFDBEA1B9428AC0004D53C /* XJSON.swift in Sources */,
+				1BF676E81B9DF4F500CA7C01 /* Array2D.swift in Sources */,
 				65E9C4751B959AFF00CDEB1E /* XPathFinder.swift in Sources */,
 				65EFDBEE1B94291F0004D53C /* XPriorityQueue.swift in Sources */,
 				65E9C4731B95900F00CDEB1E /* XPathFinderProtocol.swift in Sources */,
@@ -293,8 +303,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BF676E61B9DEF1900CA7C01 /* XPathFinder.swift in Sources */,
+				1BF676E51B9DEEE200CA7C01 /* XPathFinderProtocol.swift in Sources */,
+				1BF676E41B9DEDF800CA7C01 /* TestPathFinder.swift in Sources */,
 				65EFDC201B945D680004D53C /* TestUtils.swift in Sources */,
 				65EFDC0A1B945A590004D53C /* XPriorityQueue.swift in Sources */,
+				1BF676E91B9DF4F500CA7C01 /* Array2D.swift in Sources */,
 				65EFDC061B9458C70004D53C /* XJSON.swift in Sources */,
 				65EFDBDE1B94282C0004D53C /* xlibTests.swift in Sources */,
 			);
