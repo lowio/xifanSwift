@@ -9,7 +9,7 @@
 import Foundation
 
 
-class JsonLoader {
+class TestUtils {
     
     private static var _bundle:NSBundle?;
     

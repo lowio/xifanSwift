@@ -57,14 +57,6 @@ struct XPriorityQueue <T>{
     }
 }
 
-//MARK: extension Printable
-extension XPriorityQueue: Printable
-{
-    var description:String{
-        return self.source.description;
-    }
-}
-
 //MARK: extension XPriorityQueueProtocol
 extension XPriorityQueue: XPriorityQueueProtocol
 {
@@ -187,5 +179,13 @@ private extension XPriorityQueue
 //            swap(i, withIndex: index);
             i = index;
         }
+    }
+}
+
+//MARK: extension Printable
+extension XPriorityQueue: Printable
+{
+    var description:String{
+        return self.source.description;
     }
 }

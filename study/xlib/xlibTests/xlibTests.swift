@@ -25,23 +25,58 @@ class xlibTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-//        XCTAssert(true, "Pass")
-        
-        testPriorityQueue()
-    }
     
     func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
+        self.measureBlock() {self.testExample()}
+    }
+    
+    func testExample() {
+//        jsonTest();
+        priorityQueueTest();
+    }
+    
+    //XPriorityQueue test
+    func priorityQueueTest()
+    {
+        var q = XPriorityQueue<Int>(){$0.0 > $0.1}
+        let c = 100;
+        
+        for i in 0...c
+        {
+            let temp = Int(arc4random() % 500);
+            let e = q.pop();
             
-//            testJsonParser();
-            testPriorityQueue()
-            
+            for j in 0...3
+            {
+                q.push(temp);
+            }
         }
         
+        //        var arr = [Int]();
+        //        for i in 0...14
+        //        {
+        //            arr.append(Int(arc4random() % 1000));
+        //        }
+        //        println(arr);
+        //        q.rebuild(arr);
+        //        println(q)
+        //        while(!q.isEmpty)
+        //        {
+        //            println(q.pop());
+        //        }
+    }
+    
+    
+    //XJSON test
+    private func jsonTest()
+    {
+        TestUtils.getTopAppsDataFromFileWithSuccess(){
+            (jsd) -> Void in
+            let jsonParser = XJSON(data: jsd);
+            let d = jsonParser["feed"]["author"]["uri"]["label"] as XJSON
+//            let d = jsonParser["feed"]["author"] as XJSON
+            let v = d.stringValue;
+        };
     }
     
     
