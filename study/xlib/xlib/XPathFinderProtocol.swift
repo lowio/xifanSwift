@@ -10,12 +10,9 @@ import Foundation
 
 //PF = path finder
 
-//path finder node
-protocol XPFNode
+//path finder grid priority
+protocol XPFGridPrioriyProtocol
 {
-    //parent node
-    var p:XPFNode?{get set}
-    
     //exact cost from start node to self
     var g:CGFloat{get set}
     
@@ -24,24 +21,38 @@ protocol XPFNode
     
     //f; return g + h
     var f:CGFloat{get}
+    
+    //is closed
+    var isClosed:Bool{get set}
 }
 
-//path finder map
-protocol XPFMap
+//MARK: map grid protocol
+protocol XPFGridProtocol
 {
-    //get heuristic estimated cost fromNode to toNode
-    func getHeuristicCost(fromNode fn:XPFNode, toNode tn:XPFNode) -> CGFloat;
+    var x:Int{get set};
+    var y:Int{get set};
+    var p:XPFGridProtocol?{get set};
+}
+
+//MARK: map protocol
+protocol XPFMapProtocol
+{
+    typealias G:XPFGridProtocol;
     
-    //get exact cost between fromNode to toNode
-    func getMovementCost(fromNode fn:XPFNode, toNode tn:XPFNode) -> CGFloat;
+    //get heuristic estimated cost fromGrid to toGrid
+    func getHeuristicCost(fromGrid fg:G, toGrid tg:G) -> CGFloat;
+    
+    //get exact cost between fromGrid to toGrid
+    func getMovementCost(fromGrid fg:G, toGrid tg:G) -> CGFloat;
     
     //get neighbor nodes
-    func getNeighbors(atNode n:XPFNode) -> XPFNode;
+    func getNeighbors(atGrid: G) -> [G];
 }
 
-//path finder
-protocol XPF
+//path finder protocol
+protocol XPFProtocol
 {
     //path finder
-    func pathFinder(startNode sn:XPFNode, goalNode gn:XPFNode, map:XPFMap, completion:([XPFNode])->());
+    func pathFinder<M:XPFMapProtocol where M.G:Hashable>(startGrid sg:M.G, goalGride gg:M.G, map:M, completion:([M.G])->());
+//    func pathFinder<M:XPFMapProtocol, G:XPFGridProtocol where G:Hashable, M.G == G>(startGrid sg:G, goalGride gg:G, map:M, completion:([G])->());
 }

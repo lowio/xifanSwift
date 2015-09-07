@@ -25,6 +25,9 @@ protocol XPriorityQueueProtocol{
     //return element at index
     func getElement(atIndex:Int) -> XPQElement;
     
+    //get element index
+//    func getElementIndex<E: Equatable where XPQElement:Equatable>(element:E) -> Int;
+    
     //rebuild queue
     mutating func rebuild(source:[XPQElement])
     
