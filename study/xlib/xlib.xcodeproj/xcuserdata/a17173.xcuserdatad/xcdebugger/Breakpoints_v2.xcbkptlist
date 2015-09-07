@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
             filePath = "xlibTests/xlibTests.swift"
-            timestampString = "463301207.329076"
+            timestampString = "463302265.740966"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
             landmarkName = "priorityQueueTest()"
             landmarkType = "5">
             <Actions>
@@ -35,11 +35,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
             filePath = "xlibTests/xlibTests.swift"
-            timestampString = "463301563.431598"
+            timestampString = "463302265.740966"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "jsonTest()"
             landmarkType = "5">
             <Actions>
@@ -60,11 +60,11 @@
                   moduleName = "xlibTests"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/a17173/Documents/workspace/xifanSwift/study/xlib/xlibTests/xlibTests.swift"
-                  timestampString = "463301703.595663"
+                  timestampString = "463302815.391184"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "79"
-                  endingLineNumber = "79"
+                  startingLineNumber = "82"
+                  endingLineNumber = "82"
                   offsetFromSymbolStart = "32">
                </Location>
                <Location
@@ -75,14 +75,39 @@
                   moduleName = "xlibTests"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/a17173/Documents/workspace/xifanSwift/study/xlib/xlibTests/xlibTests.swift"
-                  timestampString = "463301703.595927"
+                  timestampString = "463302815.391605"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "79"
-                  endingLineNumber = "79"
+                  startingLineNumber = "82"
+                  endingLineNumber = "82"
                   offsetFromSymbolStart = "922">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "xlibTests/xlibTests.swift"
+            timestampString = "463302265.740966"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "priorityQueueTest()"
+            landmarkType = "5">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.Log">
+                  <ActionContent
+                     message = "@print(q.toArray())@ count:@q.count@"
+                     conveyanceType = "0">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

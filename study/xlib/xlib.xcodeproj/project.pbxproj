@@ -17,20 +17,12 @@
 		65EFDBEE1B94291F0004D53C /* XPriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDBED1B94291F0004D53C /* XPriorityQueue.swift */; };
 		65EFDC061B9458C70004D53C /* XJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDBE91B9428AC0004D53C /* XJSON.swift */; };
 		65EFDC0A1B945A590004D53C /* XPriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDBED1B94291F0004D53C /* XPriorityQueue.swift */; };
-		65EFDC151B945A8D0004D53C /* xlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EFDBCB1B94282C0004D53C /* xlib.framework */; };
 		65EFDC1F1B945D680004D53C /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDC1E1B945D680004D53C /* TestUtils.swift */; };
 		65EFDC201B945D680004D53C /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDC1E1B945D680004D53C /* TestUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		65EFDBD81B94282C0004D53C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 65EFDBC21B94282C0004D53C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 65EFDBCA1B94282C0004D53C;
-			remoteInfo = xlib;
-		};
-		65EFDC161B945A8D0004D53C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 65EFDBC21B94282C0004D53C /* Project object */;
 			proxyType = 1;
@@ -52,7 +44,6 @@
 		65EFDBDD1B94282C0004D53C /* xlibTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = xlibTests.swift; sourceTree = "<group>"; };
 		65EFDBE91B9428AC0004D53C /* XJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XJSON.swift; sourceTree = "<group>"; };
 		65EFDBED1B94291F0004D53C /* XPriorityQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPriorityQueue.swift; sourceTree = "<group>"; };
-		65EFDC0F1B945A8D0004D53C /* priorityQueueTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = priorityQueueTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		65EFDC1E1B945D680004D53C /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,14 +60,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				65EFDBD71B94282C0004D53C /* xlib.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		65EFDC0C1B945A8D0004D53C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				65EFDC151B945A8D0004D53C /* xlib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,7 +97,6 @@
 			children = (
 				65EFDBCB1B94282C0004D53C /* xlib.framework */,
 				65EFDBD61B94282C0004D53C /* xlibTests.xctest */,
-				65EFDC0F1B945A8D0004D53C /* priorityQueueTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -241,24 +223,6 @@
 			productReference = 65EFDBD61B94282C0004D53C /* xlibTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		65EFDC0E1B945A8D0004D53C /* priorityQueueTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 65EFDC181B945A8D0004D53C /* Build configuration list for PBXNativeTarget "priorityQueueTests" */;
-			buildPhases = (
-				65EFDC0B1B945A8D0004D53C /* Sources */,
-				65EFDC0C1B945A8D0004D53C /* Frameworks */,
-				65EFDC0D1B945A8D0004D53C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				65EFDC171B945A8D0004D53C /* PBXTargetDependency */,
-			);
-			name = priorityQueueTests;
-			productName = priorityQueueTests;
-			productReference = 65EFDC0F1B945A8D0004D53C /* priorityQueueTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -272,9 +236,6 @@
 						CreatedOnToolsVersion = 6.4;
 					};
 					65EFDBD51B94282C0004D53C = {
-						CreatedOnToolsVersion = 6.4;
-					};
-					65EFDC0E1B945A8D0004D53C = {
 						CreatedOnToolsVersion = 6.4;
 					};
 				};
@@ -293,7 +254,6 @@
 			targets = (
 				65EFDBCA1B94282C0004D53C /* xlib */,
 				65EFDBD51B94282C0004D53C /* xlibTests */,
-				65EFDC0E1B945A8D0004D53C /* priorityQueueTests */,
 			);
 		};
 /* End PBXProject section */
@@ -311,13 +271,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				65E9C46F1B953A2800CDEB1E /* TopApps.json in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		65EFDC0D1B945A8D0004D53C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,13 +300,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		65EFDC0B1B945A8D0004D53C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -361,11 +307,6 @@
 			isa = PBXTargetDependency;
 			target = 65EFDBCA1B94282C0004D53C /* xlib */;
 			targetProxy = 65EFDBD81B94282C0004D53C /* PBXContainerItemProxy */;
-		};
-		65EFDC171B945A8D0004D53C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 65EFDBCA1B94282C0004D53C /* xlib */;
-			targetProxy = 65EFDC161B945A8D0004D53C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -522,36 +463,6 @@
 			};
 			name = Release;
 		};
-		65EFDC191B945A8D0004D53C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = priorityQueueTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		65EFDC1A1B945A8D0004D53C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = priorityQueueTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -578,15 +489,6 @@
 			buildConfigurations = (
 				65EFDBE51B94282C0004D53C /* Debug */,
 				65EFDBE61B94282C0004D53C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		65EFDC181B945A8D0004D53C /* Build configuration list for PBXNativeTarget "priorityQueueTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				65EFDC191B945A8D0004D53C /* Debug */,
-				65EFDC1A1B945A8D0004D53C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
