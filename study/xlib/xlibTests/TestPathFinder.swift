@@ -9,18 +9,47 @@
 import UIKit
 import xlib;
 
+//extension XArray2D
+//{
+//    var description:String{
+//        let rs = rows;
+//        let cs = columns;
+//        var desc = "";
+//        for r in 0..<rs
+//        {
+//            var l = "";
+//            var s = "";
+//            for c in 0..<cs
+//            {
+//                if let element = self[c, r] as? Printable
+//                {
+//                    l += "_ ";
+//                    s += "\(element.description)|";
+//                }
+//            }
+//            desc += l + "\n";
+//            desc += s + "\n";
+//        }
+//        return desc;
+//    }
+//}
+
 //MARK: XPF_Map
 struct XPF_Map: XPFMapProtocol
 {
-//    init(start:T, goal:T)
-//    {
-//        
-//    }
     
     
+    var grids:XArray2D<Int>;
     
     init()
     {
+        self.grids = XArray2D<Int>(columns: 10);
+        for i in 0...99
+        {
+            grids.append(Int(arc4random())%1);
+        }
+        grids[100] = nil;
+        println(grids);
     }
     
     typealias G = XPF_Grid;
