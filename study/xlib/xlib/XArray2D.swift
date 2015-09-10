@@ -18,6 +18,10 @@ struct XArray2D<T> {
     private var orient:XArray2D_Orient;
     
     /*
+    |0|1|2|
+    |3|4|5|
+    |6|7|8|
+    |9|
     **/
     init(columns:Int)
     {
@@ -116,21 +120,26 @@ extension XArray2D
 extension XArray2D: Printable
 {
     var description:String{
-        let rs = rows;
-        let cs = columns;
+        let rs = self.rows;
+        let cs = self.columns;
+        let len = self.count;
         var desc:String = "";
         for r in 0..<rs
         {
             for c in 0..<cs
             {
-                if let e = self[c, r]
+                var s:String;
+                let i = self.orient.getIndex(c, row: r);
+                if(i >= len){continue};
+                if let e = self[i]
                 {
-                    desc += [e].description;
+                    s = String(stringInterpolationSegment: e);
                 }
                 else
                 {
-                    desc += "[nil]"
+                    s = "nil";
                 }
+                desc += "\(s),";
             }
             desc += "\n";
         }
@@ -161,6 +170,7 @@ private enum XArray2D_Orient
     //get index;
     func getIndex(column:Int, row:Int) -> Int
     {
+        if column < 0 || row < 0{return -1;}
         switch self
         {
         case .Column(let c):

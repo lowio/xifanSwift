@@ -9,7 +9,13 @@
 import UIKit
 
 //MARK: XPF_Grid
-struct XPF_Grid: XPFGridProtocol, Hashable {
+struct XPF_Grid: XPFGridProtocol, Hashable, Printable {
+    
+    init(_ x:Int, _ y:Int)
+    {
+        self.x = x;
+        self.y = y;
+    }
     
     var x:Int = 0;
     var y:Int = 0;
@@ -20,12 +26,17 @@ struct XPF_Grid: XPFGridProtocol, Hashable {
     var isOpened:Bool = false;
     var p:XPFGridProtocol?;
     
-    var hashValue:Int{ return x^y; }
+    var hashValue:Int{ return "\(x),\(y)".hashValue; }
+    
+    var description:String{
+        return "x:\(x) y:\(y)";
+    }
 }
 
 func ==(lsh:XPF_Grid, rsh:XPF_Grid) -> Bool
 {
-    return lsh.x == rsh.x && lsh.y == rsh.y;
+    let flag = lsh.x == rsh.x && lsh.y == rsh.y;
+    return flag;
 }
 
 //MARK: XPathFinder
@@ -84,6 +95,7 @@ extension XPathFinder: XPFProtocol
                 e.isOpened = true;
                 e.h = map.getHeuristicCost(fromGrid: grid, toGrid: e);
                 e.p = grid;
+                visited[e.hashValue] = e;
                 openQueue.push(e);
             }
             
@@ -112,6 +124,13 @@ private extension XPathFinder
     private func rebuildPath<G:XPFGridProtocol>(grid:G) -> [G]
     {
         var path = [G]();
+        var temp = grid;
+        path.append(temp);
+        while temp.p != nil
+        {
+            temp = temp.p as! G;
+            path.append(temp);
+        }
         return path;
     }
 }

@@ -34,7 +34,6 @@ class xlibTests: XCTestCase {
 //        jsonTest();
 //        priorityQueueTest();
         pathFindTest();
-        //array2d  有description有问题 待定
     }
     
     
