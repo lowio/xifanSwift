@@ -120,6 +120,12 @@ extension XArray2D
 extension XArray2D: Printable
 {
     var description:String{
+        
+        let e = self[0,0];
+//        contains(self.source, nil)
+        contains([0,1], 0)
+        
+        
         let rs = self.rows;
         let cs = self.columns;
         let len = self.count;

@@ -9,30 +9,6 @@
 import UIKit
 import xlib;
 
-//extension XArray2D
-//{
-//    var description:String{
-//        let rs = rows;
-//        let cs = columns;
-//        var desc = "";
-//        for r in 0..<rs
-//        {
-//            var l = "";
-//            var s = "";
-//            for c in 0..<cs
-//            {
-//                if let element = self[c, r] as? Printable
-//                {
-//                    l += "_ ";
-//                    s += "\(element.description)|";
-//                }
-//            }
-//            desc += l + "\n";
-//            desc += s + "\n";
-//        }
-//        return desc;
-//    }
-//}
 
 //MARK: XPF_Map
 struct XPF_Map: XPFMapProtocol
@@ -92,10 +68,12 @@ struct XPF_Map: XPFMapProtocol
 //path finder test
 func pathFindTest()
 {
+    
+    
     var map = XPF_Map();
     var s = XPF_Grid(0, 0);
     var g = XPF_Grid(6, 6);
     let pf = XPathFinder();
-//    pf.pathFinder(startGrid: s, goalGride: g, map: map){println($0)}
-    pf.pathFinder(startGrid: s, goalGride: g, map: map){$0}
+    pf.pathFinder(startGrid: s, goalGride: g, map: map){println($0)}
+//    pf.pathFinder(startGrid: s, goalGride: g, map: map){$0}
 }

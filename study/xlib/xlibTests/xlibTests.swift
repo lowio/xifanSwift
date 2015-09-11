@@ -10,7 +10,20 @@ import UIKit
 import XCTest
 import xlib;
 
+
+//struct AA<T>:AAProtocol {
+//    typealias bb = T
+//    
+//    
+//    func getIndex<E : Equatable where bb:Equatable>(e: E) {
+//        
+//    }
+//}
+
+
+
 class xlibTests: XCTestCase {
+    
     
     
     
@@ -32,9 +45,11 @@ class xlibTests: XCTestCase {
     
     func testExample() {
 //        jsonTest();
-//        priorityQueueTest();
-        pathFindTest();
+        priorityQueueTest();
+//        pathFindTest();
     }
+    
+    
     
     
    
@@ -43,32 +58,39 @@ class xlibTests: XCTestCase {
     //XPriorityQueue test
     func priorityQueueTest()
     {
-        var q = XPriorityQueue<Int>(){$0.0 > $0.1}
-        let c = 100;
+//        var q = XPriorityQueue<Int>{$0.0 >= $0.1 ? 1 : -1}
+//        let c = 100;
+//        
+//        for i in 0...c
+//        {
+//            let temp = Int(arc4random() % 500);
+//            let e = q.pop();
+//            
+//            for j in 0...3
+//            {
+//                q.push(temp);
+//            }
+//        }
         
-        for i in 0...c
+        var arr = [Int]();
+        for i in 0...14
         {
-            let temp = Int(arc4random() % 500);
-            let e = q.pop();
-            
-            for j in 0...3
-            {
-                q.push(temp);
-            }
+            arr.append(Int(arc4random() % 1000));
         }
+        println(arr);
+        var q = XPriorityQueue<Int>(source: arr){$0.0 >= $0.1 ? 1 : -1};
+        arr.sort{$0.0 > $0.1}
         
-        //        var arr = [Int]();
-        //        for i in 0...14
-        //        {
-        //            arr.append(Int(arc4random() % 1000));
-        //        }
-        //        println(arr);
-        //        q.rebuild(arr);
-        //        println(q)
-        //        while(!q.isEmpty)
-        //        {
-        //            println(q.pop());
-        //        }
+        
+        
+        while(!q.isEmpty)
+        {
+            let e = q.pop()!;
+            
+            let e2 = arr.removeLast();
+            println("\(e)-\(e2)=\(e - e2) ");
+//            println(e)
+        }
     }
     
     

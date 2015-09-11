@@ -13,6 +13,18 @@ protocol XPriorityQueueProtocol{
     //element typealias
     typealias XPQElement;
     
+    /**init with compare funct
+    $0'priority > $1'priority return 1;
+    $0'priority == $1'priority return 0;
+    $0'priority < $1'priority return -1;
+    **/
+    init(compare:(XPQElement, XPQElement) -> Int);
+    
+    /**
+    build queue use source array use compare func
+    */
+    init(source:[XPQElement], withCompare:(XPQElement, XPQElement) -> Int);
+    
     //push element at end
     mutating func push(element:XPQElement) -> XPQElement;
     
@@ -25,12 +37,6 @@ protocol XPriorityQueueProtocol{
     //return element at index
     func getElement(atIndex:Int) -> XPQElement;
     
-    //get element index
-//    func getElementIndex<E: Equatable where XPQElement:Equatable>(element:E) -> Int;
-    
-    //rebuild queue
-    mutating func rebuild(source:[XPQElement])
-    
     //return array
     func toArray() -> [XPQElement];
     
@@ -42,28 +48,39 @@ protocol XPriorityQueueProtocol{
 }
 
 /**
-*MARK: store properties and init
+*MARK: store properties
 */
 struct XPriorityQueue <T>{
     
     //array
     private var source:[T];
     
-    //compare: return t1 > t2
-    private var compare:(T, T)->Bool;
-    
-    //compare: return t1 > t2
-    init(compare:(T, T) -> Bool)
-    {
-        self.compare = compare;
-        self.source = [];
-    }
+    /**compare funct
+    $0'priority > $1'priority return 1;
+    $0'priority == $1'priority return 0;
+    $0'priority < $1'priority return -1;
+    **/
+    private var compare:(T, T)->Int;
 }
 
 //MARK: extension XPriorityQueueProtocol
 extension XPriorityQueue: XPriorityQueueProtocol
 {
     typealias XPQElement = T;
+    
+    init(compare: (XPQElement, XPQElement) -> Int)
+    {
+        self.compare = compare;
+        self.source = [];
+    }
+    
+    init(source:[XPQElement], withCompare:(XPQElement, XPQElement) -> Int)
+    {
+        self.source = source;
+        self.compare = withCompare;
+        rebuild();
+    }
+    
     
     mutating func push(element: XPQElement) -> XPQElement {
         self.source.append(element);
@@ -87,31 +104,9 @@ extension XPriorityQueue: XPriorityQueueProtocol
     
     mutating func update(element: XPQElement, atIndex: Int) -> XPQElement {
         self.source[atIndex] = element;
-        let e = getElement(atIndex);
         let p_i = getParentIndex(atIndex);
-        compare(e, getElement(p_i)) ? sinkDown(atIndex):bubbleUP(atIndex);
+        compareElements(element, getElement(p_i)) ? sinkDown(atIndex):bubbleUP(atIndex);
         return element;
-    }
-    
-    mutating func rebuild(source: [XPQElement]) {
-        self.source = source;
-        let c = self.count;
-        if c < 2 {return;}
-        var i = self.count >> 1 - 1;
-        
-        while i > -1
-        {
-            var index = i;
-            let e = getElement(i);
-            let left = getChildIndex(i);
-            if compare(e, getElement(left)) {index = left;}
-            
-            let right = left + 1;
-            if right < c && compare(getElement(index), getElement(right)){index = right;}
-            
-            if index != i {bubbleUP(index);}
-            i--;
-        }
     }
     
     var isEmpty:Bool { return self.source.isEmpty; }
@@ -132,6 +127,9 @@ private extension XPriorityQueue
     //child node index(the left one, the mini index one)
     func getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
     
+    //compare two element priority
+    func compareElements(element1:T, _ element2:T) -> Bool{return compare(element1, element2) > -1;}
+    
     //swap two element position
     mutating func swap(index:Int, withIndex:Int)
     {
@@ -149,7 +147,7 @@ private extension XPriorityQueue
         {
             let p_i = self.getParentIndex(i);
             let p_e = self.getElement(p_i);
-            if(compare(e, p_e)){ break; }
+            if(compareElements(e, p_e)){ break; }
             self.source[i] = p_e;
             self.source[p_i] = e;
 //            swap(i, withIndex: p_i);
@@ -170,17 +168,38 @@ private extension XPriorityQueue
             
             let left = self.getChildIndex(index);
             if left >= c {break;}
-            if compare(e, getElement(left)) { index = left; }
+            if compareElements(e, getElement(left)) { index = left; }
             
             
             let right = left + 1;
-            if right < c && compare(getElement(index), getElement(right)) { index = right; }
+            if right < c && compareElements(getElement(index), getElement(right)) { index = right; }
             
             if index == i {break;}
             self.source[i] = getElement(index);
             self.source[index] = e;
 //            swap(i, withIndex: index);
             i = index;
+        }
+    }
+    
+    //rebuilding queue use source
+    mutating func rebuild() {
+        let c = self.count;
+        if c < 2 {return;}
+        var i = self.count >> 1 - 1;
+        
+        while i > -1
+        {
+            var index = i;
+            let e = getElement(i);
+            let left = getChildIndex(i);
+            if compareElements(e, getElement(left)) {index = left;}
+            
+            let right = left + 1;
+            if right < c && compareElements(getElement(index), getElement(right)){index = right;}
+            
+            if index != i {bubbleUP(index);}
+            i--;
         }
     }
 }

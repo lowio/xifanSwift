@@ -3,13 +3,10 @@
 import UIKit
 
 
-struct A:Printable
-{
-    var b = 0;
-    
-    var description:String{
-        return "a";
-    }
-}
+var a = [0, 1, 2];
 
-let c = String(stringInterpolationSegment: A());
+let b = find(a, 1);
+
+var c = b! + 1;
+
+let d:Int = 0;

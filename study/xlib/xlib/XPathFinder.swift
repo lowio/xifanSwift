@@ -41,7 +41,6 @@ func ==(lsh:XPF_Grid, rsh:XPF_Grid) -> Bool
 
 //MARK: XPathFinder
 struct XPathFinder {
-    
 }
 
 
@@ -53,7 +52,7 @@ extension XPathFinder: XPFProtocol
     {
         var visited:[Int:M.G] = [:];
         visited[sg.hashValue] = sg;
-        var openQueue = XPriorityQueue<M.G>{return $0.0.f > $0.1.f};
+        var openQueue = XPriorityQueue<M.G>{return $0.0.f >= $0.1.f ? 1:-1};
         openQueue.push(sg);
         
         while let grid = openQueue.pop()
