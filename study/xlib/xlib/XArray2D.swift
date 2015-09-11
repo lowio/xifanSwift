@@ -12,7 +12,7 @@ import Foundation
 struct XArray2D<T> {
     
     //source
-    var source:[T?];
+    var source:[T];
     
     //orient
     private var orient:XArray2D_Orient;
@@ -74,44 +74,52 @@ struct XArray2D<T> {
         return self.containsElementAt(index);
     }
     
-    //contains element at index
-    func containsElementAt(index:Int) -> Bool
-    {
-        return index >= 0 && index < count;
-    }
-    
     //append
     mutating func append(element:T)
     {
         self.source.append(element);
     }
+    
+    //update
+    mutating func update(element:T, atColumn c:Int, atRow r:Int) -> Bool
+    {
+        let index = getIndex(c, row: r);
+        if index < 0 { return false; }
+        self[index] = element;
+        return true;
+    }
+    
+    //get element by (column, row)
+    subscript(column:Int, row:Int) -> T?{
+        let index = getIndex(column, row: row);
+        if !containsElementAt(index) { return nil; }
+        return self[index];
+    }
 }
 
 //MARK: subscript
-extension XArray2D
+private extension XArray2D
 {
+    //contains element at index
+    func containsElementAt(index:Int) -> Bool
+    {
+        return index >= 0 && index < self.count;
+    }
+    
+    //get element index
+    func getIndex(column:Int, row:Int) -> Int
+    {
+        let index = self.orient.getIndex(column, row: row);
+        return self.containsElementAt(index) ? index : -1;
+    }
+    
     //subscript element by index
-    subscript(index:Int) -> T? {
+    subscript(index:Int) -> T {
         set{
-            if index < 0 { return ;}
-            if index >= count{self.source.append(newValue);return;}
             self.source[index] = newValue;
         }
         get{
-            if !containsElementAt(index){return nil;}
             return self.source[index];
-        }
-    }
-    
-    //subscript element by (column, row)
-    subscript(column:Int, row:Int) -> T?{
-        set{
-            let index = self.orient.getIndex(column, row: row);
-            self[index] = newValue;
-        }
-        get{
-            let index = self.orient.getIndex(column, row: row);
-            return self[index];
         }
     }
 }
@@ -120,12 +128,6 @@ extension XArray2D
 extension XArray2D: Printable
 {
     var description:String{
-        
-        let e = self[0,0];
-//        contains(self.source, nil)
-        contains([0,1], 0)
-        
-        
         let rs = self.rows;
         let cs = self.columns;
         let len = self.count;
@@ -135,9 +137,7 @@ extension XArray2D: Printable
             for c in 0..<cs
             {
                 var s:String;
-                let i = self.orient.getIndex(c, row: r);
-                if(i >= len){continue};
-                if let e = self[i]
+                if let e = self[c, r]
                 {
                     s = String(stringInterpolationSegment: e);
                 }

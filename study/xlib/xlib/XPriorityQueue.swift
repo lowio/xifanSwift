@@ -25,16 +25,16 @@ protocol XPriorityQueueProtocol{
     init(source:[XPQElement], withCompare:(XPQElement, XPQElement) -> Bool);
     
     //push element at end
-    mutating func push(element:XPQElement) -> XPQElement;
+    mutating func push(element:XPQElement);
     
     //get first element and remove it
     mutating func pop() -> XPQElement?;
     
     //update element at index
-    mutating func update(element:XPQElement, atIndex:Int) -> XPQElement;
+    mutating func update(element:XPQElement, atIndex:Int);
     
     //return element at index
-    func getElement(atIndex:Int) -> XPQElement;
+    subscript(index:Int) -> XPQElement{get}
     
     //return array
     func toArray() -> [XPQElement];
@@ -66,6 +66,10 @@ extension XPriorityQueue: XPriorityQueueProtocol
 {
     typealias XPQElement = T;
     
+    subscript(index:Int) -> XPQElement{
+        return self.source[index];
+    }
+    
     init(compare: (XPQElement, XPQElement) -> Bool)
     {
         self.compare = compare;
@@ -79,11 +83,10 @@ extension XPriorityQueue: XPriorityQueueProtocol
         rebuild();
     }
     
-    
-    mutating func push(element: XPQElement) -> XPQElement {
+    mutating func push(element: XPQElement)
+    {
         self.source.append(element);
         bubbleUP(self.count - 1);
-        return element;
     }
     
     mutating func pop() -> XPQElement? {
@@ -98,13 +101,11 @@ extension XPriorityQueue: XPriorityQueueProtocol
         return first;
     }
     
-    func getElement(atIndex: Int) -> XPQElement {return self.source[atIndex];}
-    
-    mutating func update(element: XPQElement, atIndex: Int) -> XPQElement {
+    mutating func update(element: XPQElement, atIndex: Int) {
+        if atIndex < 0 || atIndex > count { return; }
         self.source[atIndex] = element;
         let p_i = getParentIndex(atIndex);
-        self.compare(element, getElement(p_i)) ? sinkDown(atIndex):bubbleUP(atIndex);
-        return element;
+        self.compare(element, self[p_i]) ? sinkDown(atIndex):bubbleUP(atIndex);
     }
     
     var isEmpty:Bool { return self.source.isEmpty; }
@@ -128,7 +129,7 @@ private extension XPriorityQueue
     //swap two element position
     mutating func swap(index:Int, withIndex:Int)
     {
-        let e = getElement(index);
+        let e = self[index];
         self.source[index] = self.source[withIndex];
         self.source[withIndex] = e;
     }
@@ -137,11 +138,11 @@ private extension XPriorityQueue
     mutating func bubbleUP(atIndex:Int)
     {
         var i = atIndex;
-        let e = self.getElement(i);
+        let e = self[i];
         while i > 0
         {
             let p_i = self.getParentIndex(i);
-            let p_e = self.getElement(p_i);
+            let p_e = self[p_i];
             if(self.compare(e, p_e)){ break; }
             self.source[i] = p_e;
             self.source[p_i] = e;
@@ -155,7 +156,7 @@ private extension XPriorityQueue
     {
         let c = self.count;
         var i = atIndex;
-        let e = getElement(i);
+        let e = self[i];
         
         while true
         {
@@ -163,14 +164,14 @@ private extension XPriorityQueue
             
             let left = self.getChildIndex(index);
             if left >= c {break;}
-            if self.compare(e, getElement(left)) { index = left; }
+            if self.compare(e, self[left]) { index = left; }
             
             
             let right = left + 1;
-            if right < c && self.compare(getElement(index), getElement(right)) { index = right; }
+            if right < c && self.compare(self[index], self[right]) { index = right; }
             
             if index == i {break;}
-            self.source[i] = getElement(index);
+            self.source[i] = self[index];
             self.source[index] = e;
 //            swap(i, withIndex: index);
             i = index;
@@ -185,16 +186,7 @@ private extension XPriorityQueue
         
         while i > -1
         {
-            var index = i;
-            let e = getElement(i);
-            let left = getChildIndex(i);
-            if self.compare(e, getElement(left)) {index = left;}
-            
-            let right = left + 1;
-            if right < c && self.compare(getElement(index), getElement(right)){index = right;}
-            
-            if index != i {bubbleUP(index);}
-            i--;
+            self.sinkDown(i--);
         }
     }
 }

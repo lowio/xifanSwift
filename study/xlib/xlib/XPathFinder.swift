@@ -29,7 +29,7 @@ struct XPF_Grid: XPFGridProtocol, Hashable, Printable {
     var hashValue:Int{ return "\(x),\(y)".hashValue; }
     
     var description:String{
-        return "x:\(x) y:\(y)";
+        return "x:\(x) y:\(y) f:\(f)";
     }
 }
 
@@ -52,11 +52,13 @@ extension XPathFinder: XPFProtocol
     {
         var visited:[Int:M.G] = [:];
         visited[sg.hashValue] = sg;
-        var openQueue = XPriorityQueue<M.G>{$0.0.f >= $0.1.f};
+        var openQueue = XPriorityQueue<M.G>{$0.f >= $1.f};
         openQueue.push(sg);
         
-        while let grid = openQueue.pop()
+        while !openQueue.isEmpty
         {
+            var grid = openQueue.pop()!;
+//            println(grid)
             visited[grid.hashValue]?.isClosed = true;
             visited[grid.hashValue]?.isOpened = false;
             if grid == gg
@@ -111,7 +113,7 @@ private extension XPathFinder
         let c = queue.count;
         for i in 0..<c
         {
-            if queue.getElement(i) == element
+            if queue[i] == element
             {
                 return i;
             }

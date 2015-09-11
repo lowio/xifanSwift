@@ -11,22 +11,7 @@ import XCTest
 import xlib;
 
 
-//struct AA<T>:AAProtocol {
-//    typealias bb = T
-//    
-//    
-//    func getIndex<E : Equatable where bb:Equatable>(e: E) {
-//        
-//    }
-//}
-
-
-
 class xlibTests: XCTestCase {
-    
-    
-    
-    
     
     override func setUp() {
         super.setUp()
@@ -40,13 +25,13 @@ class xlibTests: XCTestCase {
     
     
     func testPerformanceExample() {
-        self.measureBlock() {self.testExample()}
+//        self.measureBlock() {self.testExample()}
     }
     
     func testExample() {
 //        jsonTest();
-        priorityQueueTest();
-//        pathFindTest();
+//        priorityQueueTest();
+        pathFindTest();
     }
     
     
@@ -56,41 +41,51 @@ class xlibTests: XCTestCase {
     
     
     //XPriorityQueue test
-    func priorityQueueTest()
+    func priorityQueueTest(testRebuild:Bool = false)
     {
-//        var q = XPriorityQueue<Int>{$0.0 >= $0.1}
-//        let c = 100;
-//        
-//        for i in 0...c
-//        {
-//            let temp = Int(arc4random() % 500);
-//            let e = q.pop();
-//            
-//            for j in 0...3
-//            {
-//                q.push(temp);
-//            }
-//        }
-        
-        var arr = [Int]();
-        for i in 0...100
+        var queue:XPriorityQueue<Int>;
+        if(testRebuild)//测试创建优先队列
         {
-            arr.append(Int(arc4random() % 1000));
+            var sortArray = [Int]();
+            for i in 0...100
+            {
+                sortArray.append(Int(arc4random() % 1000));
+            }
+            queue = XPriorityQueue<Int>(source: sortArray){$0.0 >= $0.1};
+            sortArray.sort{$0 > $1}
+            while !queue.isEmpty
+            {
+                let e1 = queue.pop();
+                let e2 = sortArray.removeLast();
+//                println("\(e1)-\(e2)=\(e1 - e2) ");
+            }
         }
-        println(arr);
-        var q = XPriorityQueue<Int>(source: arr){$0.0 >= $0.1};
-        arr.sort{$0.0 > $0.1}
-        
-        
-        
-        while(!q.isEmpty)
-        {
-            let e = q.pop()!;
+        else
+        {   //测试优先队列效率
+            queue = XPriorityQueue<Int>{$0 >= $1}
+            let c = 100;
+            for i in 0...c
+            {
+                let temp = Int(arc4random() % 500);
+                if(!queue.isEmpty){queue.pop();}
+                
+                for j in 0...3
+                {
+                    queue.push(temp);
+                }
+            }
             
-            let e2 = arr.removeLast();
-            println("\(e)-\(e2)=\(e - e2) ");
-//            println(e)
+            while(!queue.isEmpty)
+            {
+                let e = queue.pop()!;
+                println(e)
+            }
         }
+        
+        
+        
+        
+        
     }
     
     

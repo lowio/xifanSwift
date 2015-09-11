@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
             filePath = "xlibTests/xlibTests.swift"
-            timestampString = "463664019.842219"
+            timestampString = "463676529.894042"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
             landmarkName = "jsonTest()"
             landmarkType = "5">
             <Actions>
@@ -26,38 +26,6 @@
                   </ActionContent>
                </BreakpointActionProxy>
             </Actions>
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "xlibTests.xlibTests.(jsonTest in _37DF3262AC5FC4F59049DB013E853671) (xlibTests.xlibTests)() -&gt; ()"
-                  moduleName = "xlibTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/a17173/Documents/workspace/xifanSwift/study/xlib/xlibTests/xlibTests.swift"
-                  timestampString = "463320459.413325"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "82"
-                  endingLineNumber = "82"
-                  offsetFromSymbolStart = "32">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "xlibTests.xlibTests.((jsonTest in _37DF3262AC5FC4F59049DB013E853671) (xlibTests.xlibTests) -&gt; () -&gt; ()).(closure #1)"
-                  moduleName = "xlibTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/a17173/Documents/workspace/xifanSwift/study/xlib/xlibTests/xlibTests.swift"
-                  timestampString = "463320459.413563"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "82"
-                  endingLineNumber = "82"
-                  offsetFromSymbolStart = "922">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

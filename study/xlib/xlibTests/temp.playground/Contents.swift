@@ -3,10 +3,14 @@
 import UIKit
 
 
-var a = [0, 1, 2];
 
-let b = find(a, 1);
+func a(t:(Int, Int) -> ())
+{
+    t(7,9);
+}
 
-var c = b! + 1;
-
-let d:Int = 0;
+a{
+    let a = $0;
+//    let b = $0.1;
+    let c = $1;
+};
