@@ -58,7 +58,7 @@ class xlibTests: XCTestCase {
     //XPriorityQueue test
     func priorityQueueTest()
     {
-//        var q = XPriorityQueue<Int>{$0.0 >= $0.1 ? 1 : -1}
+//        var q = XPriorityQueue<Int>{$0.0 >= $0.1}
 //        let c = 100;
 //        
 //        for i in 0...c
@@ -73,12 +73,12 @@ class xlibTests: XCTestCase {
 //        }
         
         var arr = [Int]();
-        for i in 0...14
+        for i in 0...100
         {
             arr.append(Int(arc4random() % 1000));
         }
         println(arr);
-        var q = XPriorityQueue<Int>(source: arr){$0.0 >= $0.1 ? 1 : -1};
+        var q = XPriorityQueue<Int>(source: arr){$0.0 >= $0.1};
         arr.sort{$0.0 > $0.1}
         
         

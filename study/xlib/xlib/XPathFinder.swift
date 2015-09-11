@@ -52,7 +52,7 @@ extension XPathFinder: XPFProtocol
     {
         var visited:[Int:M.G] = [:];
         visited[sg.hashValue] = sg;
-        var openQueue = XPriorityQueue<M.G>{return $0.0.f >= $0.1.f ? 1:-1};
+        var openQueue = XPriorityQueue<M.G>{$0.0.f >= $0.1.f};
         openQueue.push(sg);
         
         while let grid = openQueue.pop()
