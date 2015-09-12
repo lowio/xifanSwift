@@ -25,7 +25,7 @@ class xlibTests: XCTestCase {
     
     
     func testPerformanceExample() {
-//        self.measureBlock() {self.testExample()}
+        self.measureBlock() {self.testExample()}
     }
     
     func testExample() {

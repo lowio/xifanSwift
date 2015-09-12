@@ -25,11 +25,12 @@ struct XPF_Grid: XPFGridProtocol, Hashable, Printable {
     var isClosed:Bool = false;
     var isOpened:Bool = false;
     var p:XPFGridProtocol?;
+    var totalCount:Int = 0;
     
     var hashValue:Int{ return "\(x),\(y)".hashValue; }
     
     var description:String{
-        return "x:\(x) y:\(y) f:\(f)";
+        return "x:\(x) y:\(y) f:\(f) g:\(g) h:\(h) count:\(totalCount)";
     }
 }
 
@@ -48,23 +49,27 @@ struct XPathFinder {
 extension XPathFinder: XPFProtocol
 {
     func pathFinder<M: XPFMapProtocol where M.G: Hashable>
-        (startGrid sg: M.G, goalGride gg: M.G, map: M, completion: ([M.G]) -> ())
+        (startGrid sg: M.G, goalGride gg: M.G, map: M, completion: ([M.G], [Int:M.G]) -> ())
     {
         var visited:[Int:M.G] = [:];
         visited[sg.hashValue] = sg;
-        var openQueue = XPriorityQueue<M.G>{$0.f >= $1.f};
+        var openQueue = XPriorityQueue<M.G>{
+            if $0.f == $1.f{return $0.totalCount < $1.totalCount}
+            return $0.f > $1.f
+        };
         openQueue.push(sg);
         
+        var totalCount:Int = 0;
         while !openQueue.isEmpty
         {
+            totalCount++;
             var grid = openQueue.pop()!;
-//            println(grid)
             visited[grid.hashValue]?.isClosed = true;
             visited[grid.hashValue]?.isOpened = false;
             if grid == gg
             {
                 let path = rebuildPath(grid);
-                completion(path);
+                completion(path, visited);
                 break;
             }
             
@@ -82,6 +87,7 @@ extension XPathFinder: XPFProtocol
                             var ne = e;
                             ne.g = g;
                             ne.p = grid;
+                            ne.totalCount = totalCount;
                             visited[ne.hashValue] = ne;
                             if let i = self.getElementIndex(openQueue, element: ne)
                             {
@@ -94,8 +100,9 @@ extension XPathFinder: XPFProtocol
                 var e = n;
                 e.g = g;
                 e.isOpened = true;
-                e.h = map.getHeuristicCost(fromGrid: grid, toGrid: e);
+                e.h = map.getHeuristicCost(fromGrid: grid, toGrid: gg);
                 e.p = grid;
+                e.totalCount = totalCount++;
                 visited[e.hashValue] = e;
                 openQueue.push(e);
             }

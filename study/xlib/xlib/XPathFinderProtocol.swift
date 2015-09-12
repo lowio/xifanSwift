@@ -23,6 +23,7 @@ protocol XPFGridProtocol
     
     //f; return g + h
     var f:CGFloat{get}
+    var totalCount:Int{get set}
     
     //parent
     var p:XPFGridProtocol?{get set};
@@ -49,6 +50,6 @@ protocol XPFMapProtocol
 protocol XPFProtocol
 {
     //path finder
-    func pathFinder<M:XPFMapProtocol where M.G:Hashable>(startGrid sg:M.G, goalGride gg:M.G, map:M, completion:([M.G])->());
+    func pathFinder<M:XPFMapProtocol where M.G:Hashable>(startGrid sg:M.G, goalGride gg:M.G, map:M, completion:([M.G],[Int:M.G])->());
 //    func pathFinder<M:XPFMapProtocol, G:XPFGridProtocol where G:Hashable, M.G == G>(startGrid sg:G, goalGride gg:G, map:M, completion:([G])->());
 }
