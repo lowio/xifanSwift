@@ -61,14 +61,51 @@ struct XPriorityQueue <T>{
     private var compare:(T, T) -> Bool;
 }
 
+//MARK: SequenceType
+extension XPriorityQueue: SequenceType
+{
+    typealias Generator = GeneratorOf<T>;
+    
+    func generate() -> Generator {
+        var index = 0;
+        return GeneratorOf{
+            if index < self.count
+            {
+                return self.source[index++];
+            }
+            return nil;
+        }
+    }
+}
+
+//MARK: MutableCollectionType
+extension XPriorityQueue: MutableCollectionType
+{
+    typealias Index = Int;
+    
+    typealias _Element = T;
+    
+    var startIndex: Int { return 0; }
+    
+    var endIndex: Int { return self.count; }
+    
+    subscript(i:Int) -> T{
+        set{
+            if i < 0 || i > count { return; }
+            self.source[i] = newValue;
+            let p_i = getParentIndex(i);
+            self.compare(newValue, self[p_i]) ? sinkDown(i):bubbleUP(i);
+        }
+        get{
+            return self.source[i];
+        }
+    }
+}
+
 //MARK: extension XPriorityQueueProtocol
 extension XPriorityQueue: XPriorityQueueProtocol
 {
     typealias XPQElement = T;
-    
-    subscript(index:Int) -> XPQElement{
-        return self.source[index];
-    }
     
     init(compare: (XPQElement, XPQElement) -> Bool)
     {
@@ -102,10 +139,7 @@ extension XPriorityQueue: XPriorityQueueProtocol
     }
     
     mutating func update(element: XPQElement, atIndex: Int) {
-        if atIndex < 0 || atIndex > count { return; }
-        self.source[atIndex] = element;
-        let p_i = getParentIndex(atIndex);
-        self.compare(element, self[p_i]) ? sinkDown(atIndex):bubbleUP(atIndex);
+        self[atIndex] = element;
     }
     
     var isEmpty:Bool { return self.source.isEmpty; }
