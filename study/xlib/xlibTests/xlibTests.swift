@@ -25,7 +25,7 @@ class xlibTests: XCTestCase {
     
     
     func testPerformanceExample() {
-        self.measureBlock() {self.testExample()}
+//        self.measureBlock() {self.testExample()}
     }
     
     func testExample() {
@@ -51,13 +51,13 @@ class xlibTests: XCTestCase {
             {
                 sortArray.append(Int(arc4random() % 1000));
             }
-            queue = XPriorityQueue<Int>(source: sortArray){$0.0 >= $0.1};
+            queue = XPriorityQueue<Int>(sequence: sortArray){$0.0 >= $0.1};
             sortArray.sort{$0 > $1}
             while !queue.isEmpty
             {
-                let e1 = queue.pop();
+                let e1 = queue.pop()!;
                 let e2 = sortArray.removeLast();
-//                println("\(e1)-\(e2)=\(e1 - e2) ");
+                println("\(e1)-\(e2)=\(e1 - e2) ");
             }
         }
         else

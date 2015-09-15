@@ -17,33 +17,28 @@ protocol XPriorityQueueProtocol{
     [$0, $1] -- $0 in front of $1 return true;
     [$1, $0] -- $1 in front of $0 return false;
     **/
-    init(compare:(XPQElement, XPQElement) -> Bool);
-    
-    /**
-    build queue use source array use compare func
-    */
-    init(source:[XPQElement], withCompare:(XPQElement, XPQElement) -> Bool);
+    init(compare:(XPQElement, XPQElement) -> Bool)
     
     //push element at end
-    mutating func push(element:XPQElement);
+    mutating func push(element:XPQElement)
     
     //get first element and remove it
-    mutating func pop() -> XPQElement?;
+    mutating func pop() -> XPQElement?
     
     //update element at index
-    mutating func update(element:XPQElement, atIndex:Int);
-    
-    //return element at index
-    subscript(index:Int) -> XPQElement{get}
+    mutating func update(element:XPQElement, atIndex:Int)
     
     //return array
-    func toArray() -> [XPQElement];
+    func toArray() -> [XPQElement]
     
     //empty?
-    var isEmpty:Bool{get};
+    var isEmpty:Bool{get}
     
     //elemet count
     var count:Int{get}
+    
+    //subscript get XPQElement
+    subscript(i:Int) -> XPQElement{get}
 }
 
 /**
@@ -52,54 +47,13 @@ protocol XPriorityQueueProtocol{
 struct XPriorityQueue <T>{
     
     //array
-    private var source:[T];
+    private var _source:[T];
     
     /**compare funct
     [$0, $1] -- $0 in front of $1 return true;
     [$1, $0] -- $1 in front of $0 return false;
     **/
-    private var compare:(T, T) -> Bool;
-}
-
-//MARK: SequenceType
-extension XPriorityQueue: SequenceType
-{
-    typealias Generator = GeneratorOf<T>;
-    
-    func generate() -> Generator {
-        var index = 0;
-        return GeneratorOf{
-            if index < self.count
-            {
-                return self.source[index++];
-            }
-            return nil;
-        }
-    }
-}
-
-//MARK: MutableCollectionType
-extension XPriorityQueue: MutableCollectionType
-{
-    typealias Index = Int;
-    
-    typealias _Element = T;
-    
-    var startIndex: Int { return 0; }
-    
-    var endIndex: Int { return self.count; }
-    
-    subscript(i:Int) -> T{
-        set{
-            if i < 0 || i > count { return; }
-            self.source[i] = newValue;
-            let p_i = getParentIndex(i);
-            self.compare(newValue, self[p_i]) ? sinkDown(i):bubbleUP(i);
-        }
-        get{
-            return self.source[i];
-        }
-    }
+    private let _compare:(T, T) -> Bool;
 }
 
 //MARK: extension XPriorityQueueProtocol
@@ -107,120 +61,132 @@ extension XPriorityQueue: XPriorityQueueProtocol
 {
     typealias XPQElement = T;
     
-    init(compare: (XPQElement, XPQElement) -> Bool)
+    init(compare: (T, T) -> Bool)
     {
-        self.compare = compare;
-        self.source = [];
+        self._compare = compare;
+        self._source = [];
     }
     
-    init(source:[XPQElement], withCompare:(XPQElement, XPQElement) -> Bool)
+    init(sequence:[T], withCompare: (T, T) -> Bool)
     {
-        self.source = source;
-        self.compare = withCompare;
-        rebuild();
+        self.init(compare:withCompare);
+        self._source = sequence;
+        self._rebuild();
     }
     
-    mutating func push(element: XPQElement)
+    mutating func push(element: T)
     {
-        self.source.append(element);
-        bubbleUP(self.count - 1);
+        self._source.append(element);
+        _bubbleUP(self.count - 1);
     }
     
-    mutating func pop() -> XPQElement? {
+    mutating func pop() -> T? {
         if(isEmpty){return nil;}
-        let first = self.source.first;
-        let end = self.source.removeLast();
+        let first = self._source.first;
+        let end = self._source.removeLast();
         if !isEmpty
         {
-            self.source[0] = end;
-            sinkDown(0);
+            self._set(end, 0);
+            _sinkDown(0);
         }
         return first;
     }
     
-    mutating func update(element: XPQElement, atIndex: Int) {
-        self[atIndex] = element;
+    mutating func update(element: T, atIndex i: Int) {
+        if i < 0 || i > count { return; }
+        self._set(element, i);
+        let p_i = _getParentIndex(i);
+        self._compare(element, self._get(p_i)) ? _sinkDown(i):_bubbleUP(i);
     }
     
-    var isEmpty:Bool { return self.source.isEmpty; }
-    var count:Int{ return self.source.count; }
-    func toArray() -> [XPQElement] {
-        return source;
+    var isEmpty:Bool { return self._source.isEmpty; }
+    var count:Int{ return self._source.count; }
+    func toArray() -> [T] {
+        return _source;
     }
     
+    subscript(i:Int) -> T{
+        return self._get(i);
+    }
 }
 
 //MARK: private method
 //use private extension, not write private pre every private method
-private extension XPriorityQueue
+private  extension XPriorityQueue
 {
     //parent node index
-    func getParentIndex(atIndex:Int) -> Int{return (atIndex - 1) >> 1;}
+    func _getParentIndex(atIndex:Int) -> Int{return (atIndex - 1) >> 1;}
     
     //child node index(the left one, the mini index one)
-    func getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
+    func _getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
+    
+    //set element at index
+    mutating func _set(e:T, _ index:Int){self._source[index] = e;}
+    
+    //get element at index
+    func _get(index:Int) -> T{return self._source[index];}
     
     //swap two element position
-    mutating func swap(index:Int, withIndex:Int)
+    mutating func _swap(index:Int, _ withIndex:Int)
     {
-        let e = self[index];
-        self.source[index] = self.source[withIndex];
-        self.source[withIndex] = e;
+        let e = self._get(index);
+        self._set(self._get(withIndex), index);
+        self._set(e, withIndex);
     }
     
     //bubble up at index
-    mutating func bubbleUP(atIndex:Int)
+    mutating func _bubbleUP(atIndex:Int)
     {
         var i = atIndex;
-        let e = self[i];
+        let e = self._get(i);
         while i > 0
         {
-            let p_i = self.getParentIndex(i);
-            let p_e = self[p_i];
-            if(self.compare(e, p_e)){ break; }
-            self.source[i] = p_e;
-            self.source[p_i] = e;
-//            swap(i, withIndex: p_i);
+            let p_i = self._getParentIndex(i);
+            let p_e = self._get(p_i);
+            if(self._compare(e, p_e)){ break; }
+            self._set(p_e, i);
+            self._set(e, p_i);
+//            _swap(i, p_i);
             i = p_i;
         }
     }
     
     //sink down at index
-    mutating func sinkDown(atIndex:Int)
+    mutating func _sinkDown(atIndex:Int)
     {
         let c = self.count;
         var i = atIndex;
-        let e = self[i];
+        let e = self._get(i);
         
         while true
         {
             var index = i;
             
-            let left = self.getChildIndex(index);
+            let left = self._getChildIndex(index);
             if left >= c {break;}
-            if self.compare(e, self[left]) { index = left; }
+            if self._compare(e, self._get(left)) { index = left; }
             
             
             let right = left + 1;
-            if right < c && self.compare(self[index], self[right]) { index = right; }
+            if right < c && self._compare(self._get(index), self._get(right)) { index = right; }
             
             if index == i {break;}
-            self.source[i] = self[index];
-            self.source[index] = e;
-//            swap(i, withIndex: index);
+            self._set(self._get(index), i);
+            self._set(e, index);
+//            _swap(i, index);
             i = index;
         }
     }
     
     //rebuilding queue use source
-    mutating func rebuild() {
+    mutating func _rebuild() {
         let c = self.count;
         if c < 2 {return;}
         var i = self.count >> 1 - 1;
         
         while i > -1
         {
-            self.sinkDown(i--);
+            self._sinkDown(i--);
         }
     }
 }
@@ -229,6 +195,53 @@ private extension XPriorityQueue
 extension XPriorityQueue: Printable
 {
     var description:String{
-        return self.source.description;
+        return self._source.description;
     }
 }
+
+////MARK: SequenceType
+//extension XPriorityQueue: SequenceType
+//{
+//    typealias Generator = GeneratorOf<T>;
+//    
+//    func generate() -> Generator {
+//        var index = 0;
+//        return GeneratorOf{
+//            if index < self.count
+//            {
+//                return self.source[index++];
+//            }
+//            return nil;
+//        }
+//    }
+//    
+//    init(sequence:[T], withCompare:(T,T) -> Bool)
+//    {
+//        self.init(compare: withCompare);
+//        self.source = sequence;
+//        rebuild();
+//    }
+//}
+//
+////MARK: MutableCollectionType
+//extension XPriorityQueue: MutableCollectionType
+//{
+//    typealias Index = Int;
+//    
+//    typealias _Element = T;
+//    
+//    var startIndex: Int { return 0; }
+//    
+//    var endIndex: Int { return self.count; }
+//    
+//    subscript(i:Int) -> T{
+//        set{
+//            self.update(newValue, atIndex: i);
+//        }
+//        get{
+//            return self.source[i];
+//        }
+//    }
+//}
+
+
