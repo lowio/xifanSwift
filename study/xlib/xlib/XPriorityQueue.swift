@@ -82,7 +82,7 @@ extension XPriorityQueue: XPriorityQueueProtocol
     
     mutating func pop() -> T? {
         if(isEmpty){return nil;}
-        let first = self._source.first;
+        let first = self._get(0);
         let end = self._source.removeLast();
         if !isEmpty
         {

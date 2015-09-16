@@ -162,7 +162,7 @@ private enum XArray2D_Orient
     case Row(Int)
     
     //get position (column, row)
-    func position(index:Int) -> (Int, Int)
+    func getPosition(index:Int) -> (Int, Int)
     {
         switch self
         {

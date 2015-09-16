@@ -15,6 +15,8 @@
 		65E9C46F1B953A2800CDEB1E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65E9C46E1B953A2800CDEB1E /* TopApps.json */; };
 		65E9C4731B95900F00CDEB1E /* XPathFinderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */; };
 		65E9C4751B959AFF00CDEB1E /* XPathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */; };
+		65EF4C121BA9133F00385FB9 /* XArrayND.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF4C111BA9133F00385FB9 /* XArrayND.swift */; };
+		65EF4C131BA9133F00385FB9 /* XArrayND.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF4C111BA9133F00385FB9 /* XArrayND.swift */; };
 		65EFDBD11B94282C0004D53C /* xlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EFDBD01B94282C0004D53C /* xlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65EFDBD71B94282C0004D53C /* xlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EFDBCB1B94282C0004D53C /* xlib.framework */; };
 		65EFDBDE1B94282C0004D53C /* xlibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EFDBDD1B94282C0004D53C /* xlibTests.swift */; };
@@ -43,6 +45,7 @@
 		65E9C4701B9589C100CDEB1E /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65E9C4721B95900F00CDEB1E /* XPathFinderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinderProtocol.swift; sourceTree = "<group>"; };
 		65E9C4741B959AFF00CDEB1E /* XPathFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinder.swift; sourceTree = "<group>"; };
+		65EF4C111BA9133F00385FB9 /* XArrayND.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XArrayND.swift; sourceTree = "<group>"; };
 		65EFDBCB1B94282C0004D53C /* xlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65EFDBCF1B94282C0004D53C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65EFDBD01B94282C0004D53C /* xlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xlib.h; sourceTree = "<group>"; };
@@ -178,6 +181,7 @@
 			children = (
 				1BF51E3D1BA1B427002200E8 /* XArray2D.swift */,
 				65EFDBED1B94291F0004D53C /* XPriorityQueue.swift */,
+				65EF4C111BA9133F00385FB9 /* XArrayND.swift */,
 			);
 			name = dataStruct;
 			sourceTree = "<group>";
@@ -290,6 +294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65EF4C121BA9133F00385FB9 /* XArrayND.swift in Sources */,
 				65EFDBEA1B9428AC0004D53C /* XJSON.swift in Sources */,
 				65E9C4751B959AFF00CDEB1E /* XPathFinder.swift in Sources */,
 				1BF51E3E1BA1B427002200E8 /* XArray2D.swift in Sources */,
@@ -304,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BF676E61B9DEF1900CA7C01 /* XPathFinder.swift in Sources */,
+				65EF4C131BA9133F00385FB9 /* XArrayND.swift in Sources */,
 				1BF676E51B9DEEE200CA7C01 /* XPathFinderProtocol.swift in Sources */,
 				1BF676E41B9DEDF800CA7C01 /* TestPathFinder.swift in Sources */,
 				65EFDC201B945D680004D53C /* TestUtils.swift in Sources */,
