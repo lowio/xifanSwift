@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>F7397913-5F35-46BD-AE34-7D9CBE4F3805</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>xlib</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</key>
 		<string>https://github.com/xifanGame/xifanSwift.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>study/xlib/xlib.xcodeproj/project.xcworkspace</string>
+	<string>study/xlib/xlib.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>CEC96536EAA59AB7E101D9E0820D0FC736A4218F</key>

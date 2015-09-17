@@ -1,16 +1,15 @@
 //
-//  JsonTest.swift
-//  xlib
+//  TestUtils.swift
+//  X_Framework
 //
-//  Created by 173 on 15/8/31.
-//  Copyright (c) 2015年 yeah. All rights reserved.
+//  Created by 173 on 15/9/17.
+//  Copyright © 2015年 yeah. All rights reserved.
 //
 
 import Foundation
 
 
 class TestUtils {
-    
     private static var _bundle:NSBundle?;
     
     private static var bundle:NSBundle{
@@ -22,17 +21,16 @@ class TestUtils {
         return _bundle!;
     }
     
-    class func getTopAppsDataFromFileWithSuccess(success: ((data: NSData) -> Void)) {
-        let filePath = self.bundle.pathForResource("TopApps",ofType:"json")
+    static func loadLocalData(fileName:String, _ ofType:String, _ success:(NSData?) -> ())
+    {
+        let p = self.bundle.pathForResource(fileName, ofType: ofType);
         
-        var readError:NSError?
-        do {
-            let data = try NSData(contentsOfFile:filePath!,
-                options: NSDataReadingOptions.DataReadingUncached)
-                success(data: data)
-        } catch let error as NSError {
-            readError = error
-            print(readError);
+        do{
+            let data = try NSData(contentsOfFile: p!, options: NSDataReadingOptions.DataReadingUncached);
+            success(data);
+        }
+        catch {
+            print("loadLocalData error file:\(fileName).\(ofType)");
         }
     }
     

@@ -21,7 +21,7 @@ struct XPF_Map: XPFMapProtocol
     {
         let size = 50;
         self.grids = XArray2D<Int>(columns: size);
-        for i in 0...size*size-1
+        for _ in 0...size*size-1
         {
             let v = 0;
 //            let v = Int(rand()%10) > 3 ?0:1;
@@ -57,7 +57,7 @@ struct XPF_Map: XPFMapProtocol
         let y = grid.y + offsetY;
         if let v = self.grids[y, x] where v == 0
         {
-            var g = XPF_Grid(x, y);
+            let g = XPF_Grid(x, y);
             ns.append(g);
         }
     }
@@ -68,9 +68,9 @@ func pathFindTest()
 {
     
     
-    var map = XPF_Map();
-    var s = XPF_Grid(0, 0);
-    var g = XPF_Grid(16, 16);
+    let map = XPF_Map();
+    let s = XPF_Grid(0, 0);
+    let g = XPF_Grid(16, 16);
     let pf = XPathFinder();
 //    pf.pathFinder(startGrid: s, goalGride: g, map: map){println("count:\($0.count) \n \($0.description)")}
     pf.pathFinder(startGrid: s, goalGride: g, map: map){
@@ -88,6 +88,6 @@ func pathFindTest()
         grids.update(4, atColumn: s.y, atRow: s.x)
         grids.update(5, atColumn: g.y, atRow: g.x)
         
-        println(grids);
+        print(grids);
     }
 }

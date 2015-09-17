@@ -1,17 +1,14 @@
 //
-//  xlibTests.swift
-//  xlibTests
+//  JsonTest.swift
+//  X_Framework
 //
-//  Created by 173 on 15/8/31.
-//  Copyright (c) 2015年 yeah. All rights reserved.
+//  Created by 173 on 15/9/17.
+//  Copyright © 2015年 yeah. All rights reserved.
 //
 
-import UIKit
 import XCTest
-import xlib;
 
-
-class xlibTests: XCTestCase {
+class CommonTest: XCTestCase {
     
     override func setUp() {
         super.setUp()
@@ -23,22 +20,18 @@ class xlibTests: XCTestCase {
         super.tearDown()
     }
     
-    
     func testPerformanceExample() {
-//        self.measureBlock() {self.testExample()}
+        // This is an example of a performance test case.
+        self.measureBlock {
+            // Put the code you want to measure the time of here.
+            self.testExample();
+        }
     }
     
     func testExample() {
-//        jsonTest();
-//        priorityQueueTest();
-        pathFindTest();
+//        jsonTest()
+        priorityQueueTest();
     }
-    
-    
-    
-    
-   
-    
     
     //XPriorityQueue test
     func priorityQueueTest(testRebuild:Bool = false)
@@ -82,24 +75,21 @@ class xlibTests: XCTestCase {
             }
         }
         
-        
-        
-        
-        
     }
     
-    
-    //XJSON test
-    private func jsonTest()
+    ///test xjson
+    func jsonTest()
     {
-        TestUtils.getTopAppsDataFromFileWithSuccess(){
-            (jsd) -> Void in
-            let jsonParser = XJSON(data: jsd);
-            let d = jsonParser["feed"]["author"]["uri"]["label"] as XJSON
-//            let d = jsonParser["feed"]["author"] as XJSON
-            let v = d.stringValue;
-            print(v)
-        };
+        TestUtils.loadLocalData("TopApps", "json"){
+            if let jsd = $0{
+                let jsonParser = XJSON(data: jsd);
+                let d = jsonParser["feed"]["author"]["uri"]["label"] as XJSON
+                //                let d = jsonParser["feed"]["author"] as XJSON
+                let v = d.stringValue;
+                print(d,v)
+            }
+            
+        }
     }
     
     
