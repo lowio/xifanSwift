@@ -55,6 +55,7 @@
 		65CCF37E1BAAB8A200BCCD5E /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		65CCF3811BAABDD600BCCD5E /* TopApps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TopApps.json; sourceTree = "<group>"; };
 		65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderTest.swift; sourceTree = "<group>"; };
+		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +114,7 @@
 				65CCF35D1BAAB3D800BCCD5E /* Info.plist */,
 				65CCF37B1BAAB71C00BCCD5E /* CommonTest.swift */,
 				65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */,
+				65F5A9CE1BAC080D005E74CE /* temp.playground */,
 			);
 			path = X_FrameworkTests;
 			sourceTree = "<group>";
@@ -471,6 +473,7 @@
 				65CCF3621BAAB3D800BCCD5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		65CCF3631BAAB3D800BCCD5E /* Build configuration list for PBXNativeTarget "X_FrameworkTests" */ = {
 			isa = XCConfigurationList;
@@ -479,6 +482,7 @@
 				65CCF3651BAAB3D800BCCD5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
