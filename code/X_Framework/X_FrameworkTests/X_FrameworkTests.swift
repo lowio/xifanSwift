@@ -21,17 +21,26 @@ class X_FrameworkTests: XCTestCase {
         super.tearDown()
     }
     
-//    func testPerformanceExample() {
-//        // This is an example of a performance test case.
-//        self.measureBlock {
-//            // Put the code you want to measure the time of here.
-//            self.testExample();
-//        }
-//    }
-//    
-//    func testExample() {
-//        
-//    }
+    func testFramework()
+    {
+        if testPerformance
+        {
+            self.measureBlock{
+                self.waitForTest();
+            }
+        }
+        else
+        {
+            waitForTest();
+        }
+    }
+    
+    private var testPerformance:Bool = false;
+    private func waitForTest()
+    {
+        pathFinderTest();
+//        commonTest();
+    }
     
     
 }
