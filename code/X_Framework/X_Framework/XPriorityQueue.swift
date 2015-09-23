@@ -61,6 +61,7 @@ extension XPriorityQueue: XPriorityQueueProtocol
 {
     typealias XPQElement = T;
     
+    
     init(compare: (T, T) -> Bool)
     {
         self._compare = compare;
@@ -82,11 +83,11 @@ extension XPriorityQueue: XPriorityQueueProtocol
     
     mutating func pop() -> T? {
         if(isEmpty){return nil;}
-        let first = self._get(0);
+        let first = self[0];
         let end = self._source.removeLast();
         if !isEmpty
         {
-            self._set(end, 0);
+            self[0] = end;
             _sinkDown(0);
         }
         return first;
@@ -94,9 +95,9 @@ extension XPriorityQueue: XPriorityQueueProtocol
     
     mutating func update(element: T, atIndex i: Int) {
         if i < 0 || i > count { return; }
-        self._set(element, i);
+        self[i] = element;
         let p_i = _getParentIndex(i);
-        self._compare(element, self._get(p_i)) ? _sinkDown(i):_bubbleUP(i);
+        self._compare(element, self[p_i]) ? _sinkDown(i):_bubbleUP(i);
     }
     
     var isEmpty:Bool { return self._source.isEmpty; }
@@ -105,8 +106,13 @@ extension XPriorityQueue: XPriorityQueueProtocol
         return _source;
     }
     
-    subscript(i:Int) -> T{
-        return self._get(i);
+    private(set) subscript(i:Int) -> T{
+        set{
+            self._source[i] = newValue;
+        }
+        get{
+            return self._source[i];
+        }
     }
 }
 
@@ -120,35 +126,29 @@ private  extension XPriorityQueue
     //child node index(the left one, the mini index one)
     func _getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
     
-    //set element at index
-    mutating func _set(e:T, _ index:Int){self._source[index] = e;}
-    
-    //get element at index
-    func _get(index:Int) -> T{return self._source[index];}
-    
     //swap two element position
     mutating func _swap(index:Int, _ withIndex:Int)
     {
-        let e = self._get(index);
-        self._set(self._get(withIndex), index);
-        self._set(e, withIndex);
+        let e = self[index];
+        self[index] = self[withIndex];
+        self[withIndex] = e;
     }
     
     //bubble up at index
     mutating func _bubbleUP(atIndex:Int)
     {
+        if atIndex < 1 { return; }
         var i = atIndex;
-        let e = self._get(i);
-        while i > 0
-        {
+        let e = self[i];
+        repeat{
             let p_i = self._getParentIndex(i);
-            let p_e = self._get(p_i);
-            if(self._compare(e, p_e)){ break; }
-            self._set(p_e, i);
-            self._set(e, p_i);
+            let p_e = self[p_i];
+            if self._compare(e, p_e){ break; }
+            self[i] = p_e;
+            self[p_i] = e;
 //            _swap(i, p_i);
             i = p_i;
-        }
+        }while i > 0
     }
     
     //sink down at index
@@ -156,7 +156,7 @@ private  extension XPriorityQueue
     {
         let c = self.count;
         var i = atIndex;
-        let e = self._get(i);
+        let e = self[i];
         
         while true
         {
@@ -164,26 +164,24 @@ private  extension XPriorityQueue
             
             let left = self._getChildIndex(index);
             if left >= c {break;}
-            if self._compare(e, self._get(left)) { index = left; }
+            if self._compare(e, self[left]) { index = left; }
             
             
             let right = left + 1;
-            if right < c && self._compare(self._get(index), self._get(right)) { index = right; }
+            if right < c && self._compare(self[index], self[right]) { index = right; }
             
             if index == i {break;}
-            self._set(self._get(index), i);
-            self._set(e, index);
+            self[i] = self[index];
+            self[index] = e;
 //            _swap(i, index);
             i = index;
         }
     }
     
-    //rebuilding queue use source
-    mutating func _rebuild() {
-        let c = self.count;
-        if c < 2 {return;}
+    //rebuilding queue
+    mutating func _rebuild()
+    {
         var i = self.count >> 1 - 1;
-        
         while i > -1
         {
             self._sinkDown(i--);
@@ -198,50 +196,3 @@ extension XPriorityQueue: CustomStringConvertible
         return self._source.description;
     }
 }
-
-////MARK: SequenceType
-//extension XPriorityQueue: SequenceType
-//{
-//    typealias Generator = GeneratorOf<T>;
-//    
-//    func generate() -> Generator {
-//        var index = 0;
-//        return GeneratorOf{
-//            if index < self.count
-//            {
-//                return self.source[index++];
-//            }
-//            return nil;
-//        }
-//    }
-//    
-//    init(sequence:[T], withCompare:(T,T) -> Bool)
-//    {
-//        self.init(compare: withCompare);
-//        self.source = sequence;
-//        rebuild();
-//    }
-//}
-//
-////MARK: MutableCollectionType
-//extension XPriorityQueue: MutableCollectionType
-//{
-//    typealias Index = Int;
-//    
-//    typealias _Element = T;
-//    
-//    var startIndex: Int { return 0; }
-//    
-//    var endIndex: Int { return self.count; }
-//    
-//    subscript(i:Int) -> T{
-//        set{
-//            self.update(newValue, atIndex: i);
-//        }
-//        get{
-//            return self.source[i];
-//        }
-//    }
-//}
-
-
