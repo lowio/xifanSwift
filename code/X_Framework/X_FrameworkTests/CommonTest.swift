@@ -30,7 +30,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         {
             let e1 = queue.pop()!;
             let e2 = sortArray.removeLast();
-            print("\(e1)-\(e2)=\(e1 - e2) ");
+            print("\(e1)-\(e2)=\(e1 - e2)  count:\(queue.count)");
         }
     }
     else
@@ -51,7 +51,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         while(!queue.isEmpty)
         {
             let e = queue.pop()!;
-            print(e)
+//            print(e)
         }
     }
     
