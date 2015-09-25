@@ -65,57 +65,57 @@ extension XPriorityQueueProtocol
 //MARK: XPriorityQueueProtocol default implementation(private)
 private extension XPriorityQueueProtocol
 {
-    //rise up
-    func _riseup(atIndex:Int) -> [XPQElement]{
-        if atIndex < 1 { return self.source}
+    //rise up at index of sequence
+    func _riseup(var sequence:[XPQElement], _ atIndex:Int) -> [XPQElement]{
+        if atIndex < 1 { return sequence}
         var i = atIndex;
-        var temp = self.source;
-        let e = temp[i];
+        let e = sequence[i];
         repeat{
             let p_i = self._getParentIndex(i);
-            let p_e = temp[p_i];
+            let p_e = sequence[p_i];
             if self.compare(e, p_e){ break }
-            temp[i] = p_e;
-            temp[p_i] = e;
+            sequence[i] = p_e;
+            sequence[p_i] = e;
             i = p_i;
         }while i > 0
-        return temp;
+        return sequence;
     }
     
     //sink down
-    func _sinkdown(atIndex:Int) -> [XPQElement]{
-        let c = self.count;
-        var temp = self.source;
+    func _sinkdown(var sequence:[XPQElement], _ atIndex:Int) -> [XPQElement]{
+        let c = sequence.count;
         var i = atIndex;
-        let e = temp[i];
+        let e = sequence[i];
         
         while true
         {
             var index = i;
             let left = self._getChildIndex(index);
             if left >= c {break;}
-            if self.compare(e, temp[left]) { index = left; }
-            
-            
             let right = left + 1;
-            if right < c && self.compare(temp[index], temp[right]) { index = right; }
             
+            var compareIndex = left;
+            if right < c && self.compare(sequence[left], sequence[right])
+            {
+                compareIndex = right;
+            }
+            
+            if self.compare(e, sequence[compareIndex]) { index = compareIndex; }
             if index == i {break;}
-            temp[i] = temp[index];
-            temp[index] = e;
+            sequence[i] = sequence[index];
+            sequence[index] = e;
             i = index;
         }
-        return temp;
+        return sequence;
     }
     
     //update element at index
-    func _update(element:XPQElement, atIndex:Int) -> [XPQElement]{
-        if atIndex < 0 || atIndex > self.count { return self.source; }
-        var temp = self.source;
-        temp[atIndex] = element;
+    func _update(var sequence:[XPQElement], _ element:XPQElement, _ atIndex:Int) -> [XPQElement]{
+        if atIndex < 0 || atIndex > sequence.count { return sequence }
+        sequence[atIndex] = element;
         let p_i = self._getParentIndex(atIndex);
-        temp = self.compare(element, temp[p_i]) ? _sinkdown(atIndex):_riseup(atIndex);
-        return temp;
+        sequence = self.compare(element, sequence[p_i]) ? _sinkdown(sequence, atIndex):_riseup(sequence, atIndex);
+        return sequence;
     }
     
     //parent node index
@@ -154,43 +154,48 @@ extension XPriorityQueue: XPriorityQueueProtocol
     {
         self._compare = compare;
         self._source = sequence;
-        rebuild(self._source);
+        self.rebuild(self.source);
     }
     
     mutating func push(element: T)
     {
-        self._source.append(element);
-        self._source = self._riseup(self.count - 1);
+        var temp = self.source;
+        temp.append(element);
+        self._source = self._riseup(temp, temp.count - 1);
     }
     
     mutating func pop() -> T? {
         if(isEmpty){return nil;}
-        let first = self[0];
-        let end = self._source.removeLast();
-        if !isEmpty
+        var temp = self.source;
+        let first = temp[0];
+        let end = temp.removeLast();
+        if !temp.isEmpty
         {
-            self[0] = end;
-            self._source = _sinkdown(0);
+            temp[0] = end;
+            temp = _sinkdown(temp, 0);
         }
+        self._source = temp;
         return first;
     }
     
     mutating func update(element: T, atIndex i: Int) {
-        self._source = self._update(element, atIndex: i);
+        self[i] = element;
+//        self._source = self._update(self.source, element, i);
     }
     
     mutating func rebuild(sequence: [XPQElement]) {
-        self._source = sequence;
-        var i = self.count >> 1 - 1;
+        var temp = sequence;
+        var i = temp.count >> 1 - 1;
         while i > -1
         {
-            self._source = self._sinkdown(i--);
+            temp = self._sinkdown(temp, i--);
         }
+        self._source = temp;
     }
     
     private(set) subscript(i:Int) -> T{
         set{
-            self._source[i] = newValue;
+            self._source = self._update(self.source, newValue, i);
         }
         get{
             return self._source[i];
@@ -203,20 +208,6 @@ extension XPriorityQueue: XPriorityQueueProtocol
     
     var compare:(XPQElement, XPQElement) -> Bool{
         return self._compare;
-    }
-}
-
-//MARK: private method
-//use private extension, not write private pre every private method
-private  extension XPriorityQueue
-{
-    //swap two element position
-    func _swap(var array:[T], _ index:Int, _ withIndex:Int) -> [T]
-    {
-        let e = array[index];
-        array[index] = array[withIndex];
-        array[withIndex] = e;
-        return array;
     }
 }
 
