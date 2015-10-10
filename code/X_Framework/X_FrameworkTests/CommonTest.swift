@@ -51,7 +51,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         while(!queue.isEmpty)
         {
             let e = queue.pop()!;
-            print(e)
+//            print(e)
         }
     }
     
