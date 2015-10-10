@@ -35,10 +35,10 @@ class X_FrameworkTests: XCTestCase {
         }
     }
     
-    private var testPerformance:Bool = true;
+    private var testPerformance:Bool = false;
     private func waitForTest()
     {
-//        pathFinderTest();
-        commonTest();
+        pathFinderTest();
+//        commonTest();
     }
 }

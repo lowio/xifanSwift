@@ -14,52 +14,83 @@ protocol XPriorityQueueType: CustomStringConvertible
     //element type
     typealias _Element;
     
-    //source
-    var source:[Self._Element]{get}
-    
-    //elements count
-    var count:Int{get}
-    
-    //elements is empty
-    var isEmpty:Bool{get}
+    //source; if you set source , call rebuild()
+    var source:[Self._Element]{get set}
     
     //compare function
     var compare:(Self._Element, Self._Element) -> Bool{get};
     
-    //subscript
-    subscript(i:Int) -> Self._Element{get set}
-    
-    //push element
-    mutating func push(element:Self._Element)
-    
-    //get first element
-    mutating func pop() -> Self._Element?
-    
-    //update element at index
-    mutating func update(element:Self._Element, atIndex:Int)
-    
-    //rebuild collection to priority queue
-    mutating func rebuild(source:[Self._Element])
+    //init rebuild queue use source with compare function
+    /**init with compare funct
+    [$0, $1,...] -- $0 in front of $1 return true;
+    [$1, $0,...] -- $1 in front of $0 return false;
+    **/
+    init(source:[Self._Element], compare:(Self._Element, Self._Element) -> Bool)
 }
 
-//MARK: XPriorityQueueType -- default implement
+//MARK: XPriorityQueueType extension -- default implement
 extension XPriorityQueueType
 {
+    //compare function type
+    typealias _XCompareFunction = (Self._Element, Self._Element) -> Bool
+    
+    init(compare:_XCompareFunction)
+    {
+        self.init(source: [], compare: compare);
+    }
+    
+    mutating func push(element: Self._Element) {
+        self.source.append(element);
+        self._riseup(self.count - 1);
+    }
+    
+    mutating func pop() -> Self._Element? {
+        if(isEmpty){return nil;}
+        let first = self[0];
+        let end = self.source.removeLast();
+        guard !self.isEmpty else{return first;}
+        self[0] = end;
+        guard self.count > 1 else{return first;}
+        self._sinkdown(0);
+        return first;
+    }
+    
+    mutating func update(element: Self._Element, atIndex: Int) {
+        guard atIndex >= 0 && atIndex < self.count else{return;}
+        self[atIndex] = element;
+        let p_i = self._getParentIndex(atIndex);
+        self.compare(element, self[p_i]) ? self._sinkdown(atIndex) : self._riseup(atIndex);
+    }
+    
+    mutating func rebuild() {
+        var i = self.count >> 1 - 1;
+        while i > -1
+        {
+            self._sinkdown(i--);
+        }
+    }
+    
     var count:Int{return self.source.count;}
     var isEmpty:Bool{return self.source.isEmpty;}
     var description:String{return self.source.description;}
 }
 
-//MARK: XPriorityQueueType private default extension
+//MARK: XPriorityQueueType extension -- subscript
+extension XPriorityQueueType
+{
+    private(set) subscript(i:Int) -> Self._Element{
+        set{
+            self.source[i] = newValue;
+        }
+        get{
+            return self.source[i];
+        }
+    }
+}
+
+//MARK: XPriorityQueueType extension -- private default implement
 private extension XPriorityQueueType
 {
-    //exchange element at elementIndex with withIndex
-    mutating func _exchange(element:Self._Element, _ elementIndex:Int, _ withIndex:Int)
-    {
-        self[elementIndex] = self[withIndex];
-        self[withIndex] = element;
-    }
-    
     //rise up
     mutating func _riseup(atIndex:Int)
     {
@@ -109,85 +140,27 @@ private extension XPriorityQueueType
 }
 
 
-//MARK: XPriorityQ -- priority queue struct
+//MARK: XPriorityQueue -- priority queue struct
 struct XPriorityQueue<T>
 {
     typealias _Element = T;
     
     //source data
-    private(set) var source:[T];
+    var source:[T];
     
     //compare function
-    private(set) var compare:(T, T) -> Bool
-    
-    /**init with compare funct
-    [$0, $1,...] -- $0 in front of $1 return true;
-    [$1, $0,...] -- $1 in front of $0 return false;
-    **/
-    init(compare:(T, T) -> Bool)
-    {
-        self.init(source: [], compare: compare);
-    }
+    private(set) var compare:XPriorityQueue._XCompareFunction
     
     //init with resource
-    init(source:[T], compare:(T, T) -> Bool)
+    init(source:[T], compare:XPriorityQueue._XCompareFunction)
     {
         self.compare = compare;
         self.source = source;
-        rebuild(self.source);
+        rebuild();
     }
 }
 
-
-//MARK: XPriorityQ -- subscript
-extension XPriorityQueue
-{
-    subscript(i:Int) -> T{
-//        private(set) subscript(i:Int) -> T{
-        set{
-            self.source[i] = newValue;
-        }
-        get{
-            return self.source[i];
-        }
-    }
-}
-
-//MARK: XPriorityQ -- extension XPriorityQueueType functions
+//MARK: XPriorityQueue -- implement XPriorityQueueType
 extension XPriorityQueue: XPriorityQueueType
 {
-    mutating func push(element: T) {
-        self.source.append(element);
-        self._riseup(self.count - 1);
-    }
-    
-    mutating func pop() -> T? {
-        if(isEmpty){return nil;}
-        let first = self[0];
-        let end = self.source.removeLast();
-        guard !self.isEmpty else{return first;}
-        self[0] = end;
-        guard self.count > 1 else{return first;}
-        self._sinkdown(0);
-        return first;
-    }
-    
-    mutating func update(element: T, atIndex: Int) {
-        guard atIndex >= 0 && atIndex < self.count else{return;}
-        self[atIndex] = element;
-        let p_i = self._getParentIndex(atIndex);
-        self.compare(element, self[p_i]) ? self._sinkdown(atIndex) : self._riseup(atIndex);
-    }
-    
-    mutating func rebuild(source: [T]) {
-        self.source = source;
-        var i = self.count >> 1 - 1;
-        while i > -1
-        {
-            self._sinkdown(i--);
-        }
-    }
-    
 }
-
-

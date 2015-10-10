@@ -14,7 +14,7 @@ func commonTest() {
 }
 
 //XPriorityQueue test
-func priorityQueueTest(testRebuild:Bool = false)
+func priorityQueueTest(testRebuild:Bool = true)
 {
     var queue:XPriorityQueue<Int>;
     if(testRebuild)//测试创建优先队列
