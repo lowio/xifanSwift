@@ -3,29 +3,24 @@
 import UIKit
 
 
-//func test(a:Int?)
-//{
-//    
-//    defer{
-//        print("print1")
-//    }
-//    
-//    defer{
-//        print("print2");
-//    }
-//    
-//    defer{
-//        print("print3");
-//    }
-//
-//    guard let b = a else{
-//        print("hehe\(a)");
-//        return;
-//    }
-//    
-//    print(b);
-//}
-//
-//test(0);
 
-Array
+
+
+func a(b:Bool)
+{
+    defer{
+        print("test1")
+    }
+    print("test2");
+    
+    if b{
+        
+        return;
+    }
+    print("test3");
+    
+    
+    
+}
+
+a(false);

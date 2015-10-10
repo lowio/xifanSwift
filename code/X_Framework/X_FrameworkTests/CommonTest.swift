@@ -24,7 +24,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         {
             sortArray.append(Int(arc4random() % 1000));
         }
-        queue = XPriorityQueue<Int>(sequence: sortArray){$0.0 >= $0.1};
+        queue = XPriorityQueue<Int>(source: sortArray){$0.0 >= $0.1};
         sortArray.sortInPlace{$0 > $1}
         while !queue.isEmpty
         {
@@ -36,7 +36,7 @@ func priorityQueueTest(testRebuild:Bool = false)
     else
     {   //测试优先队列效率
         queue = XPriorityQueue<Int>{$0 >= $1}
-        let c = 100;
+        let c = 400;
         for _ in 0...c
         {
             let temp = Int(arc4random() % 500);
@@ -51,7 +51,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         while(!queue.isEmpty)
         {
             let e = queue.pop()!;
-//            print(e)
+            print(e)
         }
     }
     
