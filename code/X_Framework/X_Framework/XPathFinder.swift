@@ -89,7 +89,9 @@ extension XPathFinder: XPFProtocol
                             ne.p = grid;
                             ne.totalCount = totalCount;
                             visited[ne.hashValue] = ne;
-                            if let i = self.getElementIndex(openQueue, element: ne)
+                            
+                            let i = openQueue.indexOf(ne);
+                            if i != -1
                             {
                                 openQueue.update(ne, atIndex: i);
                             }
@@ -114,19 +116,6 @@ extension XPathFinder: XPFProtocol
 //MARK: XPathFinder extension private method
 private extension XPathFinder
 {
-    
-    private func getElementIndex<T:Hashable>(queue:XPriorityQueue<T>, element:T) -> Int?
-    {
-        let c = queue.count;
-        for i in 0..<c
-        {
-            if queue[i] == element
-            {
-                return i;
-            }
-        }
-        return nil;
-    }
     
     //rebuild path
     private func rebuildPath<G:XPFGridProtocol>(grid:G) -> [G]

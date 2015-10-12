@@ -1,197 +1,161 @@
 //
-//  Array2D.swift
+//  XArrayND.swift
 //  xlib
 //
-//  Created by 173 on 15/9/10.
+//  Created by 173 on 15/9/16.
 //  Copyright (c) 2015年 yeah. All rights reserved.
 //
 
 import Foundation
 
-//MARK: properties
-struct XArray2D<T> {
+//orient
+enum XArrayNDOrient
+{
+    case Horizontal(Int, Int)
+    case Vertical(Int, Int)
     
-    //source
-    var source:[T];
-    
-    //orient
-    private var orient:XArray2D_Orient;
-    
-    /*
-    |0|1|2|
-    |3|4|5|
-    |6|7|8|
-    |9|
-    **/
     init(columns:Int)
     {
-        self.orient = .Column(columns);
-        self.source = [];
+        self = .Horizontal(1, columns);
     }
     
-    /*
-    |0|3|6|9|
-    |1|4|7|
-    |2|5|8|
-    **/
     init(rows:Int)
     {
-        orient = .Row(rows);
-        self.source = [];
+        self = .Vertical(rows, 1);
     }
     
-    //elements count
-    var count:Int{
-        return source.count;
+    private func _convert2Index(column:Int, _ row:Int) -> Int
+    {
+        switch self{
+        case .Horizontal(let c, let r):
+            return column * c + row * r;
+        case .Vertical(let c, let r):
+            return column * c + row * r;
+        }
     }
+}
+
+//XArray2DType protocol
+protocol XArray2DType
+{
+    //element
+    typealias _Element;
+    
+    //source
+    var source:[Self._Element?]{get}
     
     //columns
-    var columns:Int{
-        switch orient
-        {
-        case .Column(let c):
-            return c;
-        case .Row(let r):
-            return (count-1)/r + 1;
-        }
-    }
+    var columns:Int{get}
     
     //rows
-    var rows:Int{
-        switch orient
-        {
-        case .Column(let c):
-            return (count - 1)/c + 1;
-        case .Row(let r):
-            return r;
-        }
-    }
+    var rows:Int{get}
     
-    //contains element at (column, row)
-    func containsElementAt(column:Int, row:Int) -> Bool
-    {
-        let index = self.orient.getIndex(column, row: row);
-        return self.containsElementAt(index);
-    }
+    //orient
+    var orient:XArrayNDOrient{get}
     
-    //append
-    mutating func append(element:T)
-    {
-        self.source.append(element);
-    }
-    
-    //update
-    mutating func update(element:T, atColumn c:Int, atRow r:Int) -> Bool
-    {
-        let index = getIndex(c, row: r);
-        if index < 0 { return false; }
-        self[index] = element;
-        return true;
-    }
-    
-    //get element by (column, row)
-    subscript(column:Int, row:Int) -> T?{
-        let index = getIndex(column, row: row);
-        if !containsElementAt(index) { return nil; }
-        return self[index];
-    }
+    //subscript
+    subscript(i:Int) -> Self._Element?{set get}
 }
 
-//MARK: subscript
-private extension XArray2D
+extension XArray2DType
 {
-    //contains element at index
-    func containsElementAt(index:Int) -> Bool
-    {
-        return index >= 0 && index < self.count;
-    }
+    //count
+    var count:Int{return self.source.count;}
     
-    //get element index
-    func getIndex(column:Int, row:Int) -> Int
-    {
-        let index = self.orient.getIndex(column, row: row);
-        return self.containsElementAt(index) ? index : -1;
-    }
-    
-    //subscript element by index
-    subscript(index:Int) -> T {
+    //subscript
+    subscript(column:Int, row:Int) -> Self._Element?{
         set{
-            self.source[index] = newValue;
+            guard let index = self.getPosition(column, row) else{return;}
+            self[index] = newValue;
         }
         get{
-            return self.source[index];
+            guard let index = self.getPosition(column, row) else{return nil;}
+            return self[index];
+        }
+    }
+    
+    //out of bounds?
+    func outOfBounds(column:Int, _ row:Int) -> Bool{
+        return column < 0 || column >= columns || row < 0 || row >= rows;
+    }
+    
+    //get position at source
+    func getPosition(column:Int, _ row:Int) -> Int?{
+        guard !outOfBounds(column, row) else{return nil;}
+        return self.orient._convert2Index(column, row);
+    }
+}
+
+extension XArray2DType where _Element: Equatable
+{
+    func indexOf(element:Self._Element) -> Int?
+    {
+        let index = self.source.indexOf{return $0 == element;}
+        return index?.littleEndian;
+    }
+}
+
+//MARK: XArray2D
+struct XArray2D<T>
+{
+    private(set) var source:[T?];
+    private(set) var columns:Int;
+    private(set) var rows:Int;
+    private(set) var orient:XArrayNDOrient;
+    
+    private init(columns:Int, rows:Int, orient:XArrayNDOrient)
+    {
+        self.columns = columns;
+        self.rows = rows;
+        self.source = Array<T?>(count: columns * rows, repeatedValue: nil);
+        self.orient = orient;
+    }
+    
+    init(columnFirst columns:Int, rows:Int)
+    {
+        self.init(columns: columns, rows: rows, orient: XArrayNDOrient(columns: columns))
+    }
+    
+    init(rowFirst columns:Int, rows:Int)
+    {
+        self.init(columns: columns, rows: rows, orient: XArrayNDOrient(rows: rows))
+    }
+}
+
+//MARK: extension XArray2DType
+extension XArray2D: XArray2DType
+{
+    typealias _Element = T;
+    
+    subscript(i:Int) -> T?{
+        set{
+            guard i >= 0 && i < self.count else{return;}
+            self.source[i] = newValue;
+        }
+        get{
+            return self.source[i];
         }
     }
 }
 
-//MARK: Printable
+//MARK: extension CustomStringConvertible
 extension XArray2D: CustomStringConvertible
 {
     var description:String{
-        let rs = self.rows;
-        let cs = self.columns;
-        var desc:String = "";
-        for r in 0..<rs
+        var text:String = "";
+        for r in 0..<self.rows
         {
-            for c in 0..<cs
+            for c in 0..<self.columns
             {
-                var s:String;
-                if let e = self[c, r]
+                if let v = self[c, r]
                 {
-                    s = String(stringInterpolationSegment: e);
+                    text += "\(v) ";
+                    continue;
                 }
-                else
-                {
-                    s = "nil";
-                }
-                desc += "\(s),";
+                text += "\(self[c, r]) ";
             }
-            desc += "\n";
+            text += "\n";
         }
-        return desc;
-    }
-}
-
-//XArray2D_Orient
-//case .Column: 0,1,2,3,4,5.......n;
-//case .Row:0,row, 2*row, 3*row.....n*row;
-private enum XArray2D_Orient
-{
-    case Column(Int)
-    case Row(Int)
-    
-    //get position (column, row)
-    func getPosition(index:Int) -> (Int, Int)
-    {
-        switch self
-        {
-        case .Column(let c):
-            return (index%c, index/c);
-        case .Row(let r):
-            return (index/r, index%r);
-        }
-    }
-    
-    //get index;
-    func getIndex(column:Int, row:Int) -> Int
-    {
-        if column < 0 || row < 0{return -1;}
-        switch self
-        {
-        case .Column(let c):
-            return column < c ? row * c + column : -1;
-        case .Row(let r):
-            return row < r ? column * r + row : -1;
-        }
-    }
-    
-    var value:Int{
-        switch self
-        {
-        case .Column(let c):
-            return c;
-        case .Row(let r):
-            return r;
-        }
+        return text;
     }
 }

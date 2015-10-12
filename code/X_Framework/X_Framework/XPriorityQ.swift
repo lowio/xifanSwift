@@ -88,6 +88,16 @@ extension XPriorityQueueType
     }
 }
 
+//indexof
+extension XPriorityQueueType where _Element: Equatable
+{
+    //get index
+    func indexOf(ele:Self._Element) -> Int{
+        guard let index = self.source.indexOf(ele) else{return -1;}
+        return index.littleEndian;
+    }
+}
+
 //MARK: XPriorityQueueType extension -- private default implement
 private extension XPriorityQueueType
 {
@@ -143,8 +153,6 @@ private extension XPriorityQueueType
 //MARK: XPriorityQueue -- priority queue struct
 struct XPriorityQueue<T>
 {
-    typealias _Element = T;
-    
     //source data
     var source:[T];
     
@@ -163,4 +171,5 @@ struct XPriorityQueue<T>
 //MARK: XPriorityQueue -- implement XPriorityQueueType
 extension XPriorityQueue: XPriorityQueueType
 {
+    typealias _Element = T;
 }

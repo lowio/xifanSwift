@@ -23,16 +23,16 @@ func pathFinderTest() {
         //        println(grids)
         for v in $1
         {
-            grids.update(1, atColumn: v.1.y, atRow: v.1.x);
+            grids[v.1.y, v.1.x] = 1;
+            
         }
         for grid in $0
         {
-            grids.update(3, atColumn: grid.y, atRow: grid.x)
+            grids[grid.y, grid.x] = 3;
         }
         
-        grids.update(4, atColumn: s.y, atRow: s.x)
-        grids.update(5, atColumn: g.y, atRow: g.x)
-        
+        grids[s.y, s.x] = 4;
+        grids[g.y, g.x] = 5;
         print(grids);
     }
 }
@@ -47,12 +47,12 @@ private struct XPF_Map: XPFMapProtocol
     init()
     {
         let size = 50;
-        self.grids = XArray2D<Int>(columns: size);
-        for _ in 0...size*size-1
+        self.grids = XArray2D<Int>(columnFirst: size, rows: size);
+        for i in 0..<size*size
         {
             let v = 0;
             //            let v = Int(rand()%10) > 3 ?0:1;
-            grids.append(v);
+            grids[i] = v;
         }
         //        println(grids);
     }

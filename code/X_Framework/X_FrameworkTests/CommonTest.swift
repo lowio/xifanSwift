@@ -10,7 +10,21 @@ import UIKit
 
 func commonTest() {
 //    jsonTest()
-    priorityQueueTest();
+//    priorityQueueTest();
+    arrayNDTest();
+}
+
+func arrayNDTest(horizontal:Bool = false)
+{
+    var nd = horizontal ? XArray2D<Int>(columnFirst: 4, rows: 3) : XArray2D<Int>(rowFirst: 4, rows: 3);
+    print(nd);
+    
+    for i in 0..<nd.count
+    {
+        nd[i] = i;
+    }
+    print(nd);
+    
 }
 
 //XPriorityQueue test
