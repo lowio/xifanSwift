@@ -21,11 +21,12 @@ protocol XPriorityQueueType: CustomStringConvertible
     var compare:(Self._Element, Self._Element) -> Bool{get};
     
     //init rebuild queue use source with compare function
-    /**init with compare funct
-    [$0, $1,...] -- $0 in front of $1 return true;
-    [$1, $0,...] -- $1 in front of $0 return false;
-    **/
     init(source:[Self._Element], compare:(Self._Element, Self._Element) -> Bool)
+
+    mutating func push(element: Self._Element)
+    mutating func pop() -> Self._Element?
+    mutating func update(element: Self._Element, atIndex: Int)
+    mutating func rebuild()
 }
 
 //MARK: XPriorityQueueType extension -- default implement
@@ -92,9 +93,8 @@ extension XPriorityQueueType
 extension XPriorityQueueType where _Element: Equatable
 {
     //get index
-    func indexOf(ele:Self._Element) -> Int{
-        guard let index = self.source.indexOf(ele) else{return -1;}
-        return index.littleEndian;
+    func indexOf(ele:Self._Element) -> Int?{
+        return self.source.indexOf(ele);
     }
 }
 

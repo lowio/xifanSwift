@@ -90,8 +90,7 @@ extension XPathFinder: XPFProtocol
                             ne.totalCount = totalCount;
                             visited[ne.hashValue] = ne;
                             
-                            let i = openQueue.indexOf(ne);
-                            if i != -1
+                            if let i = openQueue.indexOf(ne)
                             {
                                 openQueue.update(ne, atIndex: i);
                             }
