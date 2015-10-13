@@ -19,47 +19,33 @@ protocol XPathGrid
     
     //parent
     var p:Self?{get set}
+    
+    //closed
+    var closed:Bool{get set}
+    
+    //priority
+    var priority:CGFloat{get}
 }
 
-protocol XPathNode
+protocol XPathNode:XPathGrid
 {
-    typealias XPriorityType:Comparable;
-    
     //g score
     var g:CGFloat{get set}
     
     //h score
     var h:CGFloat{get set}
     
-    //parent
-    var p:Self?{get set}
-    
-    //is closed
-    var closed:Bool{get set}
-    
     //f score
     var f:CGFloat{get}
-    
-    //priority
-    var priority:CGFloat{get}
-    
-    
 }
 
 extension XPathNode
 {
     var f:CGFloat{return self.g + self.h;}
-    var priority:CGFloat{return self.f;}
 }
-
 
 protocol XPathFinderType
 {
-    //XPathNode
-//    typealias _XPathNode:XPathNode;
-    
-    
-    
 }
 
 extension XPathFinderType
@@ -107,7 +93,7 @@ extension XPathFinderType
                     openQueue.push(o);
                     continue;
                 }
-        
+                
                 guard !v.closed && v.g > g else{continue;}
                 var updateNode = v;
                 updateNode.g = g;
