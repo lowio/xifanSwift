@@ -9,6 +9,18 @@
 import UIKit
 
 
+protocol XPathGrid
+{
+    //x
+    var x:Int{get set}
+    
+    //y
+    var y:Int{get set}
+    
+    //parent
+    var p:Self?{get set}
+}
+
 protocol XPathNode
 {
     typealias XPriorityType:Comparable;
@@ -30,6 +42,8 @@ protocol XPathNode
     
     //priority
     var priority:CGFloat{get}
+    
+    
 }
 
 extension XPathNode
@@ -86,7 +100,7 @@ extension XPathFinderType
                 guard let v = visited[n] else{
                     var o = n;
                     o.g = g;
-                    o.h = heuristic(current, goal);
+                    o.h = heuristic(n, goal);
                     o.p = current;
                     o.closed = false;
                     visited[o] = o;
