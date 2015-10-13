@@ -47,7 +47,7 @@ private struct XPF_Map: XPFMapProtocol
     init()
     {
         let size = 50;
-        self.grids = XArray2D<Int>(columnFirst: size, rows: size);
+        self.grids = XArray2D<Int>(horizontal: size, rows: size);
         for i in 0..<size*size
         {
             let v = 0;

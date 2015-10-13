@@ -8,31 +8,10 @@
 
 import Foundation
 
-//orient
-enum XArrayNDOrient
+//array 2d orient enum
+enum XArray2DOrient
 {
-    case Horizontal(Int, Int)
-    case Vertical(Int, Int)
-    
-    init(columns:Int)
-    {
-        self = .Horizontal(1, columns);
-    }
-    
-    init(rows:Int)
-    {
-        self = .Vertical(rows, 1);
-    }
-    
-    private func _convert2Index(column:Int, _ row:Int) -> Int
-    {
-        switch self{
-        case .Horizontal(let c, let r):
-            return column * c + row * r;
-        case .Vertical(let c, let r):
-            return column * c + row * r;
-        }
-    }
+    case Horizontal, Vertical
 }
 
 //XArray2DType protocol
@@ -51,12 +30,13 @@ protocol XArray2DType
     var rows:Int{get}
     
     //orient
-    var orient:XArrayNDOrient{get}
+    var orient:XArray2DOrient{get set}
     
     //subscript
     subscript(i:Int) -> Self._Element?{set get}
 }
 
+//extension
 extension XArray2DType
 {
     //count
@@ -82,10 +62,16 @@ extension XArray2DType
     //get position at source
     func getPosition(column:Int, _ row:Int) -> Int?{
         guard !outOfBounds(column, row) else{return nil;}
-        return self.orient._convert2Index(column, row);
+        switch self.orient{
+        case .Horizontal:
+            return column + columns * row;
+        case .Vertical:
+            return column * rows + row;
+        }
     }
 }
 
+//extension
 extension XArray2DType where _Element: Equatable
 {
     func indexOf(element:Self._Element) -> Int?
@@ -101,9 +87,9 @@ struct XArray2D<T>
     private(set) var source:[T?];
     private(set) var columns:Int;
     private(set) var rows:Int;
-    private(set) var orient:XArrayNDOrient;
+    var orient:XArray2DOrient;
     
-    private init(columns:Int, rows:Int, orient:XArrayNDOrient)
+    private init(columns:Int, _ rows:Int, _ orient:XArray2DOrient)
     {
         self.columns = columns;
         self.rows = rows;
@@ -111,14 +97,14 @@ struct XArray2D<T>
         self.orient = orient;
     }
     
-    init(columnFirst columns:Int, rows:Int)
+    init(horizontal columns:Int, rows:Int)
     {
-        self.init(columns: columns, rows: rows, orient: XArrayNDOrient(columns: columns))
+        self.init(columns: columns, rows, .Horizontal);
     }
     
-    init(rowFirst columns:Int, rows:Int)
+    init(vertical columns:Int, rows:Int)
     {
-        self.init(columns: columns, rows: rows, orient: XArrayNDOrient(rows: rows))
+        self.init(columns: columns, rows, .Vertical);
     }
 }
 

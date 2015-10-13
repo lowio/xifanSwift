@@ -14,15 +14,19 @@ func commonTest() {
     arrayNDTest();
 }
 
-func arrayNDTest(horizontal:Bool = false)
+func arrayNDTest(horizontal:Bool = true)
 {
-    var nd = horizontal ? XArray2D<Int>(columnFirst: 4, rows: 3) : XArray2D<Int>(rowFirst: 4, rows: 3);
+    var nd = horizontal ? XArray2D<Int>(horizontal: 4, rows: 3) : XArray2D<Int>(vertical: 4, rows: 3);
     print(nd);
     
     for i in 0..<nd.count
     {
         nd[i] = i;
     }
+    nd[1, 1] = 99;
+    print(nd);
+    
+    nd.orient = .Vertical;
     print(nd);
     
 }
@@ -65,7 +69,7 @@ func priorityQueueTest(testRebuild:Bool = true)
         while(!queue.isEmpty)
         {
             let e = queue.pop()!;
-//            print(e)
+            print(e)
         }
     }
     
