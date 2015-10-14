@@ -22,15 +22,23 @@ protocol XPFinderGridType
     
     //closed
     var closed:Bool{get set}
+    
+    init(x:Int, y:Int);
+}
+
+protocol XPFAlgorithmType
+{
+    //heuristic function
+    func heuristic(fx:Int, _ fy:Int, _ tx:Int, _ ty:Int) -> Int
+    
+    //get neighbors
+    func neighbors(x:Int, _ y:Int) -> [(Int, Int)];
 }
 
 //MARK: XPFinderMapType
 protocol XPFinderMapType
 {
     typealias _Grid:XPFinderGridType;
-    
-    //diagonal walkable
-    var diagonal:Bool{get}
     
     //heuristic h
     func heuristic(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
@@ -41,19 +49,40 @@ protocol XPFinderMapType
     //getNeighbors
     func getNeighbors(grid: Self._Grid) -> [Self._Grid]
     
-    //if grid walkable
-    func walkable(grid: Self._Grid) -> Bool;
+    //walkable
+    func walkable(x:Int, _ y:Int) -> Self._Grid?
     
     //start
-    var start:Self._Grid?{get}
+    var start:Self._Grid?{get set}
     
     //goal
-    var goal:Self._Grid?{get}
+    var goal:Self._Grid?{get set}
+    
+    //algorithm
+    var algorithm:XPFAlgorithmType{get}
 }
 
 extension XPFinderMapType
 {
-    func movementCost(fromGrid: Self._Grid, toGrid: Self._Grid) -> Int{return 1;}
+    func heuristic(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int{
+        return algorithm.heuristic(fromGrid.x, fromGrid.y, toGrid.x, toGrid.y);
+    }
+    
+    func getNeighbors(grid: Self._Grid) -> [Self._Grid]{
+        var neighbors = [_Grid]();
+        let pos = algorithm.neighbors(grid.x, grid.y);
+        for p in pos
+        {
+            guard let g = walkable(p.0, p.1) else{continue;}
+            neighbors.append(g);
+        }
+        return neighbors;
+    }
+    
+    func movementCost(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
+    {
+        return 1;
+    }
 }
 
 //MARK: XPFinderNodeType

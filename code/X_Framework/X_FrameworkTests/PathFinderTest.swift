@@ -9,8 +9,11 @@
 import UIKit
 
 func pathFinderTest() {
-    
-    
+//    let xpf = XPathFinder();
+//    
+//    let size = 50;
+//    var config = XArray2D<Int>(horizontal: size, rows: size);
+//    var map = XPFinderMap(config: config, algorithm: XPFinderAlgorithm.Manhattan)
     
     
     let map = XPF_Map();

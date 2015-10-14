@@ -45,41 +45,78 @@ struct XPFinderNode<G:XPFinderGridType>: XPFinderNodeType
 struct XPFinder{}
 extension XPFinder: XPFinderType{}
 
+
+protocol XPFinderWalkable
+{
+    //movement cost
+    var movementCost:Int{get}
+    //walkable
+    var walkable:Bool{get}
+}
+
 //MARK: XPFinderMap
-struct XPFinderMap<G:XPFinderGridType>: XPFinderMapType {
+struct XPFinderMap<G:XPFinderGridType, A:XArray2DType>: XPFinderMapType {
     typealias _Grid = G;
     
-    private(set) var diagonal:Bool;
-    private(set) var start:G?;
-    private(set) var goal:G?;
+    var start:G?;
+    var goal:G?;
+    private(set) var algorithm:XPFAlgorithmType;
+    private(set) var config:A;
     
-    //heuristic h
-    func heuristic(fromGrid: G, _ toGrid: G) -> Int{
-        let x = abs(fromGrid.x - toGrid.x);
-        let y = abs(fromGrid.y - toGrid.y);
-        return x + y;
+    func movementCost(fromGrid: G, _ toGrid: G) -> Int
+    {
+        return 1;
     }
     
-    //getNeighbors
-    func getNeighbors(grid: G) -> [G]{
-        var neighbors = [_Grid]();
+    func walkable(x:Int, _ y:Int) -> G?
+    {
+        return G(x: x, y: y);
+    }
 
-//        guard let index = getPosition(grid.x, grid.y) else{
-//            return [];
-//        }
-//        let temp = self[index]!;
-//        if walkable(temp)
-//        {
-//            neighbors.append(temp);
-//        }
-        
-        return neighbors;
+    init(config:A, algorithm:XPFAlgorithmType)
+    {
+        self.config = config;
+        self.algorithm = algorithm;
+    }
+}
+
+extension XPFinderMap where A._Element:XPFinderWalkable
+{
+    func walkable(x:Int, _ y:Int) -> G?
+    {
+        guard let g = config[y, x] where g.walkable else{return nil}
+        return G(x: x, y: y);
+    }
+}
+
+//MARK XPFinderAlgorithm
+enum XPFinderAlgorithm: XPFAlgorithmType
+{
+    case Manhattan, Diagonal
+    
+    //heuristic
+    func heuristic(fx:Int, _ fy:Int, _ tx:Int, _ ty:Int) -> Int
+    {
+        switch self{
+        case .Manhattan:
+            let x = abs(fx - tx);
+            let y = abs(fy - ty);
+            return x + y;
+        case .Diagonal:
+            let x = abs(fx - tx);
+            let y = abs(fy - ty);
+            return x + y + min(x, y);
+        }
     }
     
-    //if grid walkable
-    func walkable(grid: G) -> Bool{
-        return true;
+    //neighbors
+    func neighbors(x:Int, _ y:Int) -> [(Int, Int)]
+    {
+        switch self{
+        case .Manhattan:
+            return [(x-1, y), (x, y+1), (x+1, y), (x, y-1)];
+        case .Diagonal:
+            return [(x-1, y-1), (x-1, y), (x-1, y+1), (x, y+1),(x+1, y+1),  (x+1, y), (x+1, y-1), (x, y-1)];
+        }
     }
-    
-    
 }
