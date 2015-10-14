@@ -6,10 +6,10 @@
 //  Copyright © 2015年 yeah. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-
-protocol XPathGrid
+//MARK: XPFinderGridType
+protocol XPFinderGridType
 {
     //x
     var x:Int{get set}
@@ -18,89 +18,138 @@ protocol XPathGrid
     var y:Int{get set}
     
     //parent
-    var p:Self?{get set}
+    var p:XPFinderGridType?{get set}
     
     //closed
     var closed:Bool{get set}
-    
-    //priority
-    var priority:CGFloat{get}
 }
 
-protocol XPathNode:XPathGrid
+//MARK: XPFinderMapType
+protocol XPFinderMapType
 {
+    typealias _Grid:XPFinderGridType;
+    
+    //diagonal walkable
+    var diagonal:Bool{get}
+    
+    //heuristic h
+    func heuristic(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
+    
+    //movementCost used by g
+    func movementCost(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
+    
+    //getNeighbors
+    func getNeighbors(grid: Self._Grid) -> [Self._Grid]
+    
+    //if grid walkable
+    func walkable(grid: Self._Grid) -> Bool;
+    
+    //start
+    var start:Self._Grid?{get}
+    
+    //goal
+    var goal:Self._Grid?{get}
+}
+
+extension XPFinderMapType
+{
+    func movementCost(fromGrid: Self._Grid, toGrid: Self._Grid) -> Int{return 1;}
+}
+
+//MARK: XPFinderNodeType
+protocol XPFinderNodeType
+{
+    typealias _Grid:XPFinderGridType;
+    
     //g score
-    var g:CGFloat{get set}
+    var g:Int{get set}
     
     //h score
-    var h:CGFloat{get set}
+    var h:Int{get set}
     
     //f score
-    var f:CGFloat{get}
-}
-
-extension XPathNode
-{
-    var f:CGFloat{return self.g + self.h;}
-}
-
-protocol XPathFinderType
-{
-}
-
-extension XPathFinderType
-{
+    var f:Int{get}
     
-    private func _buildPath<N:XPathNode>(node:N) -> [N]
-    {
-        return [];
-    }
+    //priority
+    var priority:Int{get}
     
-    //path find
-    func pathFind<N:XPathNode where N:Hashable, N:Equatable>(start:N, goal:N,
-        heuristic:(N, N)->CGFloat, movementCost:(N, N)->CGFloat, getNeighbors:(N)->[N],
-        completion:([N])->())
+    //gird
+    var grid:_Grid?{set get}
+    
+    //init
+    init(g:Int, h:Int)
+}
+
+extension XPFinderNodeType
+{
+    var f:Int{return self.g + self.h;}
+}
+
+//MARK: XPathFinderType
+protocol XPFinderType{}
+extension XPFinderType
+{
+    func pathFinder<_Map:XPFinderMapType, _Node:XPFinderNodeType where _Node:Equatable, _Map._Grid:Hashable, _Map._Grid == _Node._Grid>(map:_Map, completion:([_Map._Grid]) -> ())
     {
-        var visited = [N:N]();
-        visited[start] = start;
-        var openQueue = XPriorityQueue<N>{return $0.priority > $1.priority;}
-        openQueue.push(start);
+        guard let start = map.start else{return;}
+        guard let goal = map.goal else{return;}
         
-        var current:N;
+        var visited:[_Map._Grid:_Node] = [:];
+        var current:_Node = self._createPathNode(0, map.heuristic(start, goal));
+        current.grid = start;
+        
+        visited[start] = current;
+        var opened = XPriorityQueue<_Node>{return $0.priority > $1.priority};
+        opened.push(current);
+        
         defer{
-            let p = self._buildPath(current);
+            let p = self._buildPath(current.grid!);
             completion(p);
         }
         
         repeat{
-            current = openQueue.pop()!;
-            guard current != goal else{break;}  //do defer
+            current = opened.pop()!;
+            guard let grid = current.grid else{break;}
+            guard grid != goal else{break;}
+            current.grid?.closed = true;
+            visited[grid] = current;
             
-            current.closed = true;
-            visited[current] = current;
             
-            let neighbors = getNeighbors(current);
+            let neighbors = map.getNeighbors(grid);
             for n in neighbors
             {
-                let g = current.g + movementCost(current, n);
+                let g = current.g + map.movementCost(grid, n);
                 guard let v = visited[n] else{
-                    var o = n;
-                    o.g = g;
-                    o.h = heuristic(n, goal);
-                    o.p = current;
-                    o.closed = false;
-                    visited[o] = o;
-                    openQueue.push(o);
+                    var o:_Node = self._createPathNode(g, map.heuristic(n, goal))
+                    o.grid = n;
+                    o.grid?.p = grid;
+                    visited[n] = o;
+                    opened.push(o);
                     continue;
                 }
-                
-                guard !v.closed && v.g > g else{continue;}
+
+                guard v.g > g else{continue;}
                 var updateNode = v;
+                updateNode.grid?.closed = false;
                 updateNode.g = g;
-                visited[updateNode] = updateNode;
-                guard let index = openQueue.indexOf(v) else{continue;}
-                openQueue.update(updateNode, atIndex: index);
+                visited[n] = updateNode;
+                guard let index = opened.indexOf(v) else{continue;}
+                opened.update(updateNode, atIndex: index);
             }
-        }while !openQueue.isEmpty
+        }while !opened.isEmpty
+    }
+}
+
+private extension XPFinderType
+{
+    func _buildPath<_PathGrid:XPFinderGridType>(node:_PathGrid) -> [_PathGrid]
+    {
+        return [];
+    }
+    
+    //create path node
+    func _createPathNode<_PathNode:XPFinderNodeType>(g:Int, _ h:Int) -> _PathNode
+    {
+        return _PathNode.init(g:g, h:h);
     }
 }
