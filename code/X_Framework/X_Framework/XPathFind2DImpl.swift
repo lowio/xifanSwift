@@ -1,26 +1,26 @@
 //
-//  XPFinderImpl.swift
+//  XPathFind2DImpl.swift
 //  X_Framework
 //
-//  Created by 173 on 15/10/14.
+//  Created by 叶贤辉 on 15/10/16.
 //  Copyright © 2015年 yeah. All rights reserved.
 //
 
 import Foundation
 
 //=========================================================================
-//MARK: XPFinder
-struct XPFinder{}
-extension XPFinder: XPFinderType{}
+//MARK: XPFinder2D
+struct XPFinder2D{}
+extension XPFinder2D: XPathFinderType{}
 
 //=========================================================================
-//MARK: XPFinderGrid
-struct XPFinderGrid: XPFinderGridType {
+//MARK: XPFGrid2D
+struct XPFGrid2D: XPathFindGridType, Hashable {
     private(set) var x, y:Int;
     
     var closed:Bool;
     
-    var p:XPFinderGridType?;
+    var parent:XPathFindGridType?
     
     init(_ x:Int, _ y:Int)
     {
@@ -28,43 +28,66 @@ struct XPFinderGrid: XPFinderGridType {
         self.y = y;
         self.closed = false;
     }
+    
+    var hashValue:Int{return "\(x),\(y)".hashValue;}
+}
+func ==(lsh:XPFGrid2D, rsh:XPFGrid2D) -> Bool
+{
+    return lsh.x == rsh.x && lsh.y == rsh.y;
 }
 
 //=========================================================================
-//MARK: XPFinderNode
-struct XPFinderNode<G:XPFinderGridType>: XPFinderNodeType
+//MARK: XPFPriority
+struct XPFPriority: XPathFindPriorityType
 {
-    typealias _Grid = G;
+    typealias _Grid = XPFGrid2D;
     var g, h:Int;
-    private(set) var priority:Int;
-    var grid:G?
+    var grid:_Grid?
+    private var _flag:Int;
+    private var _f:Int;
+    var f:Int{return self._f;}
     
     init(g: Int, h: Int) {
         self.g = g;
         self.h = h;
-        self.priority = g + h;
+        self._f = self.g + self.h;
+        self._flag = XPFPriority._FLAG++;
+    }
+    
+    //计数器
+    private static var _FLAG:Int = 0;
+    
+    static func compare(p1:XPFPriority, p2:XPFPriority) -> Bool
+    {
+        let bl = p1.f > p2.f;
+        return bl ?? (p1._flag > p2._flag);
     }
 }
-
-//=========================================================================
-//MARK: XPFinderMap
-struct XPFinderMap<G:XPFinderGridType, T:XPFinderWalkable>
+func ==(lsh:XPFPriority, rsh:XPFPriority) -> Bool
 {
-    typealias _Grid = G;
+    return lsh.f == rsh.f && lsh.grid == rsh.grid;
+}
+//=========================================================================
+//MARK: XPFConfig
+struct XPFConfig<T:XPFinderWalkable>
+{
+    typealias _Priority = XPFPriority;
+    
+    typealias _Grid = _Priority._Grid;
     
     var start, goal:_Grid?;
     
-    private var algorithm:XPFinderAlgorithm;
+    private var algorithm:XPFAlgorithm2D;
     
     private(set) var config:XArray2D<T>;
-
-    init(config:XArray2D<T>, algorithm:XPFinderAlgorithm)
+    
+    init(config:XArray2D<T>, algorithm:XPFAlgorithm2D)
     {
         self.config = config;
         self.algorithm = algorithm;
     }
 }
-extension XPFinderMap: XPFinderMapType
+extension XPFConfig: XPathFindConfigType
 {
     func heuristic(fromGrid: _Grid, _ toGrid: _Grid) -> Int
     {
@@ -91,6 +114,11 @@ extension XPFinderMap: XPFinderMapType
         return neighbors;
     }
     
+    func isTarget(grid: _Grid) -> Bool
+    {
+        return grid == self.goal
+    }
+    
     func walkable(x:Int, _ y:Int) -> Bool
     {
         guard let element = config[x, y] else{return false;}
@@ -106,8 +134,8 @@ protocol XPFinderWalkable
     var walkable:Bool{get}
 }
 //=========================================================================
-//MARK XPFinderAlgorithm
-enum XPFinderAlgorithm
+//MARK XPFAlgorithm2D
+enum XPFAlgorithm2D
 {
     case Manhattan, Diagonal
     

@@ -76,7 +76,7 @@ extension XPriorityQueueType
     var description:String{return self.source.description;}
 }
 
-//MARK: XPriorityQueueType extension -- subscript
+//MARK: XPriorityQueueType extension
 extension XPriorityQueueType
 {
     private(set) subscript(i:Int) -> Self._Element{
