@@ -8,36 +8,71 @@
 
 import UIKit
 
-func pathFinderTest() {
-//    let xpf = XPathFinder();
-//    
-//    let size = 50;
-//    var config = XArray2D<Int>(horizontal: size, rows: size);
-//    var map = XPFinderMap(config: config, algorithm: XPFinderAlgorithm.Manhattan)
-    
-    
-    let map = XPF_Map();
-    let s = XPF_Grid(0, 0);
-    let g = XPF_Grid(16, 16);
-    let pf = XPathFinder();
-    //    pf.pathFinder(startGrid: s, goalGride: g, map: map){println("count:\($0.count) \n \($0.description)")}
-    pf.pathFinder(startGrid: s, goalGride: g, map: map){
-        var grids = map.grids;
-        //        println(grids)
-        for v in $1
-        {
-            grids[v.1.y, v.1.x] = 1;
-            
-        }
-        for grid in $0
-        {
-            grids[grid.y, grid.x] = 3;
-        }
-        
-        grids[s.y, s.x] = 4;
-        grids[g.y, g.x] = 5;
-        print(grids);
+extension XPFinderGrid:Hashable
+{
+    var hashValue:Int{
+        return "\(x), \(y)".hashValue;
     }
+}
+func ==(lsh:XPFinderGrid, rsh:XPFinderGrid) -> Bool{return lsh.hashValue == rsh.hashValue;}
+
+extension XPFinderNode:Equatable{}
+func ==<XPFN:XPFinderNodeType>(lsh:XPFN, rsh:XPFN) -> Bool{return lsh.f == rsh.f;}
+
+
+extension Int:XPFinderWalkable
+{
+    var movementCost:Int{return 1;}
+    var walkable:Bool{return true;}
+}
+
+
+func pathFinderTest() {
+    let xpf = XPFinder();
+    
+    let size = 50;
+    var config = XArray2D<Int>(horizontal: size, rows: size);
+    for i in 0..<size*size
+    {
+        let v = 0;
+//      let v = Int(rand()%10) > 3 ?0:1;
+        config[i] = v;
+    }
+    var map = XPFinderMap<XPFinderGrid, Int>(config: config, algorithm: XPFinderAlgorithm.Manhattan)
+    map.start = XPFinderGrid(0, 0);
+    map.goal = XPFinderGrid(10, 6);
+    
+    var c = map.config;
+    xpf.pathFinder(map, XPFinderNode<XPFinderGrid>.self){
+        for v in $0{
+            c[v.x, v.y] = 3;
+        }
+        print(c);
+    }
+    
+    
+//    let map = XPF_Map();
+//    let s = XPF_Grid(0, 0);
+//    let g = XPF_Grid(16, 16);
+//    let pf = XPathFinder();
+//    //    pf.pathFinder(startGrid: s, goalGride: g, map: map){println("count:\($0.count) \n \($0.description)")}
+//    pf.pathFinder(startGrid: s, goalGride: g, map: map){
+//        var grids = map.grids;
+//        //        println(grids)
+//        for v in $1
+//        {
+//            grids[v.1.y, v.1.x] = 1;
+//            
+//        }
+//        for grid in $0
+//        {
+//            grids[grid.y, grid.x] = 3;
+//        }
+//        
+//        grids[s.y, s.x] = 4;
+//        grids[g.y, g.x] = 5;
+//        print(grids);
+//    }
 }
 
 //MARK: XPF_Map

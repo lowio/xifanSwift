@@ -8,83 +8,53 @@
 
 import Foundation
 
+//=========================================================================
 //MARK: XPFinderGridType
 protocol XPFinderGridType
 {
-    //x
-    var x:Int{get set}
+    //position x
+    var x:Int{get}
     
-    //y
-    var y:Int{get set}
+    //position y
+    var y:Int{get}
     
-    //parent
-    var p:XPFinderGridType?{get set}
-    
-    //closed
+    //is closed
     var closed:Bool{get set}
     
-    init(x:Int, y:Int);
-}
-
-protocol XPFAlgorithmType
-{
-    //heuristic function
-    func heuristic(fx:Int, _ fy:Int, _ tx:Int, _ ty:Int) -> Int
+    //parent grid
+    var p:XPFinderGridType?{get set}
     
-    //get neighbors
-    func neighbors(x:Int, _ y:Int) -> [(Int, Int)];
+    //init
+    init(_ x:Int, _ y:Int);
 }
 
+//=========================================================================
 //MARK: XPFinderMapType
 protocol XPFinderMapType
 {
     typealias _Grid:XPFinderGridType;
     
     //heuristic h
-    func heuristic(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
+    func heuristic(fromGrid: _Grid, _ toGrid: _Grid) -> Int
     
     //movementCost used by g
-    func movementCost(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
+    func movementCost(fromGrid: _Grid, _ toGrid: _Grid) -> Int
     
     //getNeighbors
-    func getNeighbors(grid: Self._Grid) -> [Self._Grid]
-    
-    //walkable
-    func walkable(x:Int, _ y:Int) -> Self._Grid?
+    func getNeighbors(grid: _Grid) -> [_Grid]
     
     //start
-    var start:Self._Grid?{get set}
+    var start:_Grid?{get set}
     
     //goal
-    var goal:Self._Grid?{get set}
-    
-    //algorithm
-    var algorithm:XPFAlgorithmType{get}
+    var goal:_Grid?{get set}
 }
-
 extension XPFinderMapType
 {
-    func heuristic(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int{
-        return algorithm.heuristic(fromGrid.x, fromGrid.y, toGrid.x, toGrid.y);
-    }
-    
-    func getNeighbors(grid: Self._Grid) -> [Self._Grid]{
-        var neighbors = [_Grid]();
-        let pos = algorithm.neighbors(grid.x, grid.y);
-        for p in pos
-        {
-            guard let g = walkable(p.0, p.1) else{continue;}
-            neighbors.append(g);
-        }
-        return neighbors;
-    }
-    
-    func movementCost(fromGrid: Self._Grid, _ toGrid: Self._Grid) -> Int
-    {
-        return 1;
-    }
+    func movementCost(fromGrid: _Grid, _ toGrid: _Grid) -> Int{return 1;}
 }
 
+//=========================================================================
 //MARK: XPFinderNodeType
 protocol XPFinderNodeType
 {
@@ -108,22 +78,23 @@ protocol XPFinderNodeType
     //init
     init(g:Int, h:Int)
 }
-
 extension XPFinderNodeType
 {
     var f:Int{return self.g + self.h;}
 }
 
+//=========================================================================
 //MARK: XPathFinderType
 protocol XPFinderType{}
 extension XPFinderType
 {
-    func pathFinder<_Map:XPFinderMapType, _Node:XPFinderNodeType where _Node:Equatable, _Map._Grid:Hashable, _Map._Grid == _Node._Grid>(map:_Map, completion:([_Map._Grid]) -> ())
+    //pathFinder
+    func pathFinder<_Map:XPFinderMapType, _Node:XPFinderNodeType where _Node:Equatable, _Map._Grid:Hashable, _Node._Grid == _Map._Grid>(map:_Map, _ NT:_Node.Type, completion:([XPFinderGridType]) -> ())
     {
         guard let start = map.start else{return;}
         guard let goal = map.goal else{return;}
         
-        var visited:[_Map._Grid:_Node] = [:];
+        var visited:[_Node._Grid:_Node] = [:];
         var current:_Node = self._createPathNode(0, map.heuristic(start, goal));
         current.grid = start;
         
@@ -168,12 +139,18 @@ extension XPFinderType
         }while !opened.isEmpty
     }
 }
-
 private extension XPFinderType
 {
-    func _buildPath<_PathGrid:XPFinderGridType>(node:_PathGrid) -> [_PathGrid]
+    func _buildPath(grid:XPFinderGridType) -> [XPFinderGridType]
     {
-        return [];
+        var g:XPFinderGridType = grid;
+        var path:[XPFinderGridType] = [];
+        repeat{
+            path.append(g);
+            guard let p = g.p else{break;}
+            g = p
+        }while true
+        return path;
     }
     
     //create path node
@@ -182,3 +159,4 @@ private extension XPFinderType
         return _PathNode.init(g:g, h:h);
     }
 }
+//=========================================================================

@@ -8,16 +8,21 @@
 
 import Foundation
 
+//=========================================================================
+//MARK: XPFinder
+struct XPFinder{}
+extension XPFinder: XPFinderType{}
 
+//=========================================================================
 //MARK: XPFinderGrid
 struct XPFinderGrid: XPFinderGridType {
-    var x, y:Int;
+    private(set) var x, y:Int;
     
     var closed:Bool;
     
     var p:XPFinderGridType?;
     
-    init(x:Int, y:Int)
+    init(_ x:Int, _ y:Int)
     {
         self.x = x;
         self.y = y;
@@ -25,12 +30,12 @@ struct XPFinderGrid: XPFinderGridType {
     }
 }
 
+//=========================================================================
 //MARK: XPFinderNode
 struct XPFinderNode<G:XPFinderGridType>: XPFinderNodeType
 {
     typealias _Grid = G;
-    var g:Int;
-    var h:Int;
+    var g, h:Int;
     private(set) var priority:Int;
     var grid:G?
     
@@ -41,56 +46,68 @@ struct XPFinderNode<G:XPFinderGridType>: XPFinderNodeType
     }
 }
 
-//MARK: XPFinder
-struct XPFinder{}
-extension XPFinder: XPFinderType{}
-
-
-protocol XPFinderWalkable
-{
-    //movement cost
-    var movementCost:Int{get}
-    //walkable
-    var walkable:Bool{get}
-}
-
+//=========================================================================
 //MARK: XPFinderMap
-struct XPFinderMap<G:XPFinderGridType, A:XArray2DType>: XPFinderMapType {
+struct XPFinderMap<G:XPFinderGridType, T:XPFinderWalkable>
+{
     typealias _Grid = G;
     
-    var start:G?;
-    var goal:G?;
-    private(set) var algorithm:XPFAlgorithmType;
-    private(set) var config:A;
+    var start, goal:_Grid?;
     
-    func movementCost(fromGrid: G, _ toGrid: G) -> Int
-    {
-        return 1;
-    }
+    private var algorithm:XPFinderAlgorithm;
     
-    func walkable(x:Int, _ y:Int) -> G?
-    {
-        return G(x: x, y: y);
-    }
+    private(set) var config:XArray2D<T>;
 
-    init(config:A, algorithm:XPFAlgorithmType)
+    init(config:XArray2D<T>, algorithm:XPFinderAlgorithm)
     {
         self.config = config;
         self.algorithm = algorithm;
     }
 }
-
-extension XPFinderMap where A._Element:XPFinderWalkable
+extension XPFinderMap: XPFinderMapType
 {
-    func walkable(x:Int, _ y:Int) -> G?
+    func heuristic(fromGrid: _Grid, _ toGrid: _Grid) -> Int
     {
-        guard let g = config[y, x] where g.walkable else{return nil}
-        return G(x: x, y: y);
+        return algorithm.heuristic(fromGrid.x, fromGrid.y, toGrid.x, toGrid.y);
+    }
+    
+    func movementCost(fromGrid: _Grid, _ toGrid: _Grid) -> Int
+    {
+        guard let element = config[toGrid.x, toGrid.y] else{return 1;}
+        return element.movementCost;
+    }
+    
+    func getNeighbors(grid: _Grid) -> [_Grid]
+    {
+        var neighbors = [_Grid]();
+        let pos = algorithm.neighbors(grid.x, grid.y);
+        for p in pos
+        {
+            let x = p.0;
+            let y = p.1;
+            guard walkable(x, y) else{continue;}
+            neighbors.append(_Grid(x, y));
+        }
+        return neighbors;
+    }
+    
+    func walkable(x:Int, _ y:Int) -> Bool
+    {
+        guard let element = config[x, y] else{return false;}
+        return element.walkable;
     }
 }
 
+//=========================================================================
+//MARK: XPFinderWalkable
+protocol XPFinderWalkable
+{
+    var movementCost:Int{get}
+    var walkable:Bool{get}
+}
+//=========================================================================
 //MARK XPFinderAlgorithm
-enum XPFinderAlgorithm: XPFAlgorithmType
+enum XPFinderAlgorithm
 {
     case Manhattan, Diagonal
     
