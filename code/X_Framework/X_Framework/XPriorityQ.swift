@@ -18,7 +18,7 @@ protocol XPriorityQueueType: CustomStringConvertible
     var source:[Self._Element]{get set}
     
     //compare function
-    var compare:(Self._Element, Self._Element) -> Bool{get};
+    var compare:(Self._Element, Self._Element) -> Bool{get set};
     
     //init rebuild queue use source with compare function
     init(source:[Self._Element], compare:(Self._Element, Self._Element) -> Bool)
@@ -32,14 +32,6 @@ protocol XPriorityQueueType: CustomStringConvertible
 //MARK: XPriorityQueueType extension -- default implement
 extension XPriorityQueueType
 {
-    //compare function type
-    typealias _XCompareFunction = (Self._Element, Self._Element) -> Bool
-    
-    init(compare:_XCompareFunction)
-    {
-        self.init(source: [], compare: compare);
-    }
-    
     mutating func push(element: Self._Element) {
         self.source.append(element);
         self._riseup(self.count - 1);
@@ -71,12 +63,14 @@ extension XPriorityQueueType
         }
     }
     
+    
+    
     var count:Int{return self.source.count;}
     var isEmpty:Bool{return self.source.isEmpty;}
     var description:String{return self.source.description;}
 }
 
-//MARK: XPriorityQueueType extension
+//subscript init indexOf
 extension XPriorityQueueType
 {
     private(set) subscript(i:Int) -> Self._Element{
@@ -94,6 +88,11 @@ extension XPriorityQueueType
             return equalFunc(ele, $0);
         }
     }
+    
+    init(compare:(Self._Element, Self._Element) -> Bool)
+    {
+        self.init(source: [], compare: compare);
+    }
 }
 
 //indexof
@@ -102,6 +101,20 @@ extension XPriorityQueueType where _Element: Equatable
     //get index
     func indexOf(ele:Self._Element) -> Int?{
         return self.source.indexOf(ele);
+    }
+}
+
+//extension init
+extension XPriorityQueueType where _Element: Comparable
+{
+    init(max source:[Self._Element])
+    {
+        self.init(source: source){$0 < $1}
+    }
+    
+    init(min source:[Self._Element])
+    {
+        self.init(source: source){$0 > $1}
     }
 }
 
@@ -156,7 +169,6 @@ private extension XPriorityQueueType
     func _getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
 }
 
-
 //MARK: XPriorityQueue -- priority queue struct
 struct XPriorityQueue<T>
 {
@@ -164,14 +176,14 @@ struct XPriorityQueue<T>
     var source:[T];
     
     //compare function
-    private(set) var compare:XPriorityQueue._XCompareFunction
+    var compare:(_Element, _Element) -> Bool;
     
     //init with resource
-    init(source:[T], compare:XPriorityQueue._XCompareFunction)
+    init(source:[_Element], compare:(_Element, _Element) -> Bool)
     {
         self.compare = compare;
         self.source = source;
-        rebuild();
+        self.rebuild();
     }
 }
 

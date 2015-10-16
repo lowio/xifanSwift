@@ -101,7 +101,7 @@ protocol XPathFinderType
     func getNeighbors(tile: Self._Scannable._Tile) -> [Self._Scannable._Tile]
     
     //findPath
-    mutating func findPath(completion:([Self._Scannable._Tile]) -> ());
+    mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())?)
 }
 private extension XPathFinderType
 {
@@ -113,11 +113,14 @@ private extension XPathFinderType
 }
 extension XPathFinderType
 {
-    mutating func findPath(completion:([Self._Scannable._Tile]) -> ()){}
+    mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())? = nil)
+    {
+        assert(true, "findPath unimplement0")
+    }
 }
 extension XPathFinderType where Self._Scannable._Tile:Hashable, _Scannable:Equatable
 {
-    mutating func findPath(completion:([Self._Scannable._Tile]) -> ())
+    mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())? = nil)
     {
         guard let sg = self.start else{return;}
         guard let gg = self.goal else{return;}
@@ -133,7 +136,11 @@ extension XPathFinderType where Self._Scannable._Tile:Hashable, _Scannable:Equat
 
         defer{
             if let temp = _scanning.tile{
-                completion(temp.toPathChain());
+                pathCallback(temp.toPathChain());
+            }
+            
+            if let _visitedCallback = visitedCallback{
+                _visitedCallback(Array(visited.keys));
             }
         }
 

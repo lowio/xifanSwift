@@ -39,7 +39,8 @@ func pathFinderTest() {
     xpf.goal = XPFScannable._Tile(20, 23);
     
     var c = xpf.config;
-    xpf.findPath{
+    
+    xpf.findPath({
         for v in $0{
             var temp = v;
             temp.movementCost = 3;
@@ -47,8 +48,18 @@ func pathFinderTest() {
         }
         print(c);
         print($0.count)
-        
-    }
+    })
+//    {
+//        for v in $0{
+//            var temp = v;
+//            temp.movementCost = 3;
+//            c[v.x, v.y] = temp;
+//        }
+//        print(c);
+//        print($0.count)
+//    }
+    
+    
 //    XPathFinderType where Self._Scannable._Tile:Hashable, _Scannable:Equatable 这个方法改成通用方法
 //    pathFinder方法的where处理一下，XPathFind2DImpl优化一下，
 //    改变compare方法后打印visited看看变化
