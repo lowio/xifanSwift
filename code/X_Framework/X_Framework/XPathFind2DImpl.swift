@@ -69,6 +69,7 @@ extension XPFScannable: XPathFinderScannable
     static func compare(p1:XPFScannable, p2:XPFScannable) -> Bool
     {
         let bl = p1.f > p2.f;
+//        return bl;
         return bl ?? (p1._flag > p2._flag);
     }
 }
@@ -80,7 +81,7 @@ func ==(lsh:XPFScannable, rsh:XPFScannable) -> Bool
 
 //=========================================================================
 //MARK: XPFinder2D
-struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Tile:Equatable>
+struct XPFinder2D<T:XPathFinderScannable where T:Equatable, T._Tile:XPathFinderTile2D, T._Tile:Hashable>
 {
     typealias _Scannable = T;
     
@@ -94,7 +95,81 @@ struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Til
     {
         self.config = config;
         self.algorithm = algorithm;
+        
+        self.openedQueue = XPriorityQueue<_Scannable>(compare: _Scannable.compare);
+        self.visitedDic = [:];
     }
+    
+    
+        
+    //opened list
+    var openedQueue:XPriorityQueue<_Scannable>;
+    
+    //visited dictionay
+    var visitedDic:[_Scannable._Tile: _Scannable];
+    
+    //get visited tiles for visitedCallback
+    var visitedTiles:[_Scannable._Tile]{
+        return Array(visitedDic.keys);
+    }
+    
+    //continue scan
+    func deadEnd() -> Bool
+    {
+        return openedQueue.isEmpty;
+    }
+    
+    //push
+    mutating func push(scannable: _Scannable)
+    {
+        self.openedQueue.push(scannable);
+    }
+    
+    //pop
+    mutating func pop() -> _Scannable
+    {
+        return self.openedQueue.pop()!;
+    }
+    
+    //reset
+    mutating func reset()
+    {
+        self.openedQueue = XPriorityQueue<_Scannable>(compare: _Scannable.compare);
+        self.visitedDic = [:];
+    }
+    
+    //get visited
+    func getVisited(tile: _Scannable._Tile) -> _Scannable?
+    {
+        return self.visitedDic[tile];
+    }
+    
+    //set visited
+    mutating func setVisited(tile: _Scannable._Tile, scanner: _Scannable)
+    {
+        self.visitedDic[tile] = scanner;
+    }
+    
+    //get closed
+    func getClosed(tile: _Scannable._Tile) -> _Scannable?
+    {
+        guard let temp = self.visitedDic[tile] where temp.closed else{return nil;}
+        return temp;
+    }
+    
+    //set closed
+    mutating func setClosed(tile: _Scannable._Tile, scanner: _Scannable)
+    {
+        self.setVisited(tile, scanner: scanner);
+    }
+    
+    //update visited
+    mutating func updateScannable(scannable: _Scannable)
+    {
+//        guard index = self.openedQueue.indexOf(scannable) else{return;}
+//        self.openedQueue.update(scannable, atIndex: index);
+    }
+    
 }
 extension XPFinder2D: XPathFinderType
 {

@@ -88,19 +88,49 @@ protocol XPathFinderType
     //grid is goal?
     func isTarget(element: Self._Scannable._Tile) -> Bool
     
-    //start
+    //start tile
     var start:Self._Scannable._Tile?{get}
     
-    //goal
+    //goal tile
     var goal:Self._Scannable._Tile?{get}
     
-    //heuristic h
+    //return visited [_Scannable._Tile] used by findPath-visitedCallback
+    var visitedTiles:[Self._Scannable._Tile]{get}
+    
+    //return h score used by f = h + g
     func heuristic(fromTile: Self._Scannable._Tile, _ toTile: Self._Scannable._Tile) -> Int
     
-    //getNeighbors
+    //return neighbors [Self._Scannable._Tile]
     func getNeighbors(tile: Self._Scannable._Tile) -> [Self._Scannable._Tile]
     
-    //findPath
+    //return visited _Scannable by tile
+    func getVisited(tile: Self._Scannable._Tile) -> Self._Scannable?
+    
+    //return closed _Scannable by tile
+    func getClosed(tile: Self._Scannable._Tile) -> Self._Scannable?
+    
+    //no path, has dead end
+    func deadEnd() -> Bool
+    
+    //reset pathFinder
+    mutating func reset()
+    
+    //set _Scannable visited at tile
+    mutating func setVisited(tile: Self._Scannable._Tile, scanner: Self._Scannable)
+    
+    //set _Scannable closed at tile
+    mutating func setClosed(tile: Self._Scannable._Tile, scanner: Self._Scannable)
+    
+    //update scannable witch has a better g score
+    mutating func updateScannable(scannable: Self._Scannable)
+    
+    //push it to scanning queue
+    mutating func push(scannable: Self._Scannable)
+    
+    //pop a scannable at scanning queue
+    mutating func pop() -> Self._Scannable
+    
+    //findPath main
     mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())?)
 }
 private extension XPathFinderType
@@ -115,67 +145,68 @@ extension XPathFinderType
 {
     mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())? = nil)
     {
-        assert(true, "findPath unimplement0")
-    }
-}
-extension XPathFinderType where Self._Scannable._Tile:Hashable, _Scannable:Equatable
-{
-    mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())? = nil)
-    {
         guard let sg = self.start else{return;}
         guard let gg = self.goal else{return;}
-
-        var visited:[Self._Scannable._Tile: Self._Scannable] = [:];  //create visited
+        
+        //reset pathFinder
+        self.reset();
+        
+        //create start scannable
         let h = self.heuristic(sg, gg);
         var _scanning:Self._Scannable = self._createScannable(0, h);
         _scanning.tile = sg;
         
-        visited[sg] = _scanning;                                  //set visited
-        var opened = XPriorityQueue<_Scannable>(compare: Self._Scannable.compare);
-        opened.push(_scanning);
-
+        //set start scannable
+        self.setVisited(sg, scanner: _scanning);
+        self.push(_scanning);
+        
+        //scan over
         defer{
             if let temp = _scanning.tile{
                 pathCallback(temp.toPathChain());
             }
             
             if let _visitedCallback = visitedCallback{
-                _visitedCallback(Array(visited.keys));
+                _visitedCallback(self.visitedTiles);
             }
         }
-
+        
+        //repeat cannable tile
         repeat{
-            _scanning = opened.pop()!;
+            // get next scannable then set closed and update it visited
+            _scanning = self.pop();
             guard let tile = _scanning.tile else{break;}
             guard !self.isTarget(tile) else{break;}
-            _scanning.closed = true;        //set closed
-            visited[tile] = _scanning;      //update visited close state
-
+            _scanning.closed = true;
+            self.setVisited(tile, scanner: _scanning);
+            
+            //scan current scannable's neighbors
             let neighbors = self.getNeighbors(tile);
             for n in neighbors
             {
                 let g = _scanning.g + n.movementCost;
-                guard let v = visited[n] else{  //get visited
+                guard let v = self.getVisited(n) else{
+                    //not visited before, it is new scannable
                     var o:Self._Scannable = self._createScannable(g, self.heuristic(n, gg))
                     o.tile = n;
-                    o.tile?.parent = tile;    //set parent tile
-                    visited[n] = o;             //set visited
-                    opened.push(o);
+                    o.tile?.parent = tile;
+                    self.setVisited(n, scanner: o);
+                    self.push(o);
                     continue;
                 }
-
-
+                
+                //current scannable is closed before ?
                 guard !v.closed else{continue;}
+                //not closed, check g, choose best g then update it's parent and g
                 guard v.g > g else{continue;}
                 var updateNode = v;
-                updateNode.tile?.parent = tile;   //set parent
-                updateNode.g = g;                   //set g
-                visited[n] = updateNode;            //update visited g && parent
+                updateNode.tile?.parent = tile;
+                updateNode.g = g;
+                self.setVisited(n, scanner: updateNode);
                 print("注意前方高能：此处出现已经在访问列表中的g需要更新", __LINE__)
-                guard let index = opened.indexOf(v) else{continue;}
-                opened.update(updateNode, atIndex: index);
+                self.updateScannable(v);
             }
-        }while !opened.isEmpty
+        }while !self.deadEnd()
     }
 }
 //=========================================================================

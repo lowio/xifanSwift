@@ -8,12 +8,6 @@
 
 import UIKit
 
-//extension Int:XPathFinderTile2D
-//{
-//    var movementCost:Int{return 1;}
-//    var walkable:Bool{return true;}
-//}
-
 extension XPFinderTile2D: CustomStringConvertible
 {
     var description:String{
@@ -40,47 +34,28 @@ func pathFinderTest() {
     
     var c = xpf.config;
     
+    var path:[XPFScannable._Tile] = [];
     xpf.findPath({
+        path = $0;
+    })
+    {
         for v in $0{
+            var temp = v;
+            temp.movementCost = 0;
+            c[v.x, v.y] = temp;
+        }
+        for v in path
+        {
             var temp = v;
             temp.movementCost = 3;
             c[v.x, v.y] = temp;
         }
         print(c);
-        print($0.count)
-    })
-//    {
-//        for v in $0{
-//            var temp = v;
-//            temp.movementCost = 3;
-//            c[v.x, v.y] = temp;
-//        }
-//        print(c);
-//        print($0.count)
-//    }
+        print($0.count, "", path.count)
+    }
     
     
-//    XPathFinderType where Self._Scannable._Tile:Hashable, _Scannable:Equatable 这个方法改成通用方法
-//    pathFinder方法的where处理一下，XPathFind2DImpl优化一下，
+//    XPathFind2DImpl优化
 //    改变compare方法后打印visited看看变化
-//    此处把visited列表中的节点全部打印
 //    load map config json 格式的
-//    
-//    pf.pathFinder(startGrid: s, goalGride: g, map: map){
-//        var grids = map.grids;
-//        //        println(grids)
-//        for v in $1
-//        {
-//            grids[v.1.y, v.1.x] = 1;
-//            
-//        }
-//        for grid in $0
-//        {
-//            grids[grid.y, grid.x] = 3;
-//        }
-//        
-//        grids[s.y, s.x] = 4;
-//        grids[g.y, g.x] = 5;
-//        print(grids);
-//    }
 }
