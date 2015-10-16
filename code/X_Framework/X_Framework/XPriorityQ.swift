@@ -87,6 +87,13 @@ extension XPriorityQueueType
             return self.source[i];
         }
     }
+    
+    func indexOf(ele:Self._Element, equalFunc: (Self._Element, Self._Element) -> Bool) -> Int?
+    {
+        return self.source.indexOf{
+            return equalFunc(ele, $0);
+        }
+    }
 }
 
 //indexof

@@ -9,130 +9,126 @@
 import Foundation
 
 //=========================================================================
-//MARK: XPFinder2D
-struct XPFinder2D{}
-extension XPFinder2D: XPathFinderType{}
+protocol XPathFinderTile2D:XPathFinderTile
+{
+    var x:Int{get}
+    var y:Int{get}
+    
+    init(_ x:Int, _ y:Int)
+}
 
-//=========================================================================
-//MARK: XPFGrid2D
-struct XPFGrid2D: XPathFindGridType, Hashable {
+//MARK: XPFinderTile2D
+struct XPFinderTile2D {
     private(set) var x, y:Int;
-    
-    var closed:Bool;
-    
-    var parent:XPathFindGridType?
+    var movementCost:Int = 1;
+    var parent:XPathFinderTile? = nil;
     
     init(_ x:Int, _ y:Int)
     {
         self.x = x;
         self.y = y;
-        self.closed = false;
     }
-    
+}
+extension XPFinderTile2D: XPathFinderTile2D{}
+extension XPFinderTile2D: Hashable
+{
     var hashValue:Int{return "\(x),\(y)".hashValue;}
 }
-func ==(lsh:XPFGrid2D, rsh:XPFGrid2D) -> Bool
+func ==(lsh:XPFinderTile2D, rsh:XPFinderTile2D) -> Bool
 {
     return lsh.x == rsh.x && lsh.y == rsh.y;
 }
 
 //=========================================================================
 //MARK: XPFPriority
-struct XPFPriority: XPathFindPriorityType
+struct XPFScannable
 {
-    typealias _Grid = XPFGrid2D;
     var g, h:Int;
-    var grid:_Grid?
+    var tile:_Tile? = nil;
+    var closed:Bool = false;
+    
     private var _flag:Int;
     private var _f:Int;
+    
+    //计数器
+    private static var _FLAG:Int = 0;
+}
+extension XPFScannable: XPathFinderScannable
+{
+    typealias _Tile = XPFinderTile2D;
+    
     var f:Int{return self._f;}
     
     init(g: Int, h: Int) {
         self.g = g;
         self.h = h;
         self._f = self.g + self.h;
-        self._flag = XPFPriority._FLAG++;
+        self._flag = XPFScannable._FLAG++;
     }
     
-    //计数器
-    private static var _FLAG:Int = 0;
-    
-    static func compare(p1:XPFPriority, p2:XPFPriority) -> Bool
+    static func compare(p1:XPFScannable, p2:XPFScannable) -> Bool
     {
         let bl = p1.f > p2.f;
         return bl ?? (p1._flag > p2._flag);
     }
 }
-func ==(lsh:XPFPriority, rsh:XPFPriority) -> Bool
+extension XPFScannable: Equatable{}
+func ==(lsh:XPFScannable, rsh:XPFScannable) -> Bool
 {
-    return lsh.f == rsh.f && lsh.grid == rsh.grid;
+    return lsh.f == rsh.f && lsh.tile == rsh.tile;
 }
+
 //=========================================================================
-//MARK: XPFConfig
-struct XPFConfig<T:XPFinderWalkable>
+//MARK: XPFinder2D
+struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Tile:Equatable>
 {
-    typealias _Priority = XPFPriority;
+    typealias _Scannable = T;
     
-    typealias _Grid = _Priority._Grid;
-    
-    var start, goal:_Grid?;
+    var start, goal:T._Tile?;
     
     private var algorithm:XPFAlgorithm2D;
     
-    private(set) var config:XArray2D<T>;
+    private(set) var config:XArray2D<T._Tile>;
     
-    init(config:XArray2D<T>, algorithm:XPFAlgorithm2D)
+    init(config:XArray2D<T._Tile>, algorithm:XPFAlgorithm2D)
     {
         self.config = config;
         self.algorithm = algorithm;
     }
 }
-extension XPFConfig: XPathFindConfigType
+extension XPFinder2D: XPathFinderType
 {
-    func heuristic(fromGrid: _Grid, _ toGrid: _Grid) -> Int
+    func heuristic(fromTile: T._Tile, _ toTile: T._Tile) -> Int
     {
-        return algorithm.heuristic(fromGrid.x, fromGrid.y, toGrid.x, toGrid.y);
+        return algorithm.heuristic(fromTile.x, fromTile.y, toTile.x, toTile.y);
     }
     
-    func movementCost(fromGrid: _Grid, _ toGrid: _Grid) -> Int
+    func getNeighbors(tile: T._Tile) -> [T._Tile]
     {
-        guard let element = config[toGrid.x, toGrid.y] else{return 1;}
-        return element.movementCost;
-    }
-    
-    func getNeighbors(grid: _Grid) -> [_Grid]
-    {
-        var neighbors = [_Grid]();
-        let pos = algorithm.neighbors(grid.x, grid.y);
+        var neighbors:[T._Tile] = [];
+        let pos = algorithm.neighbors(tile.x, tile.y);
         for p in pos
         {
             let x = p.0;
             let y = p.1;
-            guard walkable(x, y) else{continue;}
-            neighbors.append(_Grid(x, y));
+            guard let t = getTile(x, y) else{continue;}
+            neighbors.append(t);
         }
         return neighbors;
     }
     
-    func isTarget(grid: _Grid) -> Bool
+    func isTarget(tile: T._Tile) -> Bool
     {
-        return grid == self.goal
+        return tile == self.goal
     }
     
-    func walkable(x:Int, _ y:Int) -> Bool
+    func getTile(x:Int, _ y:Int) -> T._Tile?
     {
-        guard let element = config[x, y] else{return false;}
-        return element.walkable;
+        guard let element = config[x, y] else{return nil;}
+        return element.passable ? element : nil;
     }
 }
 
-//=========================================================================
-//MARK: XPFinderWalkable
-protocol XPFinderWalkable
-{
-    var movementCost:Int{get}
-    var walkable:Bool{get}
-}
 //=========================================================================
 //MARK XPFAlgorithm2D
 enum XPFAlgorithm2D
