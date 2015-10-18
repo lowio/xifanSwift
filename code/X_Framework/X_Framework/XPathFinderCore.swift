@@ -203,7 +203,6 @@ extension XPathFinderType
                 updateNode.tile?.parent = tile;
                 updateNode.g = g;
                 self.setVisited(n, scanner: updateNode);
-                print("注意前方高能：此处出现已经在访问列表中的g需要更新", __LINE__)
                 self.updateScannable(v);
             }
         }while !self.deadEnd()

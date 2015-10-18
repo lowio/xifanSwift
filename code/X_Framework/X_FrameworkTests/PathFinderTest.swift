@@ -55,7 +55,7 @@ func pathFinderTest() {
     }
     
     
-//    XPathFind2DImpl优化
-//    改变compare方法后打印visited看看变化
-//    load map config json 格式的
+    //    load map config json 格式的
+    //    改变compare方法后打印visited看看变化
+    //    优化visited和closed存储方式
 }

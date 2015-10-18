@@ -1,6 +1,6 @@
 //
 //  XJSON.swift
-//  xlib
+//  X_Framework
 //
 //  Created by 173 on 15/8/31.
 //  Copyright (c) 2015年 yeah. All rights reserved.

@@ -9,6 +9,7 @@
 import Foundation
 
 //=========================================================================
+//MARK: XPathFinderTile2D
 protocol XPathFinderTile2D:XPathFinderTile
 {
     var x:Int{get}
@@ -27,13 +28,13 @@ struct XPFinderTile2D {
     {
         self.x = x;
         self.y = y;
+        self.hashValue = "\(x),\(y)".hashValue;
     }
+    
+    private(set)var hashValue:Int;
 }
 extension XPFinderTile2D: XPathFinderTile2D{}
-extension XPFinderTile2D: Hashable
-{
-    var hashValue:Int{return "\(x),\(y)".hashValue;}
-}
+extension XPFinderTile2D: Hashable{}
 func ==(lsh:XPFinderTile2D, rsh:XPFinderTile2D) -> Bool
 {
     return lsh.x == rsh.x && lsh.y == rsh.y;
@@ -81,7 +82,7 @@ func ==(lsh:XPFScannable, rsh:XPFScannable) -> Bool
 
 //=========================================================================
 //MARK: XPFinder2D
-struct XPFinder2D<T:XPathFinderScannable where T:Equatable, T._Tile:XPathFinderTile2D, T._Tile:Hashable>
+struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Tile:Hashable>
 {
     typealias _Scannable = T;
     
@@ -89,6 +90,7 @@ struct XPFinder2D<T:XPathFinderScannable where T:Equatable, T._Tile:XPathFinderT
     
     private var algorithm:XPFAlgorithm2D;
     
+    //config
     private(set) var config:XArray2D<T._Tile>;
     
     init(config:XArray2D<T._Tile>, algorithm:XPFAlgorithm2D)
@@ -96,17 +98,48 @@ struct XPFinder2D<T:XPathFinderScannable where T:Equatable, T._Tile:XPathFinderT
         self.config = config;
         self.algorithm = algorithm;
         
-        self.openedQueue = XPriorityQueue<_Scannable>(compare: _Scannable.compare);
+        self.openedQueue = XPriorityQueue<T>(compare: T.compare);
         self.visitedDic = [:];
     }
-    
-    
         
     //opened list
-    var openedQueue:XPriorityQueue<_Scannable>;
+    private var openedQueue:XPriorityQueue<T>;
     
     //visited dictionay
-    var visitedDic:[_Scannable._Tile: _Scannable];
+    private var visitedDic:[T._Tile: T];
+    
+    //get tile
+    func getTile(x:Int, _ y:Int) -> T._Tile?
+    {
+        guard let element = config[x, y] else{return nil;}
+        return element.passable ? element : nil;
+    }
+}
+extension XPFinder2D: XPathFinderType
+{
+    func heuristic(fromTile: T._Tile, _ toTile: T._Tile) -> Int
+    {
+        return algorithm.heuristic(fromTile.x, fromTile.y, toTile.x, toTile.y);
+    }
+    
+    func getNeighbors(tile: T._Tile) -> [T._Tile]
+    {
+        var neighbors:[T._Tile] = [];
+        let pos = algorithm.neighbors(tile.x, tile.y);
+        for p in pos
+        {
+            let x = p.0;
+            let y = p.1;
+            guard let t = getTile(x, y) else{continue;}
+            neighbors.append(t);
+        }
+        return neighbors;
+    }
+    
+    func isTarget(tile: T._Tile) -> Bool
+    {
+        return tile == self.goal
+    }
     
     //get visited tiles for visitedCallback
     var visitedTiles:[_Scannable._Tile]{
@@ -166,41 +199,18 @@ struct XPFinder2D<T:XPathFinderScannable where T:Equatable, T._Tile:XPathFinderT
     //update visited
     mutating func updateScannable(scannable: _Scannable)
     {
-//        guard index = self.openedQueue.indexOf(scannable) else{return;}
-//        self.openedQueue.update(scannable, atIndex: index);
+        guard let index = (self.openedQueue.indexOf(scannable){return $0.f == $1.f && $0.tile == $1.tile})else{return;}
+        self.openedQueue.update(scannable, atIndex: index);
+        print("注意前方高能：此处出现已经在访问列表中的g需要更新", scannable)
     }
-    
 }
-extension XPFinder2D: XPathFinderType
+extension XPFinder2D where T:Equatable
 {
-    func heuristic(fromTile: T._Tile, _ toTile: T._Tile) -> Int
+    mutating func updateScannable(scannable: _Scannable)
     {
-        return algorithm.heuristic(fromTile.x, fromTile.y, toTile.x, toTile.y);
-    }
-    
-    func getNeighbors(tile: T._Tile) -> [T._Tile]
-    {
-        var neighbors:[T._Tile] = [];
-        let pos = algorithm.neighbors(tile.x, tile.y);
-        for p in pos
-        {
-            let x = p.0;
-            let y = p.1;
-            guard let t = getTile(x, y) else{continue;}
-            neighbors.append(t);
-        }
-        return neighbors;
-    }
-    
-    func isTarget(tile: T._Tile) -> Bool
-    {
-        return tile == self.goal
-    }
-    
-    func getTile(x:Int, _ y:Int) -> T._Tile?
-    {
-        guard let element = config[x, y] else{return nil;}
-        return element.passable ? element : nil;
+        guard let index = self.openedQueue.indexOf(scannable) else{return;}
+        self.openedQueue.update(scannable, atIndex: index);
+        print("注意前方高能：此处出现已经在访问列表中的g需要更新", scannable)
     }
 }
 
