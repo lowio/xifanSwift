@@ -58,4 +58,5 @@ func pathFinderTest() {
     //    load map config json 格式的
     //    改变compare方法后打印visited看看变化
     //    优化visited和closed存储方式
+    //    其它：优化算法 添加alpha值用于配置算法趋向Dijkstra还是Best-First-Search根据结果打印
 }
