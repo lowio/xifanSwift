@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol PathFinderByNeighbors: PathFinderType
+protocol PathFinderAStarType: PathFinderType
 {
     //get neighbors
     func getNeighborsAt(node: _Node) -> [_Node];
@@ -22,7 +22,7 @@ protocol PathFinderByNeighbors: PathFinderType
     //update visited node
     func updateVisited(node: _Node, _ parent: _Node)
 }
-extension PathFinderByNeighbors
+extension PathFinderAStarType
 {
     mutating func scanningAroundAt(node: _Node)
     {
