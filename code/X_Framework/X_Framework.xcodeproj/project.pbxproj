@@ -11,6 +11,10 @@
 		1BA105A31BCFE6C70071506E /* XPathFinderCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA105A11BCFE6C70071506E /* XPathFinderCore.swift */; settings = {ASSET_TAGS = (); }; };
 		1BA105A51BD009870071506E /* XPathFind2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA105A41BD009870071506E /* XPathFind2DImpl.swift */; settings = {ASSET_TAGS = (); }; };
 		1BA105A61BD009870071506E /* XPathFind2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA105A41BD009870071506E /* XPathFind2DImpl.swift */; settings = {ASSET_TAGS = (); }; };
+		1BACF7671BD5303F00558D94 /* PathFinderByNeighbors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BACF7661BD5303F00558D94 /* PathFinderByNeighbors.swift */; settings = {ASSET_TAGS = (); }; };
+		1BACF7681BD5303F00558D94 /* PathFinderByNeighbors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BACF7661BD5303F00558D94 /* PathFinderByNeighbors.swift */; settings = {ASSET_TAGS = (); }; };
+		1BACF76A1BD5449D00558D94 /* PathFinderByNeighborsImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BACF7691BD5449D00558D94 /* PathFinderByNeighborsImpl.swift */; settings = {ASSET_TAGS = (); }; };
+		1BACF76B1BD5449D00558D94 /* PathFinderByNeighborsImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BACF7691BD5449D00558D94 /* PathFinderByNeighborsImpl.swift */; settings = {ASSET_TAGS = (); }; };
 		65CCF3501BAAB3D800BCCD5E /* X_Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65CCF3571BAAB3D800BCCD5E /* X_Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */; settings = {ASSET_TAGS = (); }; };
 		65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */; };
@@ -41,6 +45,8 @@
 /* Begin PBXFileReference section */
 		1BA105A11BCFE6C70071506E /* XPathFinderCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinderCore.swift; sourceTree = "<group>"; };
 		1BA105A41BD009870071506E /* XPathFind2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFind2DImpl.swift; sourceTree = "<group>"; };
+		1BACF7661BD5303F00558D94 /* PathFinderByNeighbors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderByNeighbors.swift; sourceTree = "<group>"; };
+		1BACF7691BD5449D00558D94 /* PathFinderByNeighborsImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderByNeighborsImpl.swift; sourceTree = "<group>"; };
 		65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = X_Framework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = X_Framework.h; sourceTree = "<group>"; };
 		65CCF3511BAAB3D800BCCD5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +149,8 @@
 				1BA105A11BCFE6C70071506E /* XPathFinderCore.swift */,
 				1BA105A41BD009870071506E /* XPathFind2DImpl.swift */,
 				65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */,
+				1BACF7661BD5303F00558D94 /* PathFinderByNeighbors.swift */,
+				1BACF7691BD5449D00558D94 /* PathFinderByNeighborsImpl.swift */,
 			);
 			name = pathfind;
 			sourceTree = "<group>";
@@ -286,7 +294,9 @@
 				65FC86E21BC8B998004E25B2 /* XPriorityQ.swift in Sources */,
 				65FAC7E61BD4F2B800C96C72 /* PathFinderCore.swift in Sources */,
 				65CCF3711BAAB61A00BCCD5E /* XJSON.swift in Sources */,
+				1BACF76A1BD5449D00558D94 /* PathFinderByNeighborsImpl.swift in Sources */,
 				1BA105A21BCFE6C70071506E /* XPathFinderCore.swift in Sources */,
+				1BACF7671BD5303F00558D94 /* PathFinderByNeighbors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,10 +309,12 @@
 				65CCF37C1BAAB71C00BCCD5E /* CommonTest.swift in Sources */,
 				65FAC7E71BD4F2B800C96C72 /* PathFinderCore.swift in Sources */,
 				1BA105A31BCFE6C70071506E /* XPathFinderCore.swift in Sources */,
+				1BACF76B1BD5449D00558D94 /* PathFinderByNeighborsImpl.swift in Sources */,
 				65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */,
 				65FC86E31BC8B998004E25B2 /* XPriorityQ.swift in Sources */,
 				65CCF3701BAAB61A00BCCD5E /* XArray2D.swift in Sources */,
 				1BA105A61BD009870071506E /* XPathFind2DImpl.swift in Sources */,
+				1BACF7681BD5303F00558D94 /* PathFinderByNeighbors.swift in Sources */,
 				65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -39,47 +39,42 @@ extension PathFinderNode
 //MARK: path finder protocol
 protocol PathFinderType
 {
+    //path node type typealias
     typealias _Node: PathFinderNode;
     
     //start tile
-    var start:Self._Node?{get}
+    var start:_Node?{get}
     
     //goal tile
-    var goal:Self._Node?{get}
+    var goal:_Node?{get}
     
     //return visited list
     var visitedList:[_Node]{get}
     
-    //no path, has dead end
-    func deadEnd() -> Bool
-    
     //grid is goal?
-    func isTarget(element: Self._Node) -> Bool
+    func isTarget(element: _Node) -> Bool
     
     //reset pathFinder
     mutating func reset()
     
+    //return next node for search
+    mutating func next() -> _Node?
+    
     //set _Node visited at tile
-    mutating func setVisited(node: Self._Node)
+    mutating func setVisited(node: _Node, _ parent: _Node?)
     
     //set _Node closed at tile
-    mutating func setClosed(node: Self._Node)
-    
-    //pop node
-    mutating func pop() -> Self._Node
-    
-    //push node
-    mutating func push(node: Self._Node)
+    mutating func setClosed(node: _Node)
     
     //scanning around
-    mutating func scanningAround(node: Self._Node)
+    mutating func scanningAroundAt(node: _Node)
     
     //find path
     mutating func findPath(pathCallback:([_Node]) -> (), _ visitedCallback:(([_Node]) -> ())?)
 }
 extension PathFinderType
 {
-    mutating func findPath(pathCallback:([_Node]) -> (), _ visitedCallback:(([_Node]) -> ())?)
+    mutating func findPath(pathCallback:([_Node]) -> (), _ visitedCallback:(([_Node]) -> ())? = nil)
     {
         guard let sg = self.start, let gg = self.goal else{return;}
         
@@ -87,8 +82,7 @@ extension PathFinderType
         self.reset();
         
         //set start visited and push it into queue
-        self.setVisited(sg);
-        self.push(sg);
+        self.setVisited(sg, nil);
         
         //current node
         var current = sg;
@@ -104,17 +98,19 @@ extension PathFinderType
         
         //repeat
         repeat{
+            guard let _next = self.next() else {break;}
+
             // get next current and set it closed and visited
-            current = self.pop();
+            current = _next;
             self.setClosed(current);
-            self.setVisited(current);
             
             //found path
             guard !self.isTarget(current) else{break;}
             
-            //scanning around
-            self.scanningAround(current);
-        }while !self.deadEnd()
+            //scanning around at current
+            self.scanningAroundAt(current);
+        }while true
     }
 }
+
 //=========================================================================
