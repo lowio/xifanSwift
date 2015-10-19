@@ -10,7 +10,7 @@ import Foundation
 
 //=========================================================================
 //MARK: XPathFinderTile2D
-protocol XPathFinderTile2D:XPathFinderTile
+protocol XPathFinderTile2D:XPathFinderCostTile
 {
     var x:Int{get}
     var y:Int{get}
@@ -21,8 +21,11 @@ protocol XPathFinderTile2D:XPathFinderTile
 //MARK: XPFinderTile2D
 struct XPFinderTile2D {
     private(set) var x, y:Int;
-    var movementCost:Int = 1;
+    var passable:Bool{
+        return movementCost > 0;
+    }
     var parent:XPathFinderTile? = nil;
+    var movementCost:Int = 1;
     
     init(_ x:Int, _ y:Int)
     {
@@ -120,6 +123,11 @@ extension XPFinder2D: XPathFinderType
     func heuristic(fromTile: T._Tile, _ toTile: T._Tile) -> Int
     {
         return algorithm.heuristic(fromTile.x, fromTile.y, toTile.x, toTile.y);
+    }
+    
+    func getMovementCost(fromTile: T._Tile, _ toTile: T._Tile) -> Int
+    {
+        return toTile.movementCost;
     }
     
     func getNeighbors(tile: T._Tile) -> [T._Tile]
@@ -231,7 +239,7 @@ enum XPFAlgorithm2D
         case .Diagonal:
             let x = abs(fx - tx);
             let y = abs(fy - ty);
-            return x + y + min(x, y);
+            return max(x, y);
         }
     }
     

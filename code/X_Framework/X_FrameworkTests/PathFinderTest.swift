@@ -54,7 +54,10 @@ func pathFinderTest() {
         print($0.count, "", path.count)
     }
     
-    
+    //    tile 中的 passable也不应该出现
+    //    jump point search
+    //    dic不可取 效率太低 想其他办法 index ...
+    //    diagoanl算法有问题
     //    load map config json 格式的
     //    改变compare方法后打印visited看看变化
     //    优化visited和closed存储方式

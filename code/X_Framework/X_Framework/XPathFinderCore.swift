@@ -12,9 +12,6 @@ import Foundation
 //MARK: XPathFinderTile
 protocol XPathFinderTile
 {
-    //movement cost
-    var movementCost:Int{get}
-    
     //passable
     var passable:Bool{get}
     
@@ -26,9 +23,6 @@ protocol XPathFinderTile
 }
 extension XPathFinderTile
 {
-    var movementCost:Int{return 1;}
-    var passable:Bool{return self.movementCost > 0;}
-    
     func toPathChain() -> [Self]
     {
         var chain:[Self] = [];
@@ -40,6 +34,18 @@ extension XPathFinderTile
         }while true
         return chain;
     }
+}
+
+//XPathFinderTile that has diff movement cost
+protocol XPathFinderCostTile: XPathFinderTile
+{
+    //movement cost
+    var movementCost:Int{get}
+}
+extension XPathFinderCostTile
+{
+    var movementCost:Int{return 1;}
+    var passable:Bool{return self.movementCost > 0;}
 }
 
 //================ path finder open list element type ================
@@ -100,6 +106,9 @@ protocol XPathFinderType
     //return h score used by f = h + g
     func heuristic(fromTile: Self._Scannable._Tile, _ toTile: Self._Scannable._Tile) -> Int
     
+    //return movement score used by f = h + g, g = parent.g + movementcost
+    func getMovementCost(fromTile: Self._Scannable._Tile, _ toTile: Self._Scannable._Tile) -> Int
+    
     //return neighbors [Self._Scannable._Tile]
     func getNeighbors(tile: Self._Scannable._Tile) -> [Self._Scannable._Tile]
     
@@ -133,6 +142,13 @@ protocol XPathFinderType
     //findPath main
     mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())?)
 }
+extension XPathFinderType where Self._Scannable._Tile: XPathFinderCostTile
+{
+    func getMovementCost(fromTile: Self._Scannable._Tile, _ toTile: Self._Scannable._Tile) -> Int
+    {
+        return toTile.movementCost;
+    }
+}
 private extension XPathFinderType
 {
     //create scannable
@@ -145,8 +161,7 @@ extension XPathFinderType
 {
     mutating func findPath(pathCallback:([Self._Scannable._Tile]) -> (), _ visitedCallback:([Self._Scannable._Tile] -> ())? = nil)
     {
-        guard let sg = self.start else{return;}
-        guard let gg = self.goal else{return;}
+        guard let sg = self.start, let gg = self.goal else{return;}
         
         //reset pathFinder
         self.reset();
@@ -175,8 +190,7 @@ extension XPathFinderType
         repeat{
             // get next scannable then set closed and update it visited
             _scanning = self.pop();
-            guard let tile = _scanning.tile else{break;}
-            guard !self.isTarget(tile) else{break;}
+            guard let tile = _scanning.tile where !self.isTarget(tile) else{break;}
             _scanning.closed = true;
             self.setVisited(tile, scanner: _scanning);
             
@@ -184,7 +198,7 @@ extension XPathFinderType
             let neighbors = self.getNeighbors(tile);
             for n in neighbors
             {
-                let g = _scanning.g + n.movementCost;
+                let g = _scanning.g + self.getMovementCost(tile, n);
                 guard let v = self.getVisited(n) else{
                     //not visited before, it is new scannable
                     var o:Self._Scannable = self._createScannable(g, self.heuristic(n, gg))
@@ -195,10 +209,8 @@ extension XPathFinderType
                     continue;
                 }
                 
-                //current scannable is closed before ?
-                guard !v.closed else{continue;}
-                //not closed, check g, choose best g then update it's parent and g
-                guard v.g > g else{continue;}
+                //current scannable is closed before ? if not closed, check g, choose best g then update it's parent and g
+                guard !v.closed && v.g > g else{continue;}
                 var updateNode = v;
                 updateNode.tile?.parent = tile;
                 updateNode.g = g;
