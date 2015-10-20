@@ -9,13 +9,13 @@
 import Foundation
 
 //array 2d orient enum
-enum XArray2DOrient
+public enum XArray2DOrient
 {
     case Horizontal, Vertical
 }
 
 //XArray2DType protocol
-protocol XArray2DType
+public protocol XArray2DType
 {
     //element
     typealias _Element;
@@ -35,7 +35,6 @@ protocol XArray2DType
     //subscript
     subscript(i:Int) -> Self._Element?{set get}
 }
-
 //extension
 extension XArray2DType
 {
@@ -82,12 +81,12 @@ extension XArray2DType where _Element: Equatable
 }
 
 //MARK: XArray2D
-struct XArray2D<T>
+public struct XArray2D<T>
 {
-    private(set) var source:[T?];
-    private(set) var columns:Int;
-    private(set) var rows:Int;
-    var orient:XArray2DOrient;
+    private(set) public var source:[T?];
+    private(set) public var columns:Int;
+    private(set) public var rows:Int;
+    public var orient:XArray2DOrient;
     
     private init(columns:Int, _ rows:Int, _ orient:XArray2DOrient)
     {
@@ -111,9 +110,9 @@ struct XArray2D<T>
 //MARK: extension XArray2DType
 extension XArray2D: XArray2DType
 {
-    typealias _Element = T;
+    public typealias _Element = T;
     
-    subscript(i:Int) -> T?{
+    public subscript(i:Int) -> T?{
         set{
             guard i >= 0 && i < self.count else{return;}
             self.source[i] = newValue;
@@ -127,7 +126,7 @@ extension XArray2D: XArray2DType
 //MARK: extension CustomStringConvertible
 extension XArray2D: CustomStringConvertible
 {
-    var description:String{
+    public var description:String{
         var text:String = "";
         for r in 0..<self.rows
         {

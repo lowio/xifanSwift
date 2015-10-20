@@ -7,110 +7,199 @@
 //
 
 import Foundation
-//=================== can be scanned node -> path finder ===================
-//MARK: path finder node
-protocol PathFinderNode
+
+//===============================================================================
+//path finder queue type
+public protocol PathFinderQueue
 {
-    //set parent
-    mutating func setParent(parent:Self?)
+    //element Type
+    typealias _Element;
     
-    //get parent
-    func getParent() -> Self?
+    //append visited element
+    mutating func append(visited element: _Element, chainTo parent: _Element?) -> Bool
     
-    //backtrace self, return path from start to self
-    func backtrace() -> [Self]
-}
-extension PathFinderNode
-{
-    func backtrace() -> [Self]
-    {
-        var chain:[Self] = [];
-        var node = self;
-        repeat{
-            chain.append(node);
-            guard let p = node.getParent() else{break;}
-            node = p;
-        }while true
-        return chain.reverse();
-    }
+    //pop visited element
+    mutating func pop() -> _Element?
+    
+    //set closed
+    mutating func setClosed(element: _Element)
 }
 
-//========================= path finder protocol ===========================
-//MARK: path finder protocol
-protocol PathFinderType
+//===============================================================================
+//path finder operator
+public protocol PathFinderOprator
 {
-    //path node type typealias
-    typealias _Node: PathFinderNode;
+    //queue type
+    typealias _Queue: PathFinderQueue;
     
-    //start tile
-    var start:_Node?{get}
+    //queue
+    var queue: _Queue{get set}
     
-    //goal tile
-    var goal:_Node?{get}
+    //prepare
+    mutating func prepare()
     
-    //return visited list
-    var visitedList:[_Node]{get}
+    //excuting
+    mutating func excuting(withElement e: _Queue._Element)
     
-    //grid is goal?
-    func isTarget(element: _Node) -> Bool
+    //complete
+    mutating func completion(at element: _Queue._Element);
     
-    //reset pathFinder
-    mutating func reset()
-    
-    //return next node for search
-    mutating func next() -> _Node?
-    
-    //set _Node visited at tile
-    mutating func setVisited(node: _Node, _ parent: _Node?)
-    
-    //set _Node closed at tile
-    mutating func setClosed(node: _Node)
-    
-    //scanning around
-    mutating func scanningAroundAt(node: _Node)
-    
-    //find path
-    mutating func findPath(pathCallback:([_Node]) -> (), _ visitedCallback:(([_Node]) -> ())?)
+    //execute
+    mutating func execute(start: _Queue._Element, goal: _Queue._Element)
 }
-extension PathFinderType
+extension PathFinderOprator
 {
-    mutating func findPath(pathCallback:([_Node]) -> (), _ visitedCallback:(([_Node]) -> ())? = nil)
+    mutating func execute(start: _Queue._Element, goal: _Queue._Element)
     {
-        guard let sg = self.start, let gg = self.goal else{return;}
+        //prepare
+        self.prepare();
         
-        //reset path finder
-        self.reset();
-        
-        //set start visited and push it into queue
-        self.setVisited(sg, nil);
+        //append start
+        self.queue.append(visited: start, chainTo: nil);
         
         //current node
-        var current = sg;
+        var current = start;
         
         //over: found path or deadend
         defer{
-            pathCallback(current.backtrace());
-            
-            if let _visitedCallback = visitedCallback{
-                _visitedCallback(self.visitedList);
-            }
+            self.completion(at: current)
         }
         
         //repeat
         repeat{
-            guard let _next = self.next() else {break;}
-
-            // get next current and set it closed and visited
+            guard let _next = self.queue.pop() else {break;}
+            
+            //set current and close it
             current = _next;
-            self.setClosed(current);
+            self.queue.setClosed(current);
             
-            //found path
-            guard !self.isTarget(current) else{break;}
+            //find goal
+//            guard current != start else{break;}
             
-            //scanning around at current
-            self.scanningAroundAt(current);
+            //executing with current
+            self.excuting(withElement: current);
         }while true
+
     }
 }
 
-//=========================================================================
+
+//========================= path finder protocol ===========================
+////MARK: path finder protocol
+//public protocol PathFinderType
+//{
+//    //path node queue type
+////    typealias _Queue: PathFinderQueueType;
+//    
+//    //path node type typealias
+//    typealias _Node: Equatable;
+//    
+//    //start
+//    var start:_Node?{get set}
+//    
+//    //goal
+//    var goal:_Node?{get set}
+//    
+//    //path chain
+//    var path:[_Node]?{get}
+//    
+//    //prepare for seaching
+//    mutating func prepare(start: _Node, _ goal: _Node)
+//    
+//    //exploring around node
+//    mutating func exploring(around node: _Node)
+//    
+//    //seach complete
+//    mutating func completion(at node: _Node)
+//    
+//    //find path
+//    mutating func findPath()
+//}
+//extension PathFinderType
+//{
+//    //back trace, return path
+//    func backtrace(node: _Node) -> [_Node]
+//    {
+//        var chain:[_Node] = [];
+//        var n = node;
+//        repeat{
+//            chain.append(n);
+//            guard let p = getParentOf(n) else{break;}
+//            n = p;
+//        }while true
+//        return chain.reverse();
+//    }
+//    
+//    mutating func findPath()
+//    {
+//        guard let sg = self.start, let gg = self.goal else{return;}
+//        
+//        //reset path finder
+//        self.prepare(sg, gg);
+//        
+//        //set start visited and push it into queue
+//        self.setExplored(sg, chainedTo: nil);
+//        
+//        //current node
+//        var current = sg;
+//        
+//        //over: found path or deadend
+//        defer{
+//            self.completion(at: current);
+//        }
+//        
+//        //repeat
+//        repeat{
+//            guard let _next = self.next() else {break;}
+//
+//            // get next current and set it closed and visited
+//            current = _next;
+//            self.setClosed(current);
+//            
+//            //found path
+//            guard current != goal else{break;}
+//            
+//            //exploring around current
+//            self.exploring(around: current);
+//        }while true
+//    }
+//}
+//
+////=========================================================================
+////PathFinderNeighbors
+//public protocol PathFinderNeighbors
+//{
+//    //get neighbors
+//    func getNeighbors<T>(around node:T) -> [T]
+//}
+//
+////BreadthFirstPathFinder
+//public protocol BreadthFirstPathFinder
+//{
+//    //neighbor type
+//    typealias _Neighbor: Hashable;
+//    
+//    //neighbors
+//    var neighbors:PathFinderNeighbors{get}
+//    
+//    //is explored
+//    func isExplored(node: _Neighbor) -> Bool
+//}
+//extension BreadthFirstPathFinder where Self:PathFinderType, Self._Neighbor == Self._Node
+//{
+//    //exploring around node
+//    mutating func exploring(around node: _Node)
+//    {
+//        self.neighbors.getNeighbors(around: node).forEach{
+//            let neighbor = $0;
+//            
+//            if !self.isExplored(neighbor)
+//            {
+//                self.setExplored(neighbor, chainedTo: node);
+//            }
+//        }
+//    }
+//    
+//    //set _Node closed at tile
+//    mutating func setClosed(node: _Node){}
+//}

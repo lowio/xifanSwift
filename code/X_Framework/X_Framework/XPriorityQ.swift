@@ -9,7 +9,7 @@
 import Foundation
 
 //MARK: XPriorityQueueType --  priority queue type
-protocol XPriorityQueueType: CustomStringConvertible
+public protocol XPriorityQueueType: CustomStringConvertible
 {
     //element type
     typealias _Element;
@@ -18,7 +18,7 @@ protocol XPriorityQueueType: CustomStringConvertible
     var source:[Self._Element]{get set}
     
     //compare function
-    var compare:(Self._Element, Self._Element) -> Bool{get set};
+    var compare:(Self._Element, Self._Element) -> Bool{get};
     
     //init rebuild queue use source with compare function
     init(source:[Self._Element], compare:(Self._Element, Self._Element) -> Bool)
@@ -30,7 +30,7 @@ protocol XPriorityQueueType: CustomStringConvertible
 }
 
 //MARK: XPriorityQueueType extension -- default implement
-extension XPriorityQueueType
+public extension XPriorityQueueType
 {
     mutating func push(element: Self._Element) {
         self.source.append(element);
@@ -170,16 +170,16 @@ private extension XPriorityQueueType
 }
 
 //MARK: XPriorityQueue -- priority queue struct
-struct XPriorityQueue<T>
+public struct XPriorityQueue<T>
 {
     //source data
-    var source:[T];
+    public var source:[T];
     
     //compare function
-    var compare:(_Element, _Element) -> Bool;
+    private(set) public var compare:(_Element, _Element) -> Bool;
     
     //init with resource
-    init(source:[_Element], compare:(_Element, _Element) -> Bool)
+    public init(source:[_Element], compare:(_Element, _Element) -> Bool)
     {
         self.compare = compare;
         self.source = source;
@@ -190,5 +190,5 @@ struct XPriorityQueue<T>
 //MARK: XPriorityQueue -- implement XPriorityQueueType
 extension XPriorityQueue: XPriorityQueueType
 {
-    typealias _Element = T;
+    public typealias _Element = T;
 }
