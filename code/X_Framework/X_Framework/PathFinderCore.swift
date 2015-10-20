@@ -23,8 +23,32 @@ public protocol PathFinderQueue
     
     //set closed
     mutating func setClosed(element: _Element)
+    
+    //is closed
+    func isClosed(element: _Element) -> Bool
 }
 
+//===============================================================================
+//path finder option
+public protocol PathFinderOption
+{
+    //element Type
+    typealias _Element;
+
+    //start
+    var start: _Element?{get}
+    
+    //goal
+    var goal: _Element?{get}
+}
+
+//===============================================================================
+//path finder PathFinderNeighborsOption
+public protocol PathFinderNeighborsOption: PathFinderOption
+{
+    //get neighbors
+    func getNeighbors(around node: _Element) -> [_Element]
+}
 //===============================================================================
 //path finder operator
 public protocol PathFinderOprator
@@ -39,18 +63,20 @@ public protocol PathFinderOprator
     mutating func prepare()
     
     //excuting
-    mutating func excuting(withElement e: _Queue._Element)
+    mutating func excuting<_OPT: PathFinderOption where _OPT._Element == _Queue._Element>(withElement e: _Queue._Element, useOption opt: _OPT)
     
     //complete
     mutating func completion(at element: _Queue._Element);
     
     //execute
-    mutating func execute(start: _Queue._Element, goal: _Queue._Element)
+    mutating func execute<_OPT: PathFinderOption where _OPT._Element == _Queue._Element>(opt: _OPT)
 }
-extension PathFinderOprator
+extension PathFinderOprator where Self._Queue._Element:Equatable
 {
-    mutating func execute(start: _Queue._Element, goal: _Queue._Element)
+    mutating func execute<_OPT: PathFinderOption where _OPT._Element == _Queue._Element>(opt: _OPT)
     {
+        guard let start = opt.start, let goal = opt.goal else{return;}
+        
         //prepare
         self.prepare();
         
@@ -74,15 +100,31 @@ extension PathFinderOprator
             self.queue.setClosed(current);
             
             //find goal
-//            guard current != start else{break;}
+            guard current != start else{break;}
             
             //executing with current
-            self.excuting(withElement: current);
+            self.excuting(withElement: current, useOption: opt);
         }while true
-
     }
 }
 
+//=========================================================================
+//extension PathFinderOprator: PathFinderNeighbors
+extension PathFinderOprator
+{
+    //excuting with element use option opt
+    mutating func excuting<_OPT: PathFinderNeighborsOption where _OPT._Element == _Queue._Element>(withElement e: _Queue._Element, useOption opt: _OPT)
+    {
+        let neighbors = opt.getNeighbors(around: e);
+        neighbors.forEach{
+            let neighbor = $0;
+            if !self.queue.isClosed(neighbor)
+            {
+                self.queue.append(visited: neighbor, chainTo: e);
+            }
+        }
+    }
+}
 
 //========================= path finder protocol ===========================
 ////MARK: path finder protocol
@@ -165,41 +207,3 @@ extension PathFinderOprator
 //    }
 //}
 //
-////=========================================================================
-////PathFinderNeighbors
-//public protocol PathFinderNeighbors
-//{
-//    //get neighbors
-//    func getNeighbors<T>(around node:T) -> [T]
-//}
-//
-////BreadthFirstPathFinder
-//public protocol BreadthFirstPathFinder
-//{
-//    //neighbor type
-//    typealias _Neighbor: Hashable;
-//    
-//    //neighbors
-//    var neighbors:PathFinderNeighbors{get}
-//    
-//    //is explored
-//    func isExplored(node: _Neighbor) -> Bool
-//}
-//extension BreadthFirstPathFinder where Self:PathFinderType, Self._Neighbor == Self._Node
-//{
-//    //exploring around node
-//    mutating func exploring(around node: _Node)
-//    {
-//        self.neighbors.getNeighbors(around: node).forEach{
-//            let neighbor = $0;
-//            
-//            if !self.isExplored(neighbor)
-//            {
-//                self.setExplored(neighbor, chainedTo: node);
-//            }
-//        }
-//    }
-//    
-//    //set _Node closed at tile
-//    mutating func setClosed(node: _Node){}
-//}
