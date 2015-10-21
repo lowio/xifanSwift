@@ -33,7 +33,10 @@ func arrayNDTest()
     nd[1, 1] = 99;
     nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.toArray());
     print(nd);
-    print(nd.contains(99), nd.contains(-1), nd.positionOf(99), nd.positionOf(-1));
+    print(nd.positionOf(99), nd.positionOf(-1));
+    
+    let p = nd.positionOf(99){return $0 == $1;}
+    print(p);
 }
 
 //XPriorityQueue test

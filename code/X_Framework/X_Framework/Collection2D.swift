@@ -28,6 +28,10 @@ public protocol Collection2DType
     
     //column, row is valid
     func isValid(column:Int, _ row:Int) -> Bool
+    
+    //return element position
+    @warn_unused_result
+    func positionOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> (column:Int, row:Int)?
 }
 //MARK: extension public
 public extension Collection2DType
@@ -39,7 +43,7 @@ public extension Collection2DType
     }
 }
 //MARK: extension internal
-extension Collection2DType
+public extension Collection2DType
 {
     //return index in collection at column and row
     func indexAt(column:Int, _ row:Int) -> Int?
@@ -55,6 +59,18 @@ extension Collection2DType
         let column = index % self.columns;
         let row:Int = index / self.columns;
         return (column: column, row: row);
+    }
+}
+//MARK: extension contains and positionOf
+extension Collection2DType where Self._Element: Equatable
+{
+    //if exist, return position else return nil
+    @warn_unused_result
+    public func positionOf(element: Self._Element) -> (column:Int, row:Int)?
+    {
+        return self.positionOf(element){
+            return $0 == $1;
+        }
     }
 }
 //MARK: extension CustomStringConvertible
@@ -122,24 +138,15 @@ extension Array2D: Collection2DType
             return self.source[index];
         }
     }
-}
-//MARK: extension contains and positionOf
-extension Array2D where T: Equatable
-{
-    //contains element
-    public func contains(element: T) -> Bool
-    {
-        guard let _ = positionOf(element) else {return false;}
-        return true;
-    }
     
-    //if exist, return position else return nil
-    public func positionOf(element: T) -> (column:Int, row:Int)?
+    //return element position
+    @warn_unused_result
+    public func positionOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> (column:Int, row:Int)?
     {
         guard let index = (self.source.indexOf{
             guard let ele = $0 else {return false;}
-            return ele == element;
-        }) else {return nil;}
+            return isEquals(ele, element);
+        })else{return nil;}
         return positionAt(index);
     }
 }
