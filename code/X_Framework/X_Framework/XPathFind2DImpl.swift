@@ -101,12 +101,12 @@ struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Til
         self.config = config;
         self.algorithm = algorithm;
         
-        self.openedQueue = PriorityQueue<T>(compare: T.compare);
+        self.openedQueue = PriorityArray<T>(isOrderedBefore: T.compare);
         self.visitedDic = [:];
     }
         
     //opened list
-    private var openedQueue:PriorityQueue<T>;
+    private var openedQueue:PriorityArray<T>;
     
     //visited dictionay
     private var visitedDic:[T._Tile: T];
@@ -169,13 +169,13 @@ extension XPFinder2D: XPathFinderType
     //pop
     mutating func pop() -> _Scannable
     {
-        return self.openedQueue.removeFirst()!;
+        return self.openedQueue.popFirst()!;
     }
     
     //reset
     mutating func reset()
     {
-        self.openedQueue = PriorityQueue<_Scannable>(compare: _Scannable.compare);
+        self.openedQueue = PriorityArray<_Scannable>(isOrderedBefore: _Scannable.compare);
         self.visitedDic = [:];
     }
     
@@ -208,7 +208,7 @@ extension XPFinder2D: XPathFinderType
     mutating func updateScannable(scannable: _Scannable)
     {
         guard let index = (self.openedQueue.indexOf(scannable){return $0.f == $1.f && $0.tile == $1.tile})else{return;}
-        self.openedQueue.update(scannable, atIndex: index);
+        self.openedQueue.updateElement(scannable, atIndex: index);
         print("注意前方高能：此处出现已经在访问列表中的g需要更新", scannable)
     }
 }
@@ -217,7 +217,7 @@ extension XPFinder2D where T:Equatable
     mutating func updateScannable(scannable: _Scannable)
     {
         guard let index = self.openedQueue.indexOf(scannable) else{return;}
-        self.openedQueue.update(scannable, atIndex: index);
+        self.openedQueue.updateElement(scannable, atIndex: index);
         print("注意前方高能：此处出现已经在访问列表中的g需要更新", scannable)
     }
 }

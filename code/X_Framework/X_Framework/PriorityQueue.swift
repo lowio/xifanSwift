@@ -8,7 +8,8 @@
 
 import Foundation
 
-public protocol PriorityCollectionType
+//MARK: binary heap collection type
+public protocol BinaryHeapCollectionType
 {
     //element Type
     typealias _Element;
@@ -22,12 +23,217 @@ public protocol PriorityCollectionType
     //append element and resort
     mutating func append(newElement: _Element)
     
-    //remove first element and resort
-    mutating func removeFirst() -> _Element?
+    //return(and remove) first element and resort
+    mutating func popFirst() -> _Element?
     
     //update element and resort
-    mutating func update(newElement: _Element, atIndex: Int)
+    mutating func updateElement(element: _Element, atIndex: Int)
     
-    //rebuild queue use source
-    mutating func rebuild()
+    //return element index
+    @warn_unused_result
+    func indexOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> Int?
+}
+extension BinaryHeapCollectionType where _Element: Equatable
+{
+    //return element index
+    @warn_unused_result
+    func indexOf(element: _Element) -> Int?
+    {
+        return self.indexOf(element){$0 == $1;}
+    }
+}
+//MARK: extension internal
+extension BinaryHeapCollectionType
+{
+    //shift up collection element at index i use isOrderedBefore function
+    //return nil when collection no change
+    @warn_unused_result
+    static func shiftUp<_CT:MutableCollectionType where _CT.Index == Int>
+        (collection: _CT, atIndex i: Int, isOrderedBefore iob: (_CT.Generator.Element, _CT.Generator.Element)->Bool) -> _CT?
+    {
+        guard i > 0 else{return nil;}
+        var _temp = collection;
+        var _index = i;
+        let _ele = _temp[_index];
+        repeat{
+            let _parentIndex = Self.getParentIndex(ofChildIndex: _index);
+            let _parent = _temp[_parentIndex];
+            guard iob(_ele, _parent) else {break;}
+            _temp[_index] = _parent;
+            _temp[_parentIndex] = _ele;
+            _index = _parentIndex;
+        }while _index > 0
+        
+        return _temp;
+    }
+    
+    //shift down collection element at index i use isOrderedBefore function
+    //return nil when collection no change
+    @warn_unused_result
+    static func shiftDown<_CT:MutableCollectionType where _CT.Index == Int>
+        (collection: _CT, atIndex i: Int, isOrderedBefore iob: (_CT.Generator.Element, _CT.Generator.Element)->Bool) -> _CT?
+    {
+        let _c = collection.count;
+        guard i < _c else{return nil;}
+        var _temp = collection;
+        let _ele = _temp[i];
+        var _index = i;
+        repeat{
+            var _tempIndex = _index;
+            var _childIndex = Self.getChildIndex(ofParentIndex: _tempIndex);
+            guard _childIndex < _c else{break;}
+            if iob(_temp[_childIndex], _ele){_tempIndex = _childIndex;}
+            
+            _childIndex++;
+            
+            if _childIndex < _c && iob(_temp[_childIndex], _temp[_tempIndex]){_tempIndex = _childIndex;}
+            
+            guard _tempIndex != _index else{break;}
+            _temp[_index] = _temp[_tempIndex];
+            _temp[_tempIndex] = _ele;
+            _index = _tempIndex;
+        }while _index < _c
+        
+        return _temp;
+    }
+    
+    //update collection element at index use isOrderedBefore functoin
+    //return nil when collection no change
+    @warn_unused_result
+    static func updateElement<_CT:MutableCollectionType where _CT.Index == Int>
+        (collection: _CT, element: _CT.Generator.Element, atIndex i: Int, isOrderedBefore iob: (_CT.Generator.Element, _CT.Generator.Element)->Bool) -> _CT?
+    {
+        let _c = collection.count;
+        guard i >= 0 && i < _c else{return nil;}
+        var _temp = collection;
+        _temp[i] = element;
+        let _parentIndex = Self.getParentIndex(ofChildIndex: i);
+        guard iob(element, _temp[_parentIndex]) else {
+            return Self.shiftDown(_temp, atIndex: i, isOrderedBefore: iob);
+        }
+        return Self.shiftUp(_temp, atIndex: i, isOrderedBefore: iob);
+    }
+    
+    //build collection to priority collection use isOrderedBefore function
+    //return nil when collection no change
+    @warn_unused_result
+    static func build<_CT:MutableCollectionType where _CT.Index == Int>
+        (collection: _CT, isOrderedBefore iob: (_CT.Generator.Element, _CT.Generator.Element)->Bool) -> _CT?
+    {
+        var _index:Int = collection.count >> 1 - 1;
+        guard _index > -1 else{return nil;}
+        var _temp = collection;
+        repeat{
+            guard let newTemp = Self.shiftDown(_temp, atIndex: _index--, isOrderedBefore: iob) else {continue;}
+            _temp = newTemp;
+        }while _index > -1
+        return _temp;
+    }
+    
+    //parent node index
+    static func getParentIndex(ofChildIndex index:Int) -> Int{return (index - 1) >> 1;}
+    
+    //child node index(the left one, the mini index one)
+    static func getChildIndex(ofParentIndex index:Int) -> Int{return ((index << 1) + 1);}
+}
+
+
+//MARK: priority queue use array collection
+public struct PriorityArray<T>
+{
+    //source
+    private var source:[T];
+    
+    //is ordered before
+    private var isOrderedBefore:(T, T) -> Bool;
+    
+    //element count
+    public var count:Int{return self.source.count;}
+    
+    //element count == 0
+    public var isEmpty:Bool{return self.source.isEmpty;}
+    
+    //init with resource, compare
+    public init(source:[T], isOrderedBefore:(T, T) -> Bool)
+    {
+        self.isOrderedBefore = isOrderedBefore;
+        guard let temp = PriorityArray.build(source, isOrderedBefore: self.isOrderedBefore) else {
+            self.source = source;
+            return;
+        }
+        self.source = temp;
+    }
+}
+//MARK: extension public
+public extension PriorityArray where T: Comparable
+{
+    init(max source:[T])
+    {
+        self.init(source: source){$0 < $1}
+    }
+    
+    init(min source:[T])
+    {
+        self.init(source: source){$0 > $1}
+    }
+}
+public extension PriorityArray
+{
+    init(isOrderedBefore:(T, T) -> Bool)
+    {
+        self.init(source: [], isOrderedBefore:isOrderedBefore);
+    }
+    
+    //return element index
+    @warn_unused_result
+    func indexOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> Int?
+    {
+        return self.source.indexOf{
+            return isEquals(element, $0);
+        }
+    }
+}
+public extension PriorityArray where T: Equatable
+{
+    //return element index
+    @warn_unused_result
+    func indexOf(element: _Element) -> Int?
+    {
+        return self.source.indexOf(element);
+    }
+}
+//MARK: extension binary heap collection type
+extension PriorityArray: BinaryHeapCollectionType
+{
+    //element Type
+    public typealias _Element = T;
+    
+    //append element and resort
+    public mutating func append(newElement: _Element)
+    {
+        self.source.append(newElement);
+        guard let temp = PriorityArray.shiftUp(self.source, atIndex: self.count - 1, isOrderedBefore: self.isOrderedBefore) else {return;}
+        self.source = temp;
+    }
+    
+    //return(and remove) first element and resort
+    public mutating func popFirst() -> _Element?
+    {
+        if(isEmpty){return nil;}
+        let first = self.source[0];
+        let end = self.source.removeLast();
+        guard !self.isEmpty else{return first;}
+        self.source[0] = end;
+        guard let temp = PriorityArray.shiftDown(self.source, atIndex: 0, isOrderedBefore: self.isOrderedBefore) else {return first;}
+        self.source = temp;
+        return first;
+    }
+    
+    //update element and resort
+    public mutating func updateElement(element: _Element, atIndex: Int)
+    {
+        guard atIndex >= 0 && atIndex < self.count else{return;}
+        guard let temp = PriorityArray.updateElement(self.source, element: element, atIndex: atIndex, isOrderedBefore: self.isOrderedBefore) else {return;}
+        self.source = temp;
+    }
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+@testable import X_Framework;
 
 extension XPFinderTile2D: CustomStringConvertible
 {
@@ -17,42 +18,42 @@ extension XPFinderTile2D: CustomStringConvertible
 
 func pathFinderTest() {
     
-    let size = 50;
-    var config = Array2D<XPFScannable._Tile>(columns: size, rows: size);
-    for c in 0..<size
-    {
-        for r in 0..<size
-        {
-            var v = XPFScannable._Tile.init(c, r);
-            v.movementCost = 1;
-            config[c, r] = v;
-        }
-    }
-    var xpf = XPFinder2D<XPFScannable>(config: config, algorithm: XPFAlgorithm2D.Manhattan);
-    xpf.start = XPFScannable._Tile(3, 3);
-    xpf.goal = XPFScannable._Tile(20, 23);
-    
-    var c = xpf.config;
-    
-    var path:[XPFScannable._Tile] = [];
-    xpf.findPath({
-        path = $0;
-    })
-    {
-        for v in $0{
-            var temp = v;
-            temp.movementCost = 0;
-            c[v.x, v.y] = temp;
-        }
-        for v in path
-        {
-            var temp = v;
-            temp.movementCost = 3;
-            c[v.x, v.y] = temp;
-        }
-        print(c);
-        print($0.count, "", path.count)
-    }
+//    let size = 50;
+//    var config = Array2D<XPFScannable._Tile>(columns: size, rows: size);
+//    for c in 0..<size
+//    {
+//        for r in 0..<size
+//        {
+//            var v = XPFScannable._Tile.init(c, r);
+//            v.movementCost = 1;
+//            config[c, r] = v;
+//        }
+//    }
+//    var xpf = XPFinder2D<XPFScannable>(config: config, algorithm: XPFAlgorithm2D.Manhattan);
+//    xpf.start = XPFScannable._Tile(3, 3);
+//    xpf.goal = XPFScannable._Tile(20, 23);
+//    
+//    var c = xpf.config;
+//    
+//    var path:[XPFScannable._Tile] = [];
+//    xpf.findPath({
+//        path = $0;
+//    })
+//    {
+//        for v in $0{
+//            var temp = v;
+//            temp.movementCost = 0;
+//            c[v.x, v.y] = temp;
+//        }
+//        for v in path
+//        {
+//            var temp = v;
+//            temp.movementCost = 3;
+//            c[v.x, v.y] = temp;
+//        }
+//        print(c);
+//        print($0.count, "", path.count)
+//    }
     
     //    tile 中的 passable也不应该出现
     //    jump point search

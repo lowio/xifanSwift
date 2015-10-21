@@ -7,11 +7,12 @@
 //
 
 import UIKit
+@testable import X_Framework;
 
 func commonTest() {
 //    jsonTest()
-//    priorityQueueTest();
-    arrayNDTest();
+    priorityQueueTest();
+//    arrayNDTest();
 }
 
 func arrayNDTest()
@@ -46,31 +47,32 @@ func arrayNDTest()
 //XPriorityQueue test
 func priorityQueueTest(testRebuild:Bool = true)
 {
-    var queue:PriorityQueue<Int>;
+    var queue:PriorityArray<Int>;
     if(testRebuild)//测试创建优先队列
     {
         var sortArray = [Int]();
         for _ in 0...100
         {
-            sortArray.append(Int(arc4random() % 1000));
+            sortArray.append(random());
         }
-        queue = PriorityQueue<Int>(source: sortArray){$0.0 > $0.1};
-        sortArray.sortInPlace(queue.compare)
+        
+        queue = PriorityArray<Int>(source: sortArray){$0 < $1};
+        sortArray.sortInPlace({$0 > $1})
         while !queue.isEmpty
         {
-            let e1 = queue.removeFirst()!;
+            let e1 = queue.popFirst()!;
             let e2 = sortArray.removeLast();
             print("\(e1)-\(e2)=\(e1 - e2)  count:\(queue.count)");
         }
     }
     else
     {   //测试优先队列效率
-        queue = PriorityQueue<Int>{$0 > $1}
+        queue = PriorityArray<Int>{$0 < $1}
         let c = 400;
         for _ in 0...c
         {
             let temp = Int(arc4random() % 500);
-            if(!queue.isEmpty){queue.removeFirst();}
+            if(!queue.isEmpty){queue.popFirst();}
             
             for _ in 0...3
             {
@@ -80,7 +82,7 @@ func priorityQueueTest(testRebuild:Bool = true)
         
         while(!queue.isEmpty)
         {
-            let e = queue.removeFirst()!;
+            let e = queue.popFirst()!;
             print(e)
         }
     }
