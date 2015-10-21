@@ -237,3 +237,9 @@ extension PriorityArray: BinaryHeapCollectionType
         self.source = temp;
     }
 }
+extension PriorityArray: CustomDebugStringConvertible
+{
+    public var debugDescription:String{
+        return self.source.debugDescription;
+    }
+}
