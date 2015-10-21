@@ -14,10 +14,8 @@
 		65CCF3501BAAB3D800BCCD5E /* X_Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65CCF3571BAAB3D800BCCD5E /* X_Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */; settings = {ASSET_TAGS = (); }; };
 		65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */; };
-		65CCF36F1BAAB61A00BCCD5E /* XArray2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36A1BAAB61A00BCCD5E /* XArray2D.swift */; settings = {ASSET_TAGS = (); }; };
-		65CCF3701BAAB61A00BCCD5E /* XArray2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36A1BAAB61A00BCCD5E /* XArray2D.swift */; settings = {ASSET_TAGS = (); }; };
-		65CCF3711BAAB61A00BCCD5E /* XJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36B1BAAB61A00BCCD5E /* XJSON.swift */; settings = {ASSET_TAGS = (); }; };
-		65CCF3721BAAB61A00BCCD5E /* XJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36B1BAAB61A00BCCD5E /* XJSON.swift */; settings = {ASSET_TAGS = (); }; };
+		65CCF36F1BAAB61A00BCCD5E /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36A1BAAB61A00BCCD5E /* Array2D.swift */; settings = {ASSET_TAGS = (); }; };
+		65CCF3701BAAB61A00BCCD5E /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36A1BAAB61A00BCCD5E /* Array2D.swift */; settings = {ASSET_TAGS = (); }; };
 		65CCF37C1BAAB71C00BCCD5E /* CommonTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF37B1BAAB71C00BCCD5E /* CommonTest.swift */; settings = {ASSET_TAGS = (); }; };
 		65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF37E1BAAB8A200BCCD5E /* TestUtils.swift */; settings = {ASSET_TAGS = (); }; };
 		65CCF3821BAABDD600BCCD5E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65CCF3811BAABDD600BCCD5E /* TopApps.json */; settings = {ASSET_TAGS = (); }; };
@@ -28,8 +26,8 @@
 		65F4CEB41BD62BAF007CB88B /* PathFinder2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F4CEB21BD62BAF007CB88B /* PathFinder2DImpl.swift */; settings = {ASSET_TAGS = (); }; };
 		65FAC7E61BD4F2B800C96C72 /* PathFinderCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */; settings = {ASSET_TAGS = (); }; };
 		65FAC7E71BD4F2B800C96C72 /* PathFinderCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */; settings = {ASSET_TAGS = (); }; };
-		65FC86E21BC8B998004E25B2 /* XPriorityQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC86E11BC8B998004E25B2 /* XPriorityQ.swift */; settings = {ASSET_TAGS = (); }; };
-		65FC86E31BC8B998004E25B2 /* XPriorityQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC86E11BC8B998004E25B2 /* XPriorityQ.swift */; settings = {ASSET_TAGS = (); }; };
+		65FC86E21BC8B998004E25B2 /* PriorityQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC86E11BC8B998004E25B2 /* PriorityQ.swift */; settings = {ASSET_TAGS = (); }; };
+		65FC86E31BC8B998004E25B2 /* PriorityQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC86E11BC8B998004E25B2 /* PriorityQ.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,8 +49,7 @@
 		65CCF3561BAAB3D800BCCD5E /* X_FrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = X_FrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = X_FrameworkTests.swift; sourceTree = "<group>"; };
 		65CCF35D1BAAB3D800BCCD5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		65CCF36A1BAAB61A00BCCD5E /* XArray2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XArray2D.swift; sourceTree = "<group>"; };
-		65CCF36B1BAAB61A00BCCD5E /* XJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XJSON.swift; sourceTree = "<group>"; };
+		65CCF36A1BAAB61A00BCCD5E /* Array2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array2D.swift; sourceTree = "<group>"; };
 		65CCF37B1BAAB71C00BCCD5E /* CommonTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonTest.swift; sourceTree = "<group>"; };
 		65CCF37E1BAAB8A200BCCD5E /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		65CCF3811BAABDD600BCCD5E /* TopApps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TopApps.json; sourceTree = "<group>"; };
@@ -61,7 +58,7 @@
 		65F4CEB21BD62BAF007CB88B /* PathFinder2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinder2DImpl.swift; sourceTree = "<group>"; };
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderCore.swift; sourceTree = "<group>"; };
-		65FC86E11BC8B998004E25B2 /* XPriorityQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPriorityQ.swift; sourceTree = "<group>"; };
+		65FC86E11BC8B998004E25B2 /* PriorityQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQ.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,9 +133,8 @@
 		65CCF3671BAAB4E800BCCD5E /* collection */ = {
 			isa = PBXGroup;
 			children = (
-				65CCF36A1BAAB61A00BCCD5E /* XArray2D.swift */,
-				65CCF36B1BAAB61A00BCCD5E /* XJSON.swift */,
-				65FC86E11BC8B998004E25B2 /* XPriorityQ.swift */,
+				65CCF36A1BAAB61A00BCCD5E /* Array2D.swift */,
+				65FC86E11BC8B998004E25B2 /* PriorityQ.swift */,
 			);
 			name = collection;
 			sourceTree = "<group>";
@@ -289,11 +285,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65CCF36F1BAAB61A00BCCD5E /* XArray2D.swift in Sources */,
+				65CCF36F1BAAB61A00BCCD5E /* Array2D.swift in Sources */,
 				1BA105A51BD009870071506E /* XPathFind2DImpl.swift in Sources */,
-				65FC86E21BC8B998004E25B2 /* XPriorityQ.swift in Sources */,
+				65FC86E21BC8B998004E25B2 /* PriorityQ.swift in Sources */,
 				65FAC7E61BD4F2B800C96C72 /* PathFinderCore.swift in Sources */,
-				65CCF3711BAAB61A00BCCD5E /* XJSON.swift in Sources */,
 				1BA105A21BCFE6C70071506E /* XPathFinderCore.swift in Sources */,
 				65F4CEB31BD62BAF007CB88B /* PathFinder2DImpl.swift in Sources */,
 				65F4CEB01BD623C9007CB88B /* PathFinderImpl.swift in Sources */,
@@ -305,14 +300,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				65CCF3841BAAC12100BCCD5E /* PathFinderTest.swift in Sources */,
-				65CCF3721BAAB61A00BCCD5E /* XJSON.swift in Sources */,
 				65F4CEB41BD62BAF007CB88B /* PathFinder2DImpl.swift in Sources */,
 				65CCF37C1BAAB71C00BCCD5E /* CommonTest.swift in Sources */,
 				65FAC7E71BD4F2B800C96C72 /* PathFinderCore.swift in Sources */,
 				1BA105A31BCFE6C70071506E /* XPathFinderCore.swift in Sources */,
 				65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */,
-				65FC86E31BC8B998004E25B2 /* XPriorityQ.swift in Sources */,
-				65CCF3701BAAB61A00BCCD5E /* XArray2D.swift in Sources */,
+				65FC86E31BC8B998004E25B2 /* PriorityQ.swift in Sources */,
+				65CCF3701BAAB61A00BCCD5E /* Array2D.swift in Sources */,
 				1BA105A61BD009870071506E /* XPathFind2DImpl.swift in Sources */,
 				65F4CEB11BD623C9007CB88B /* PathFinderImpl.swift in Sources */,
 				65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */,

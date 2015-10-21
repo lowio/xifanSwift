@@ -18,7 +18,7 @@ extension XPFinderTile2D: CustomStringConvertible
 func pathFinderTest() {
     
     let size = 50;
-    var config = XArray2D<XPFScannable._Tile>(horizontal: size, rows: size);
+    var config = Array2D<XPFScannable._Tile>(columns: size, rows: size);
     for c in 0..<size
     {
         for r in 0..<size

@@ -14,27 +14,33 @@ func commonTest() {
     arrayNDTest();
 }
 
-func arrayNDTest(horizontal:Bool = true)
+func arrayNDTest()
 {
-    var nd = horizontal ? XArray2D<Int>(horizontal: 4, rows: 3) : XArray2D<Int>(vertical: 4, rows: 3);
-    print(nd);
+    let columns = 4;
+    let rows = 3;
+    var nd = Array2D<Int>(columns: columns, rows: rows);
     
-    for i in 0..<nd.count
+    var i = 0;
+    for r in 0..<rows
     {
-        nd[i] = i;
+        for c in 0..<columns
+        {
+            nd[c, r] = i++;
+        }
     }
+    
+    print(nd);
+    
     nd[1, 1] = 99;
-    print(nd);
     
-    nd.orient = .Vertical;
+    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.source);
     print(nd);
-    
 }
 
 //XPriorityQueue test
 func priorityQueueTest(testRebuild:Bool = true)
 {
-    var queue:XPriorityQueue<Int>;
+    var queue:PriorityQueue<Int>;
     if(testRebuild)//测试创建优先队列
     {
         var sortArray = [Int]();
@@ -42,7 +48,7 @@ func priorityQueueTest(testRebuild:Bool = true)
         {
             sortArray.append(Int(arc4random() % 1000));
         }
-        queue = XPriorityQueue<Int>(source: sortArray){$0.0 >= $0.1};
+        queue = PriorityQueue<Int>(source: sortArray){$0.0 >= $0.1};
         sortArray.sortInPlace{$0 > $1}
         while !queue.isEmpty
         {
@@ -53,7 +59,7 @@ func priorityQueueTest(testRebuild:Bool = true)
     }
     else
     {   //测试优先队列效率
-        queue = XPriorityQueue<Int>{$0 >= $1}
+        queue = PriorityQueue<Int>{$0 >= $1}
         let c = 400;
         for _ in 0...c
         {
@@ -78,14 +84,14 @@ func priorityQueueTest(testRebuild:Bool = true)
 ///test xjson
 func jsonTest()
 {
-    TestUtils.loadLocalData("TopApps", "json"){
-        if let jsd = $0{
-            let jsonParser = XJSON(data: jsd);
-            let d = jsonParser["feed"]["author"]["uri"]["label"] as XJSON
-            //                let d = jsonParser["feed"]["author"] as XJSON
-            let v = d.stringValue;
-            print(d,v)
-        }
-        
-    }
+//    TestUtils.loadLocalData("TopApps", "json"){
+//        if let jsd = $0{
+//            let jsonParser = XJSON(data: jsd);
+//            let d = jsonParser["feed"]["author"]["uri"]["label"] as XJSON
+//            //                let d = jsonParser["feed"]["author"] as XJSON
+//            let v = d.stringValue;
+//            print(d,v)
+//        }
+//        
+//    }
 }

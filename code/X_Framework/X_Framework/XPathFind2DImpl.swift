@@ -94,19 +94,19 @@ struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Til
     private var algorithm:XPFAlgorithm2D;
     
     //config
-    private(set) var config:XArray2D<T._Tile>;
+    private(set) var config:Array2D<T._Tile>;
     
-    init(config:XArray2D<T._Tile>, algorithm:XPFAlgorithm2D)
+    init(config:Array2D<T._Tile>, algorithm:XPFAlgorithm2D)
     {
         self.config = config;
         self.algorithm = algorithm;
         
-        self.openedQueue = XPriorityQueue<T>(compare: T.compare);
+        self.openedQueue = PriorityQueue<T>(compare: T.compare);
         self.visitedDic = [:];
     }
         
     //opened list
-    private var openedQueue:XPriorityQueue<T>;
+    private var openedQueue:PriorityQueue<T>;
     
     //visited dictionay
     private var visitedDic:[T._Tile: T];
@@ -175,7 +175,7 @@ extension XPFinder2D: XPathFinderType
     //reset
     mutating func reset()
     {
-        self.openedQueue = XPriorityQueue<_Scannable>(compare: _Scannable.compare);
+        self.openedQueue = PriorityQueue<_Scannable>(compare: _Scannable.compare);
         self.visitedDic = [:];
     }
     

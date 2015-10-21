@@ -1,5 +1,5 @@
 //
-//  XPriorityQ.swift
+//  PriorityQ.swift
 //  X_Framework
 //
 //  Created by 173 on 15/10/10.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-//MARK: XPriorityQueueType --  priority queue type
-public protocol XPriorityQueueType: CustomStringConvertible
+//MARK: PriorityQueueType --  priority queue type
+public protocol PriorityQueueType: CustomStringConvertible
 {
     //element type
     typealias _Element;
@@ -23,14 +23,21 @@ public protocol XPriorityQueueType: CustomStringConvertible
     //init rebuild queue use source with compare function
     init(source:[Self._Element], compare:(Self._Element, Self._Element) -> Bool)
 
+    //push element and resort
     mutating func push(element: Self._Element)
+    
+    //pop element and resort
     mutating func pop() -> Self._Element?
+    
+    //update element and resort
     mutating func update(element: Self._Element, atIndex: Int)
+    
+    //rebuild queue use source
     mutating func rebuild()
 }
 
-//MARK: XPriorityQueueType extension -- default implement
-public extension XPriorityQueueType
+//MARK: PriorityQueueType extension -- default implement
+public extension PriorityQueueType
 {
     mutating func push(element: Self._Element) {
         self.source.append(element);
@@ -63,15 +70,13 @@ public extension XPriorityQueueType
         }
     }
     
-    
-    
     var count:Int{return self.source.count;}
     var isEmpty:Bool{return self.source.isEmpty;}
     var description:String{return self.source.description;}
 }
 
 //subscript init indexOf
-extension XPriorityQueueType
+extension PriorityQueueType
 {
     private(set) subscript(i:Int) -> Self._Element{
         set{
@@ -96,7 +101,7 @@ extension XPriorityQueueType
 }
 
 //indexof
-extension XPriorityQueueType where _Element: Equatable
+extension PriorityQueueType where _Element: Equatable
 {
     //get index
     func indexOf(ele:Self._Element) -> Int?{
@@ -105,7 +110,7 @@ extension XPriorityQueueType where _Element: Equatable
 }
 
 //extension init
-extension XPriorityQueueType where _Element: Comparable
+extension PriorityQueueType where _Element: Comparable
 {
     init(max source:[Self._Element])
     {
@@ -118,8 +123,8 @@ extension XPriorityQueueType where _Element: Comparable
     }
 }
 
-//MARK: XPriorityQueueType extension -- private default implement
-private extension XPriorityQueueType
+//MARK: PriorityQueueType extension -- private default implement
+private extension PriorityQueueType
 {
     //rise up
     mutating func _riseup(atIndex:Int)
@@ -169,8 +174,8 @@ private extension XPriorityQueueType
     func _getChildIndex(atIndex:Int) -> Int{return ((atIndex << 1) + 1);}
 }
 
-//MARK: XPriorityQueue -- priority queue struct
-public struct XPriorityQueue<T>
+//MARK: PriorityQueue -- priority queue struct
+public struct PriorityQueue<T>
 {
     //source data
     public var source:[T];
@@ -187,8 +192,8 @@ public struct XPriorityQueue<T>
     }
 }
 
-//MARK: XPriorityQueue -- implement XPriorityQueueType
-extension XPriorityQueue: XPriorityQueueType
+//MARK: PriorityQueue -- implement PriorityQueueType
+extension PriorityQueue: PriorityQueueType
 {
     public typealias _Element = T;
 }
