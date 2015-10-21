@@ -118,8 +118,8 @@ public struct Array2D<T>
         self.source = s;
     }
     
-    //to array
-    public func toArray() -> [T?]{ return self.source; }
+    //to toCollection
+    public func toCollection() -> [T?]{ return self.source; }
 }
 
 //MARK: extension Array2DType
@@ -151,3 +151,65 @@ extension Array2D: Collection2DType
     }
 }
 extension Array2D: CustomDebugStringConvertible{}
+
+
+
+//MARK: struct dictionary 2d
+public struct Dictionary2D<T>
+{
+    //source
+    private var source: [Int: T];
+    private(set) public var columns, rows, count:Int;
+    
+    public init(columns:Int, rows:Int, values: [T?]? = nil)
+    {
+        self.columns = columns;
+        self.rows = rows;
+        self.count = columns * rows;
+        guard let v = values else{
+            self.source = [:];
+            return;
+        }
+        var dic:[Int: T] = [:];
+        for i in 0..<v.count
+        {
+            guard let vv = v[i] else { continue; }
+            dic[i] = vv;
+        }
+        self.source = dic;
+    }
+    
+    //to dictionary
+    public func toCollection() -> [Int: T]{ return self.source; }
+}
+
+//MARK: extension Array2DType
+extension Dictionary2D: Collection2DType
+{
+    public typealias _Element = T;
+    
+    //subscript
+    public subscript(column:Int, row:Int) -> _Element?{
+        set{
+            guard let index = self.indexAt(column, row) else{return;}
+            self.source[index] = newValue;
+        }
+        get{
+            guard let index = self.indexAt(column, row) else{return nil;}
+            return self.source[index];
+        }
+    }
+    
+    //return element position
+    @warn_unused_result
+    public func positionOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> (column:Int, row:Int)?
+    {
+        for (index, value) in self.source
+        {
+            guard isEquals(element, value) else{continue;}
+            return positionAt(index);
+        }
+        return nil;
+    }
+}
+extension Dictionary2D: CustomDebugStringConvertible{}

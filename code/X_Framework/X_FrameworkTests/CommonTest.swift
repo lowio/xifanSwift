@@ -18,7 +18,8 @@ func arrayNDTest()
 {
     let columns = 4;
     let rows = 3;
-    var nd = Array2D<Int>(columns: columns, rows: rows);
+//    var nd = Array2D<Int>(columns: columns, rows: rows);
+    var nd =  Dictionary2D<Int>(columns: columns, rows: rows);
     var i = 0;
     for r in 0..<rows
     {
@@ -31,12 +32,15 @@ func arrayNDTest()
     print(nd);
     
     nd[1, 1] = 99;
-    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.toArray());
+//    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.toCollection());
+    nd = Dictionary2D<Int>(columns: nd.columns, rows: nd.rows, values: [0, nil, 20]);
     print(nd);
     print(nd.positionOf(99), nd.positionOf(-1));
     
     let p = nd.positionOf(99){return $0 == $1;}
     print(p);
+    
+    print(nd.toCollection())
 }
 
 //XPriorityQueue test
