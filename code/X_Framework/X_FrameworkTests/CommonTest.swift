@@ -19,7 +19,6 @@ func arrayNDTest()
     let columns = 4;
     let rows = 3;
     var nd = Array2D<Int>(columns: columns, rows: rows);
-    
     var i = 0;
     for r in 0..<rows
     {
@@ -32,9 +31,9 @@ func arrayNDTest()
     print(nd);
     
     nd[1, 1] = 99;
-    
-    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.source);
+    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.toArray());
     print(nd);
+    print(nd.contains(99), nd.contains(-1), nd.positionOf(99), nd.positionOf(-1));
 }
 
 //XPriorityQueue test
@@ -48,33 +47,33 @@ func priorityQueueTest(testRebuild:Bool = true)
         {
             sortArray.append(Int(arc4random() % 1000));
         }
-        queue = PriorityQueue<Int>(source: sortArray){$0.0 >= $0.1};
-        sortArray.sortInPlace{$0 > $1}
+        queue = PriorityQueue<Int>(source: sortArray){$0.0 > $0.1};
+        sortArray.sortInPlace(queue.compare)
         while !queue.isEmpty
         {
-            let e1 = queue.pop()!;
+            let e1 = queue.removeFirst()!;
             let e2 = sortArray.removeLast();
             print("\(e1)-\(e2)=\(e1 - e2)  count:\(queue.count)");
         }
     }
     else
     {   //测试优先队列效率
-        queue = PriorityQueue<Int>{$0 >= $1}
+        queue = PriorityQueue<Int>{$0 > $1}
         let c = 400;
         for _ in 0...c
         {
             let temp = Int(arc4random() % 500);
-            if(!queue.isEmpty){queue.pop();}
+            if(!queue.isEmpty){queue.removeFirst();}
             
             for _ in 0...3
             {
-                queue.push(temp);
+                queue.append(temp);
             }
         }
         
         while(!queue.isEmpty)
         {
-            let e = queue.pop()!;
+            let e = queue.removeFirst()!;
             print(e)
         }
     }

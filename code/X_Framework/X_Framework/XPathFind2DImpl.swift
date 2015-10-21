@@ -163,13 +163,13 @@ extension XPFinder2D: XPathFinderType
     //push
     mutating func push(scannable: _Scannable)
     {
-        self.openedQueue.push(scannable);
+        self.openedQueue.append(scannable);
     }
     
     //pop
     mutating func pop() -> _Scannable
     {
-        return self.openedQueue.pop()!;
+        return self.openedQueue.removeFirst()!;
     }
     
     //reset

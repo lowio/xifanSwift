@@ -8,8 +8,8 @@
 
 import Foundation
 
-//MARK: PriorityQueueType --  priority queue type
-public protocol PriorityQueueType: CustomStringConvertible
+//MARK: priority queue type
+public protocol PriorityQueueType
 {
     //element type
     typealias _Element;
@@ -17,41 +17,47 @@ public protocol PriorityQueueType: CustomStringConvertible
     //source; if you set source , call rebuild()
     var source:[Self._Element]{get set}
     
+    //element count
+    var count:Int{get}
+    
+    //element count == 0
+    var isEmpty:Bool{get}
+    
     //compare function
     var compare:(Self._Element, Self._Element) -> Bool{get};
     
     //init rebuild queue use source with compare function
     init(source:[Self._Element], compare:(Self._Element, Self._Element) -> Bool)
 
-    //push element and resort
-    mutating func push(element: Self._Element)
+    //append element and resort
+    mutating func append(newElement: Self._Element)
     
-    //pop element and resort
-    mutating func pop() -> Self._Element?
+    //remove first element and resort
+    mutating func removeFirst() -> Self._Element?
     
     //update element and resort
-    mutating func update(element: Self._Element, atIndex: Int)
+    mutating func update(newElement: Self._Element, atIndex: Int)
     
     //rebuild queue use source
     mutating func rebuild()
 }
 
-//MARK: PriorityQueueType extension -- default implement
+//MARK: extension public
 public extension PriorityQueueType
 {
-    mutating func push(element: Self._Element) {
-        self.source.append(element);
-        self._riseup(self.count - 1);
+    mutating func append(newElement: Self._Element) {
+        self.source.append(newElement);
+        self._shiftUp(self.count - 1);
     }
     
-    mutating func pop() -> Self._Element? {
+    mutating func removeFirst() -> Self._Element? {
         if(isEmpty){return nil;}
         let first = self[0];
         let end = self.source.removeLast();
         guard !self.isEmpty else{return first;}
         self[0] = end;
         guard self.count > 1 else{return first;}
-        self._sinkdown(0);
+        self._shiftDown(0);
         return first;
     }
     
@@ -59,58 +65,48 @@ public extension PriorityQueueType
         guard atIndex >= 0 && atIndex < self.count else{return;}
         self[atIndex] = element;
         let p_i = self._getParentIndex(atIndex);
-        self.compare(element, self[p_i]) ? self._sinkdown(atIndex) : self._riseup(atIndex);
+        self.compare(element, self[p_i]) ? self._shiftDown(atIndex) : self._shiftUp(atIndex);
     }
     
     mutating func rebuild() {
         var i = self.count >> 1 - 1;
         while i > -1
         {
-            self._sinkdown(i--);
+            self._shiftDown(i--);
         }
     }
     
     var count:Int{return self.source.count;}
     var isEmpty:Bool{return self.source.isEmpty;}
+}
+
+//extension CustomStringConvertible
+public extension PriorityQueueType where Self:CustomStringConvertible
+{
     var description:String{return self.source.description;}
 }
 
-//subscript init indexOf
-extension PriorityQueueType
+//extension indexof
+public extension PriorityQueueType where _Element: Equatable
 {
-    private(set) subscript(i:Int) -> Self._Element{
-        set{
-            self.source[i] = newValue;
-        }
-        get{
-            return self.source[i];
-        }
-    }
-    
-    func indexOf(ele:Self._Element, equalFunc: (Self._Element, Self._Element) -> Bool) -> Int?
-    {
-        return self.source.indexOf{
-            return equalFunc(ele, $0);
-        }
-    }
-    
-    init(compare:(Self._Element, Self._Element) -> Bool)
-    {
-        self.init(source: [], compare: compare);
+    //return element index
+    func indexOf(element: Self._Element) -> Int?{
+        return self.source.indexOf(element);
     }
 }
-
-//indexof
-extension PriorityQueueType where _Element: Equatable
+public extension PriorityQueueType
 {
-    //get index
-    func indexOf(ele:Self._Element) -> Int?{
-        return self.source.indexOf(ele);
+    //return element index
+    func indexOf(element:Self._Element, isEquals: (Self._Element, Self._Element) -> Bool) -> Int?
+    {
+        return self.source.indexOf{
+            return isEquals(element, $0);
+        }
     }
 }
 
 //extension init
-extension PriorityQueueType where _Element: Comparable
+public extension PriorityQueueType where _Element: Comparable
 {
     init(max source:[Self._Element])
     {
@@ -122,12 +118,29 @@ extension PriorityQueueType where _Element: Comparable
         self.init(source: source){$0 > $1}
     }
 }
+public extension PriorityQueueType
+{
+    init(compare:(Self._Element, Self._Element) -> Bool)
+    {
+        self.init(source: [], compare: compare);
+    }
+}
 
-//MARK: PriorityQueueType extension -- private default implement
+//MARK: extension private
 private extension PriorityQueueType
 {
-    //rise up
-    mutating func _riseup(atIndex:Int)
+    //subscript
+    subscript(i:Int) -> Self._Element{
+        set{
+            self.source[i] = newValue;
+        }
+        get{
+            return self.source[i];
+        }
+    }
+    
+    //shift up
+    mutating func _shiftUp(atIndex:Int)
     {
         if atIndex < 1 {return;}
         var i = atIndex;
@@ -143,7 +156,7 @@ private extension PriorityQueueType
     }
     
     //sink down
-    mutating func _sinkdown(atIndex:Int)
+    mutating func _shiftDown(atIndex:Int)
     {
         let c = self.count;
         var i = atIndex;
@@ -192,7 +205,7 @@ public struct PriorityQueue<T>
     }
 }
 
-//MARK: PriorityQueue -- implement PriorityQueueType
+//MARK: extention PriorityQueueType
 extension PriorityQueue: PriorityQueueType
 {
     public typealias _Element = T;
