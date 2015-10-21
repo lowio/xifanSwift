@@ -8,10 +8,10 @@
 
 import Foundation
 
-protocol PriorityCollectionType
+public protocol PriorityCollectionType
 {
     //element Type
-    typealias _Element: CollectionType;
+    typealias _Element;
     
     //element count
     var count:Int{get}
@@ -20,13 +20,13 @@ protocol PriorityCollectionType
     var isEmpty:Bool{get}
     
     //append element and resort
-    mutating func append(newElement: Self._Element)
+    mutating func append(newElement: _Element)
     
     //remove first element and resort
-    mutating func removeFirst() -> Self._Element?
+    mutating func removeFirst() -> _Element?
     
     //update element and resort
-    mutating func update(newElement: Self._Element, atIndex: Int)
+    mutating func update(newElement: _Element, atIndex: Int)
     
     //rebuild queue use source
     mutating func rebuild()
