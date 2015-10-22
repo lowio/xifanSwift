@@ -11,8 +11,8 @@ import UIKit
 
 func commonTest() {
 //    jsonTest()
-//    priorityQueueTest();
-    arrayNDTest();
+    priorityQueueTest();
+//    arrayNDTest();
 }
 
 func arrayNDTest()
@@ -55,13 +55,18 @@ func priorityQueueTest(testRebuild:Bool = true)
     var queue:PriorityArray<Int>;
     if(testRebuild)//测试创建优先队列
     {
-        var sortArray = [Int]();
+        var sortArray = [999];
         for _ in 0...100
         {
             sortArray.append(random());
         }
         
         queue = PriorityArray<Int>(source: sortArray){$0 < $1};
+        let index = queue.indexOf(999);
+        let index2 = queue.indexOf{return $0 == 999;}
+        print(index, index2);
+        
+        print(queue)
         sortArray.sortInPlace({$0 > $1})
         while !queue.isEmpty
         {
@@ -69,6 +74,7 @@ func priorityQueueTest(testRebuild:Bool = true)
             let e2 = sortArray.removeLast();
             print("\(e1)-\(e2)=\(e1 - e2)  count:\(queue.count)");
         }
+        
     }
     else
     {   //测试优先队列效率
@@ -85,10 +91,12 @@ func priorityQueueTest(testRebuild:Bool = true)
             }
         }
         
+        var temp = 0;
         while(!queue.isEmpty)
         {
             let e = queue.popFirst()!;
-            print(e)
+            temp += e;
+//            print(e)
         }
     }
     

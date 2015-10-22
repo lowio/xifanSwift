@@ -12,7 +12,7 @@ import Foundation
 public protocol BinaryHeapCollectionType
 {
     //element Type
-    typealias _Element;
+    typealias Element;
     
     //element count
     var count:Int{get}
@@ -21,29 +21,18 @@ public protocol BinaryHeapCollectionType
     var isEmpty:Bool{get}
     
     //append element and resort
-    mutating func append(newElement: _Element)
+    mutating func append(newElement: Element)
     
     //return(and remove) first element and resort
-    mutating func popFirst() -> _Element?
+    mutating func popFirst() -> Element?
     
     //update element and resort
-    mutating func updateElement(element: _Element, atIndex: Int)
-    
-    //return element index
-    @warn_unused_result
-    func indexOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> Int?
+    mutating func updateElement(element: Element, atIndex: Int)
 }
-extension BinaryHeapCollectionType where _Element: Equatable
-{
-    //return element index
-    @warn_unused_result
-    func indexOf(element: _Element) -> Int?
-    {
-        return self.indexOf(element){$0 == $1;}
-    }
-}
-//MARK: extension internal
-extension BinaryHeapCollectionType
+
+//MARK: binary heap operator
+protocol BinaryHeapOperator{}
+extension BinaryHeapOperator
 {
     //shift up collection element at index i use isOrderedBefore function
     //return nil when collection no change
@@ -137,32 +126,20 @@ extension BinaryHeapCollectionType
     static func getChildIndex(ofParentIndex index:Int) -> Int{return ((index << 1) + 1);}
 }
 
-
 //MARK: priority queue use array collection
 public struct PriorityArray<T>
 {
     //source
-    private var source:[T];
+    private var _source:[T];
     
     //is ordered before
-    private var isOrderedBefore:(T, T) -> Bool;
+    private var _isOrderedBefore:(T, T) -> Bool;
     
     //element count
-    public var count:Int{return self.source.count;}
+    public var count:Int{return self._source.count;}
     
     //element count == 0
-    public var isEmpty:Bool{return self.source.isEmpty;}
-    
-    //init with resource, compare
-    public init(source:[T], isOrderedBefore:(T, T) -> Bool)
-    {
-        self.isOrderedBefore = isOrderedBefore;
-        guard let temp = PriorityArray.build(source, isOrderedBefore: self.isOrderedBefore) else {
-            self.source = source;
-            return;
-        }
-        self.source = temp;
-    }
+    public var isEmpty:Bool{return self._source.isEmpty;}
 }
 //MARK: extension public
 public extension PriorityArray where T: Comparable
@@ -183,63 +160,60 @@ public extension PriorityArray
     {
         self.init(source: [], isOrderedBefore:isOrderedBefore);
     }
-    
-    //return element index
-    @warn_unused_result
-    func indexOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> Int?
+}
+//MARK: extension BinaryHeapOperator
+extension PriorityArray: BinaryHeapOperator
+{
+    //init with resource, compare
+    public init(source:[T], isOrderedBefore:(T, T) -> Bool)
     {
-        return self.source.indexOf{
-            return isEquals(element, $0);
+        self._isOrderedBefore = isOrderedBefore;
+        guard let temp = PriorityArray.build(source, isOrderedBefore: self._isOrderedBefore) else {
+            self._source = source;
+            return;
         }
+        self._source = temp;
     }
 }
-public extension PriorityArray where T: Equatable
+//MARK: extension CollectionType
+extension PriorityArray: CollectionType
 {
-    //return element index
-    @warn_unused_result
-    func indexOf(element: _Element) -> Int?
-    {
-        return self.source.indexOf(element);
-    }
+    public var startIndex: Int {return 0}
+    public var endIndex: Int {return self._source.count;}
+    public subscript(i: Int) -> Element{return self._source[i]}
 }
 //MARK: extension binary heap collection type
 extension PriorityArray: BinaryHeapCollectionType
 {
     //element Type
-    public typealias _Element = T;
+    public typealias Element = T;
     
     //append element and resort
-    public mutating func append(newElement: _Element)
+    public mutating func append(newElement: Element)
     {
-        self.source.append(newElement);
-        guard let temp = PriorityArray.shiftUp(self.source, atIndex: self.count - 1, isOrderedBefore: self.isOrderedBefore) else {return;}
-        self.source = temp;
+        self._source.append(newElement);
+        guard let temp = PriorityArray.shiftUp(self._source, atIndex: self.count - 1, isOrderedBefore: self._isOrderedBefore) else {return;}
+        self._source = temp;
     }
     
     //return(and remove) first element and resort
-    public mutating func popFirst() -> _Element?
+    public mutating func popFirst() -> Element?
     {
         if(isEmpty){return nil;}
-        let first = self.source[0];
-        let end = self.source.removeLast();
+        let first = self._source[0];
+        let end = self._source.removeLast();
         guard !self.isEmpty else{return first;}
-        self.source[0] = end;
-        guard let temp = PriorityArray.shiftDown(self.source, atIndex: 0, isOrderedBefore: self.isOrderedBefore) else {return first;}
-        self.source = temp;
+        self._source[0] = end;
+        guard let temp = PriorityArray.shiftDown(self._source, atIndex: 0, isOrderedBefore: self._isOrderedBefore) else {return first;}
+        self._source = temp;
         return first;
     }
     
     //update element and resort
-    public mutating func updateElement(element: _Element, atIndex: Int)
+    public mutating func updateElement(element: Element, atIndex: Int)
     {
         guard atIndex >= 0 && atIndex < self.count else{return;}
-        guard let temp = PriorityArray.updateElement(self.source, element: element, atIndex: atIndex, isOrderedBefore: self.isOrderedBefore) else {return;}
-        self.source = temp;
-    }
-}
-extension PriorityArray: CustomDebugStringConvertible
-{
-    public var debugDescription:String{
-        return self.source.debugDescription;
+        guard let temp = PriorityArray.updateElement(self._source, element: element, atIndex: atIndex, isOrderedBefore: self._isOrderedBefore) else {return;}
+        self._source = temp;
     }
 }

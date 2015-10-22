@@ -131,7 +131,7 @@ extension Array2D where T: NilLiteralConvertible
 extension Array2D: Collection2DType, CollectionType
 {
     //subscript
-    public subscript(column:Int, row:Int) -> Element {
+    public subscript(column:Int, row:Int) -> T {
         set{
             guard let index = self.indexAt(column, row) else{return;}
             self.source[index] = newValue;
@@ -145,6 +145,6 @@ extension Array2D: Collection2DType, CollectionType
     /// collection
     public var startIndex: Int {return 0}
     public var endIndex: Int {return self.source.count;}
-    public subscript(i: Int) -> Element{return self.source[i]}
+    public subscript(i: Int) -> T{return self.source[i]}
 }
 extension Array2D: CustomDebugStringConvertible{}

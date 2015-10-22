@@ -207,9 +207,9 @@ extension XPFinder2D: XPathFinderType
     //update visited
     mutating func updateScannable(scannable: _Scannable)
     {
-        guard let index = (self.openedQueue.indexOf(scannable){return $0.f == $1.f && $0.tile == $1.tile})else{return;}
-        self.openedQueue.updateElement(scannable, atIndex: index);
-        print("注意前方高能：此处出现已经在访问列表中的g需要更新", scannable)
+//        guard let index = try (self.openedQueue.indexOf{return scannable.f == $0.f && scannable.tile == $0.title})else{return;}
+//        self.openedQueue.updateElement(scannable, atIndex: index);
+//        print("注意前方高能：此处出现已经在访问列表中的g需要更新", scannable)
     }
 }
 extension XPFinder2D where T:Equatable
