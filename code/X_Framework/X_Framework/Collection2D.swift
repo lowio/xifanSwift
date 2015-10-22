@@ -12,7 +12,7 @@ import Foundation
 public protocol Collection2DType
 {
     //element type
-    typealias _Element
+    typealias Element
     
     //columns
     var columns: Int{get}
@@ -24,26 +24,22 @@ public protocol Collection2DType
     var count: Int{get}
     
     //subscript
-    subscript(column:Int, row:Int) -> _Element? {get set}
+    subscript(column:Int, row:Int) -> Element {get set}
     
     //column, row is valid
     func isValid(column:Int, _ row:Int) -> Bool
-    
-    //return element position
-    @warn_unused_result
-    func positionOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> (column:Int, row:Int)?
 }
 //MARK: extension public
-public extension Collection2DType
+extension Collection2DType
 {
     //column, row is valid
-    func isValid(column:Int, _ row:Int) -> Bool
+    public func isValid(column:Int, _ row:Int) -> Bool
     {
         return column >= 0 && column < columns && row >= 0 && row < rows;
     }
 }
 //MARK: extension internal
-public extension Collection2DType
+extension Collection2DType
 {
     //return index in collection at column and row
     func indexAt(column:Int, _ row:Int) -> Int?
@@ -61,32 +57,37 @@ public extension Collection2DType
         return (column: column, row: row);
     }
 }
-//MARK: extension contains and positionOf
-extension Collection2DType where Self._Element: Equatable
+//MARK: extension CollectionType
+extension Collection2DType where Self: CollectionType, Self.Generator.Element == Self.Element, Self.Index == Int
+{
+    //return element position
+    @warn_unused_result
+    public func positionOf(@noescape predicate: (Self.Generator.Element) throws -> Bool) rethrows ->(column:Int, row:Int)?
+    {
+        guard let index = try self.indexOf(predicate) else {return nil;}
+        return positionAt(index);
+    }
+}
+extension Collection2DType where Self: CollectionType, Self.Generator.Element == Self.Element, Self.Index == Int, Self.Generator.Element: Equatable
 {
     //if exist, return position else return nil
     @warn_unused_result
-    public func positionOf(element: Self._Element) -> (column:Int, row:Int)?
+    public func positionOf(element: Self.Element) -> (column:Int, row:Int)?
     {
-        return self.positionOf(element){
-            return $0 == $1;
-        }
+        guard let index = self.indexOf(element) else {return nil;}
+        return positionAt(index);
     }
 }
 //MARK: extension CustomStringConvertible
-public extension Collection2DType where Self: CustomDebugStringConvertible
+extension Collection2DType where Self: CustomDebugStringConvertible
 {
-    var debugDescription:String{
+    public var debugDescription:String{
         var text:String = "";
         for r in 0..<self.rows
         {
             for c in 0..<self.columns
             {
-                guard let ele = self[c, r] else{
-                    text += "nil ";
-                    continue;
-                }
-                text += "\(ele) ";
+                text += "\(self[c, r]) ";
             }
             text += "\n";
         }
@@ -97,119 +98,53 @@ public extension Collection2DType where Self: CustomDebugStringConvertible
 //MARK: struct array 2d
 public struct Array2D<T>
 {
-    //source
-    private var source: [T?];
-    private(set) public var columns, rows, count:Int;
+    public typealias Element = T;
     
-    public init(columns:Int, rows:Int, values: [T?]? = nil)
+    //source
+    private var source: [T];
+    private(set) public var columns, rows:Int;
+    
+    public init(columns:Int, rows:Int, repeatValue: T, values: [T]? = nil)
     {
         self.columns = columns;
         self.rows = rows;
-        self.count = columns * rows;
-        guard let v = values else {
-            self.source = [T?](count: count, repeatedValue: nil);
+        let c = columns * rows
+        guard let vs = values else{
+            self.source = Array<T>(count: c, repeatedValue: repeatValue);
             return;
         }
-        var s = v
-        if s.count < count
-        {
-            s += [T?](count: count - s.count, repeatedValue: nil)
+        var temp = Array<T>(vs.prefix(c));
+        if temp.count < c{
+            temp += Array<T>(count: c - temp.count, repeatedValue: repeatValue);
         }
-        self.source = s;
+        self.source = temp;
     }
-    
-    //to toCollection
-    public func toCollection() -> [T?]{ return self.source; }
 }
-
-//MARK: extension Array2DType
-extension Array2D: Collection2DType
+extension Array2D where T: NilLiteralConvertible
 {
-    public typealias _Element = T;
-    
+    public init(columns:Int, rows:Int)
+    {
+        self.init(columns: columns, rows: rows, repeatValue: nil);
+    }
+}
+//MARK: extension Array2DType
+extension Array2D: Collection2DType, CollectionType
+{
     //subscript
-    public subscript(column:Int, row:Int) -> _Element?{
+    public subscript(column:Int, row:Int) -> Element {
         set{
             guard let index = self.indexAt(column, row) else{return;}
             self.source[index] = newValue;
         }
         get{
-            guard let index = self.indexAt(column, row) else{return nil;}
+            let index = self.indexAt(column, row)!;
             return self.source[index];
         }
     }
     
-    //return element position
-    @warn_unused_result
-    public func positionOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> (column:Int, row:Int)?
-    {
-        guard let index = (self.source.indexOf{
-            guard let ele = $0 else {return false;}
-            return isEquals(ele, element);
-        })else{return nil;}
-        return positionAt(index);
-    }
+    /// collection
+    public var startIndex: Int {return 0}
+    public var endIndex: Int {return self.source.count;}
+    public subscript(i: Int) -> Element{return self.source[i]}
 }
 extension Array2D: CustomDebugStringConvertible{}
-
-
-
-//MARK: struct dictionary 2d
-public struct Dictionary2D<T>
-{
-    //source
-    private var source: [Int: T];
-    private(set) public var columns, rows, count:Int;
-    
-    public init(columns:Int, rows:Int, values: [T?]? = nil)
-    {
-        self.columns = columns;
-        self.rows = rows;
-        self.count = columns * rows;
-        guard let v = values else{
-            self.source = [:];
-            return;
-        }
-        var dic:[Int: T] = [:];
-        for i in 0..<v.count
-        {
-            guard let vv = v[i] else { continue; }
-            dic[i] = vv;
-        }
-        self.source = dic;
-    }
-    
-    //to dictionary
-    public func toCollection() -> [Int: T]{ return self.source; }
-}
-
-//MARK: extension Array2DType
-extension Dictionary2D: Collection2DType
-{
-    public typealias _Element = T;
-    
-    //subscript
-    public subscript(column:Int, row:Int) -> _Element?{
-        set{
-            guard let index = self.indexAt(column, row) else{return;}
-            self.source[index] = newValue;
-        }
-        get{
-            guard let index = self.indexAt(column, row) else{return nil;}
-            return self.source[index];
-        }
-    }
-    
-    //return element position
-    @warn_unused_result
-    public func positionOf(element: _Element, isEquals:(_Element, _Element) -> Bool) -> (column:Int, row:Int)?
-    {
-        for (index, value) in self.source
-        {
-            guard isEquals(element, value) else{continue;}
-            return positionAt(index);
-        }
-        return nil;
-    }
-}
-extension Dictionary2D: CustomDebugStringConvertible{}

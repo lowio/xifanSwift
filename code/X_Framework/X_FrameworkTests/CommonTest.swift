@@ -11,16 +11,17 @@ import UIKit
 
 func commonTest() {
 //    jsonTest()
-    priorityQueueTest();
-//    arrayNDTest();
+//    priorityQueueTest();
+    arrayNDTest();
 }
 
 func arrayNDTest()
 {
     let columns = 4;
     let rows = 3;
-//    var nd = Array2D<Int>(columns: columns, rows: rows);
-    var nd =  Dictionary2D<Int>(columns: columns, rows: rows);
+//    var nd = Array2D<Int?>(columns: columns, rows: rows, repeatValue: 0);
+    var nd = Array2D<Int>(columns: columns, rows: rows, repeatValue: 0);
+    print(nd);
     var i = 0;
     for r in 0..<rows
     {
@@ -29,19 +30,23 @@ func arrayNDTest()
             nd[c, r] = i++;
         }
     }
-    
     print(nd);
-    
+    print(nd.count)
     nd[1, 1] = 99;
-//    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, values: nd.toCollection());
-    nd = Dictionary2D<Int>(columns: nd.columns, rows: nd.rows, values: [0, nil, 20]);
+//    nd[3, 2] = nil;
+    
+    let p = nd.positionOf{
+        return 99 == $0
+    }
+    print(nd, p);
+//    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, repeatValue: 0, values: [nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil]);
+    nd = Array2D<Int>(columns: nd.columns, rows: nd.rows, repeatValue: 0, values: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+    nd[3,2] = 99;
     print(nd);
-    print(nd.positionOf(99), nd.positionOf(-1));
     
-    let p = nd.positionOf(99){return $0 == $1;}
-    print(p);
     
-    print(nd.toCollection())
+    let a = Array<Int>(nd);
+    print(a);
 }
 
 //XPriorityQueue test

@@ -55,6 +55,13 @@ func pathFinderTest() {
 //        print($0.count, "", path.count)
 //    }
     
+    
+    
+    
+    
+    //    make struct implemente GeneratorType
+    //    every collection extends sequenceType
+
     //    tile 中的 passable也不应该出现
     //    jump point search
     //    dic不可取 效率太低 想其他办法 index ...

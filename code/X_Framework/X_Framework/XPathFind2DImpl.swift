@@ -94,9 +94,9 @@ struct XPFinder2D<T:XPathFinderScannable where T._Tile:XPathFinderTile2D, T._Til
     private var algorithm:XPFAlgorithm2D;
     
     //config
-    private(set) var config:Array2D<T._Tile>;
+    private(set) var config:Array2D<T._Tile?>;
     
-    init(config:Array2D<T._Tile>, algorithm:XPFAlgorithm2D)
+    init(config:Array2D<T._Tile?>, algorithm:XPFAlgorithm2D)
     {
         self.config = config;
         self.algorithm = algorithm;
