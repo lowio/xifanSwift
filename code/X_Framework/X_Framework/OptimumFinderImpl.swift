@@ -17,8 +17,11 @@ public struct BreadthFirstFinderQueue<Element: FinderComparable> {
     //opened list
     private(set)var openedList: [Element];
     
+    //last pop element
+    private var lastPop: Element?;
+    
     //current index
-    private(set) var currentIndex:Int = 0;
+    private var currentIndex:Int = 0;
     
     init()
     {
@@ -44,7 +47,8 @@ extension BreadthFirstFinderQueue: FinderQueue
     mutating public func popFirst() -> Element?
     {
         guard currentIndex < self.openedList.count else{return nil;}
-        return self.openedList[currentIndex++];
+        lastPop = self.openedList[currentIndex++];
+        return lastPop;
     }
     
     //appen element

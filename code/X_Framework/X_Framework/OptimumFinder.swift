@@ -8,7 +8,7 @@
 
 import Foundation
 
-//optimum finder comparable element
+//MARK: optimum finder comparable element
 public protocol FinderComparable
 {
     //point type
@@ -24,7 +24,7 @@ public protocol FinderComparable
     static func create(point: Self._Point, chainFrom: Self?) -> Self
 }
 
-//optimum finder queue
+//MARK: optimum finder queue
 public protocol FinderQueue
 {
     //element Type
@@ -80,9 +80,8 @@ extension OptimumFinder
         queue.append(current);
         queue.setVisited(current);
         
-        //over: found path or deadend
         defer{
-            print("WARN::======================== do complete", __LINE__);
+            print("WARN::======================== completion", __LINE__);
         }
         
         //repeat

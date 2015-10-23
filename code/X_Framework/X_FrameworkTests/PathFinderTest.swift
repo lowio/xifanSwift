@@ -58,8 +58,7 @@ func pathFinderTest() {
     
     
     
-    
-    //    Queue create/ completion/ Queue Element create/ check g and update (可以提出update方法， 根据不同的queue.element的权重g来更新）
+    //    Queue create/ completion/ getneighbors/ Queue Element create heuristic movementcost/ check g and update (可以提出update方法， 根据不同的queue.element的权重g来更新）
 
     //    tile 中的 passable也不应该出现
     //    jump point search
