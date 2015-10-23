@@ -10,6 +10,7 @@
 		1B0F4D5B1BD7EDB900148AE7 /* PathFinderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */; };
 		1BA105A21BCFE6C70071506E /* XPathFinderCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA105A11BCFE6C70071506E /* XPathFinderCore.swift */; settings = {ASSET_TAGS = (); }; };
 		1BA105A51BD009870071506E /* XPathFind2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA105A41BD009870071506E /* XPathFind2DImpl.swift */; settings = {ASSET_TAGS = (); }; };
+		655FCD741BDA0DF500B14198 /* OptimumFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655FCD731BDA0DF500B14198 /* OptimumFinder.swift */; settings = {ASSET_TAGS = (); }; };
 		65CCF3501BAAB3D800BCCD5E /* X_Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65CCF3571BAAB3D800BCCD5E /* X_Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */; settings = {ASSET_TAGS = (); }; };
 		65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */; };
@@ -19,6 +20,7 @@
 		65CCF3821BAABDD600BCCD5E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65CCF3811BAABDD600BCCD5E /* TopApps.json */; settings = {ASSET_TAGS = (); }; };
 		65F4CEB01BD623C9007CB88B /* PathFinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F4CEAF1BD623C9007CB88B /* PathFinderImpl.swift */; settings = {ASSET_TAGS = (); }; };
 		65F4CEB31BD62BAF007CB88B /* PathFinder2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F4CEB21BD62BAF007CB88B /* PathFinder2DImpl.swift */; settings = {ASSET_TAGS = (); }; };
+		65F69B481BD9CEA300850B10 /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F69B471BD9CEA300850B10 /* Temp.swift */; settings = {ASSET_TAGS = (); }; };
 		65F6A3F51BD76B9300A95AB3 /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6A3F41BD76B9300A95AB3 /* PriorityQueue.swift */; settings = {ASSET_TAGS = (); }; };
 		65FAC7E61BD4F2B800C96C72 /* PathFinderCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
@@ -36,6 +38,7 @@
 /* Begin PBXFileReference section */
 		1BA105A11BCFE6C70071506E /* XPathFinderCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFinderCore.swift; sourceTree = "<group>"; };
 		1BA105A41BD009870071506E /* XPathFind2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XPathFind2DImpl.swift; sourceTree = "<group>"; };
+		655FCD731BDA0DF500B14198 /* OptimumFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimumFinder.swift; sourceTree = "<group>"; };
 		65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = X_Framework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = X_Framework.h; sourceTree = "<group>"; };
 		65CCF3511BAAB3D800BCCD5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -50,6 +53,7 @@
 		65F4CEAF1BD623C9007CB88B /* PathFinderImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderImpl.swift; sourceTree = "<group>"; };
 		65F4CEB21BD62BAF007CB88B /* PathFinder2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinder2DImpl.swift; sourceTree = "<group>"; };
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
+		65F69B471BD9CEA300850B10 /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		65F6A3F41BD76B9300A95AB3 /* PriorityQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
 		65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +113,7 @@
 				65CCF37D1BAAB87700BCCD5E /* components */,
 				65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */,
 				65CCF35D1BAAB3D800BCCD5E /* Info.plist */,
+				65F69B471BD9CEA300850B10 /* Temp.swift */,
 				65F5A9CE1BAC080D005E74CE /* temp.playground */,
 			);
 			path = X_FrameworkTests;
@@ -117,7 +122,7 @@
 		65CCF3661BAAB49C00BCCD5E /* yeah */ = {
 			isa = PBXGroup;
 			children = (
-				65CCF3681BAAB58300BCCD5E /* pathfind */,
+				65CCF3681BAAB58300BCCD5E /* optimumFinder */,
 				65CCF3671BAAB4E800BCCD5E /* collection */,
 			);
 			name = yeah;
@@ -132,7 +137,7 @@
 			name = collection;
 			sourceTree = "<group>";
 		};
-		65CCF3681BAAB58300BCCD5E /* pathfind */ = {
+		65CCF3681BAAB58300BCCD5E /* optimumFinder */ = {
 			isa = PBXGroup;
 			children = (
 				1BA105A11BCFE6C70071506E /* XPathFinderCore.swift */,
@@ -140,8 +145,9 @@
 				65FAC7E51BD4F2B800C96C72 /* PathFinderCore.swift */,
 				65F4CEAF1BD623C9007CB88B /* PathFinderImpl.swift */,
 				65F4CEB21BD62BAF007CB88B /* PathFinder2DImpl.swift */,
+				655FCD731BDA0DF500B14198 /* OptimumFinder.swift */,
 			);
-			name = pathfind;
+			name = optimumFinder;
 			sourceTree = "<group>";
 		};
 		65CCF37D1BAAB87700BCCD5E /* components */ = {
@@ -278,6 +284,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				655FCD741BDA0DF500B14198 /* OptimumFinder.swift in Sources */,
 				65CCF36F1BAAB61A00BCCD5E /* Collection2D.swift in Sources */,
 				1BA105A51BD009870071506E /* XPathFind2DImpl.swift in Sources */,
 				65FAC7E61BD4F2B800C96C72 /* PathFinderCore.swift in Sources */,
@@ -295,6 +302,7 @@
 				1B0F4D5B1BD7EDB900148AE7 /* PathFinderTest.swift in Sources */,
 				65CCF37C1BAAB71C00BCCD5E /* CommonTest.swift in Sources */,
 				65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */,
+				65F69B481BD9CEA300850B10 /* Temp.swift in Sources */,
 				65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -23,6 +23,7 @@ class X_FrameworkTests: XCTestCase {
     
     func testFramework()
     {
+        tempTest();
         if testPerformance
         {
             self.measureBlock{
