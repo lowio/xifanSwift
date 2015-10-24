@@ -9,7 +9,7 @@
 import Foundation
 
 //BreadthFirst finder queue
-public struct BreadthFirstFinderQueue<Element: FinderComparable> {
+public struct FinderBreadthFirstQueue<Element: FinderComparable> {
     
     //key came from value
     private(set) var camefrom: [Element._Point: Element];
@@ -29,22 +29,29 @@ public struct BreadthFirstFinderQueue<Element: FinderComparable> {
         self.openedList = [];
     }
 }
-extension BreadthFirstFinderQueue: FinderQueue
+extension FinderBreadthFirstQueue: FinderQueue
 {
+    
     //if point is visited return element else return nil
-    public func getVisited(point: Element._Point) -> Element?
+    public func getVisitedElementAt(point: Element._Point) -> Element?
     {
         return self.camefrom[point];
     }
     
-    //set element visited
-    mutating public func setVisited(element: Element)
+    //set element's point closed and update it in 'Self'
+    mutating public func setPointClosedOf(element: Element)
+    {
+        self.camefrom[element.point!] = element;
+    }
+    
+    //set element's point visited and update it in 'Self'
+    mutating public func setPointVisitedOf(element: Element)
     {
         self.camefrom[element.point!] = element;
     }
     
     //pop optimum element
-    mutating public func popFirst() -> Element?
+    mutating public func popFirstElement() -> Element?
     {
         guard currentIndex < self.openedList.count else{return nil;}
         lastPop = self.openedList[currentIndex++];
@@ -52,13 +59,13 @@ extension BreadthFirstFinderQueue: FinderQueue
     }
     
     //appen element
-    mutating public func append(element: Element)
+    mutating public func appendElement(element: Element)
     {
         self.openedList.append(element);
     }
     
     //update element
-    mutating public func update(element: Element) -> Bool
+    mutating public func updateElement(element: Element) -> Bool
     {
         guard let index = (self.openedList.indexOf{return element.point! == $0.point!})else{return false;}
         self.openedList[index] = element;
@@ -66,15 +73,15 @@ extension BreadthFirstFinderQueue: FinderQueue
     }
     
     //create 'Self'
-    static public func create() -> BreadthFirstFinderQueue
+    static public func create() -> FinderBreadthFirstQueue
     {
-        return BreadthFirstFinderQueue();
+        return FinderBreadthFirstQueue();
     }
 }
-extension BreadthFirstFinderQueue where Element: Equatable
+extension FinderBreadthFirstQueue where Element: Equatable
 {
     //update element
-    mutating func update(element: Element) -> Bool
+    mutating func updateElement(element: Element) -> Bool
     {
         guard let index = (self.openedList.indexOf(element))else{return false;}
         self.openedList[index] = element;

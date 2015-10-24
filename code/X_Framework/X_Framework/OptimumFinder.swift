@@ -8,8 +8,14 @@
 
 import Foundation
 
+public protocol FinderChainable
+{
+    //chain from
+    var chainFrom: FinderChainable?{get set}
+}
+
 //MARK: optimum finder comparable element
-public protocol FinderComparable
+public protocol FinderComparable: FinderChainable
 {
     //point type
     typealias _Point: Hashable;
@@ -17,11 +23,20 @@ public protocol FinderComparable
     //point
     var point: Self._Point?{get}
     
-    //is closed
-    var colsed:Bool{get set}
+    //g score, real cost from start point to 'self' point
+    var g: Int{get set}
     
-    //create 'Self'
-    static func create(point: Self._Point, chainFrom: Self?) -> Self
+    //h score, hurisctic cost from 'self' point to goal point
+    var h: Int{get set}
+    
+    //weight f = g + h
+    var f:Int{get}
+    
+    //'self' is closed
+    var closed:Bool{get set}
+    
+    //init
+    init(g: Int, h: Int, point: Self._Point?)
 }
 
 //MARK: optimum finder queue
@@ -31,19 +46,22 @@ public protocol FinderQueue
     typealias Element: FinderComparable;
     
     //if point is visited return element else return nil
-    func getVisited(point: Self.Element._Point) -> Self.Element?
+    func getVisitedElementAt(point: Self.Element._Point) -> Self.Element?
     
-    //set element visited
-    mutating func setVisited(element: Self.Element)
+    //set element's point closed and update it in 'Self'
+    mutating func setPointClosedOf(element: Self.Element)
+    
+    //set element's point visited and update it in 'Self'
+    mutating func setPointVisitedOf(element: Self.Element)
     
     //pop optimum element
-    mutating func popFirst() -> Self.Element?
+    mutating func popFirstElement() -> Self.Element?
     
     //appen element
-    mutating func append(element: Self.Element)
+    mutating func appendElement(element: Self.Element)
     
     //update element
-    mutating func update(element: Self.Element) -> Bool
+    mutating func updateElement(element: Self.Element) -> Bool
     
     //create 'Self'
     static func create() -> Self
@@ -52,33 +70,55 @@ public protocol FinderQueue
 //optimum finder request
 public protocol FinderRequest
 {
-    //point
-    typealias _Point: Hashable;
+    
+    //heuristic type
+    typealias _Heuristic: FinderHeuristic
     
     //start
-    var start: Self._Point{get}
+    var start: Self._Heuristic._Point{get}
     
     //goal
-    var goal: Self._Point{get}
+    var goal: Self._Heuristic._Point{get}
+    
+    //heurisitc
+    var heuristic: Self._Heuristic{get}
 }
 
+//heuristic 
+public protocol FinderHeuristic
+{
+    typealias _Point
+    //get heuristic
+    func getHeuristic(from: Self._Point, toPoint: Self._Point) -> Int
+}
 
 //finder
 public protocol OptimumFinder
 {
+    //map - getNeighbors(point)->point
+    //map - getCostFrom(point, toPoint)->point
+    
+    //huristic
+    
+    //createQueue()
+    
+    //completion／visited
 }
 //extension find use getNeighbors
 extension OptimumFinder
 {
-    func find<_Req: FinderRequest, _Queue: FinderQueue where _Req._Point == _Queue.Element._Point>(request: _Req, getNeighbors: (_Req._Point) -> [_Req._Point])
+    func find<_Req: FinderRequest, _Queue: FinderQueue where _Req._Heuristic._Point == _Queue.Element._Point>(request: _Req,
+        getNeighbors: (_Req._Heuristic._Point) -> [_Req._Heuristic._Point], getCostFrom: (_Req._Heuristic._Point, _Req._Heuristic._Point) -> Int)
     {
         //create queue
         var queue = _Queue.create();
         
         //append start and set start visited
-        var current = _Queue.Element.create(request.start, chainFrom: nil);
-        queue.append(current);
-        queue.setVisited(current);
+        var current = _Queue.Element(g: 0, h: 0, point: request.start);
+        current.chainFrom = nil;
+        current.closed = false;
+        queue.appendElement(current);
+        queue.setPointVisitedOf(current);
         
         defer{
             print("WARN::======================== completion", __LINE__);
@@ -86,39 +126,45 @@ extension OptimumFinder
         
         //repeat
         repeat{
-            guard let _next = queue.popFirst() else {break;}
+            guard let _next = queue.popFirstElement() else {break;}
             
-            //set current and close it
+            //current element , current point
             current = _next;
-            current.colsed = true;
-            //update visited closed state
-            queue.setVisited(current);
+            guard let point = current.point else {break;}
+            
+            //set current's point closed
+            current.closed = true;
+            queue.setPointClosedOf(current);
             
             //compare current point with goal
-            guard let point = current.point else {break;}
             guard point != request.goal else{break;}
             
             //explore neighbors
             let neighbors = getNeighbors(point);
             for n in neighbors
             {
-                guard let visited = queue.getVisited(n) else{
+                let g = current.g + getCostFrom(point, n);
+                guard let visited = queue.getVisitedElementAt(n) else{
                     //create new element appent it and set it visited
-                    let pc = _Queue.Element.create(n, chainFrom: current);
-                    print("WARN::======================== set h and g and parent and point", __LINE__);
-                    queue.setVisited(pc);
-                    queue.append(pc);
+                    let h = request.heuristic.getHeuristic(point, toPoint: n);
+                    var pc = _Queue.Element(g: g, h: h, point: n);
+                    pc.closed = false;
+                    pc.chainFrom = current;
+                    queue.appendElement(pc);
+                    queue.setPointVisitedOf(pc);
                     continue;
                 }
                 
-                guard !visited.colsed else{ continue; }
-                print("WARN::======================== guard new g < visited.g else{continue;} //可以提出此部分用于不同element类型去更新，比如有g的比较g", __LINE__);
+                //if element is not closed, compare neighbor' g with visited' g
+                guard !visited.closed && g < visited.g else{ continue; }
                 
+                //update
                 var updateElement = visited;
-                print("WARN::======================== replace parent and g ", __LINE__);
-                updateElement.colsed = false;
-                queue.setVisited(updateElement);
-                queue.update(updateElement);
+                updateElement.g = g;
+                updateElement.closed = false;
+                updateElement.chainFrom = current;
+                queue.updateElement(updateElement);
+                queue.setPointVisitedOf(updateElement);
             }
         }while true
     }
