@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+//MARK: finder chainable type
 public protocol FinderChainable
 {
     //chain from
@@ -34,9 +34,6 @@ public protocol FinderComparable: FinderChainable
     
     //'self' is closed
     var closed:Bool{get set}
-    
-    //init
-    init(g: Int, h: Int, point: Self._Point?)
 }
 
 //MARK: optimum finder queue
@@ -63,11 +60,23 @@ public protocol FinderQueue
     //update element
     mutating func updateElement(element: Self.Element) -> Bool
     
-    //create 'Self'
-    static func create() -> Self
+    //all visited point
+    func allVisitedPoints() -> [Self.Element._Point]
 }
 
-//optimum finder request
+//MARK: finder datasource
+public protocol FinderDataSource
+{
+    typealias _Point;
+    
+    //get neighbors
+    func getNeighborsOf(point: Self._Point) -> [_Point]
+    
+    //get cost
+    func getCostFrom(point: Self._Point, toPoint: Self._Point) -> Int
+}
+
+//MARK: finder request
 public protocol FinderRequest
 {
     
@@ -84,7 +93,7 @@ public protocol FinderRequest
     var heuristic: Self._Heuristic{get}
 }
 
-//heuristic 
+//MARK: finder heuristic
 public protocol FinderHeuristic
 {
     typealias _Point
@@ -95,33 +104,70 @@ public protocol FinderHeuristic
 //finder
 public protocol OptimumFinder
 {
-    //map - getNeighbors(point)->point
-    //map - getCostFrom(point, toPoint)->point
-    
-    //huristic
-    
-    //createQueue()
+    //FinderRequest/ FinderQueue/ FinderDataSource
     
     //completion／visited
+    
+    //path finder queue type
+    typealias _Queue: FinderQueue;
+    
+    //path finder request type
+    typealias _Request: FinderRequest;
+    
+    //path data source type
+    typealias _DataSource: FinderDataSource;
+    
+    //create element
+    func createElement(g: Int, h: Int, point: Self._Queue.Element._Point) -> Self._Queue.Element
+    
+    //create queue
+    func createQueue() -> Self._Queue
+    
+    //backtrace path
+    func backtraceToPath(end: Self._Queue.Element) -> [Self._Queue.Element._Point]
 }
-//extension find use getNeighbors
 extension OptimumFinder
 {
-    func find<_Req: FinderRequest, _Queue: FinderQueue where _Req._Heuristic._Point == _Queue.Element._Point>(request: _Req,
-        getNeighbors: (_Req._Heuristic._Point) -> [_Req._Heuristic._Point], getCostFrom: (_Req._Heuristic._Point, _Req._Heuristic._Point) -> Int)
+    func backtraceToPath(end: Self._Queue.Element) -> [Self._Queue.Element._Point]
     {
+        var element = end;
+        var path:[Self._Queue.Element._Point] = [];
+        repeat{
+            guard let p = element.point else {break;}
+            path.append(p);
+            guard let ele = element.chainFrom as? _Queue.Element else {break;}
+            element = ele;
+        }while true
+        return path;
+    }
+}
+//extension find use getNeighbors
+extension OptimumFinder where Self._Request._Heuristic._Point == Self._Queue.Element._Point, Self._Queue.Element._Point == Self._DataSource._Point
+{
+    func find(request: _Request, dataSource: _DataSource, completion:([_DataSource._Point]) -> (), visitation:(([_DataSource._Point]) -> ())? = nil)
+    {
+        let start = request.start;
+        let goal = request.goal;
+        let heuristic = request.heuristic;
+        
         //create queue
-        var queue = _Queue.create();
+        var queue = self.createQueue();
         
         //append start and set start visited
-        var current = _Queue.Element(g: 0, h: 0, point: request.start);
+        var current = self.createElement(0, h: 0, point: start)
         current.chainFrom = nil;
         current.closed = false;
         queue.appendElement(current);
         queue.setPointVisitedOf(current);
         
         defer{
-            print("WARN::======================== completion", __LINE__);
+            let path = self.backtraceToPath(current);
+            completion(path);
+            if let _visitation = visitation
+            {
+                let visitedPoints = queue.allVisitedPoints();
+                _visitation(visitedPoints);
+            }
         }
         
         //repeat
@@ -137,17 +183,17 @@ extension OptimumFinder
             queue.setPointClosedOf(current);
             
             //compare current point with goal
-            guard point != request.goal else{break;}
+            guard point != goal else{break;}
             
             //explore neighbors
-            let neighbors = getNeighbors(point);
+            let neighbors = dataSource.getNeighborsOf(point);
             for n in neighbors
             {
-                let g = current.g + getCostFrom(point, n);
+                let g = current.g + dataSource.getCostFrom(point, toPoint: n);
                 guard let visited = queue.getVisitedElementAt(n) else{
                     //create new element appent it and set it visited
-                    let h = request.heuristic.getHeuristic(point, toPoint: n);
-                    var pc = _Queue.Element(g: g, h: h, point: n);
+                    let h = heuristic.getHeuristic(point, toPoint: n);
+                    var pc = self.createElement(g, h: h, point: n)
                     pc.closed = false;
                     pc.chainFrom = current;
                     queue.appendElement(pc);

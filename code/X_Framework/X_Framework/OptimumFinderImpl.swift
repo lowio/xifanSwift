@@ -72,10 +72,10 @@ extension FinderBreadthFirstQueue: FinderQueue
         return true;
     }
     
-    //create 'Self'
-    static public func create() -> FinderBreadthFirstQueue
+    //all visited point
+    public func allVisitedPoints() -> [Element._Point]
     {
-        return FinderBreadthFirstQueue();
+        return Array<Element._Point>(self.camefrom.keys);
     }
 }
 extension FinderBreadthFirstQueue where Element: Equatable
