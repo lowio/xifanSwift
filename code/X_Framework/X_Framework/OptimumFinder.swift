@@ -106,8 +106,6 @@ public protocol OptimumFinder
 {
     //FinderRequest/ FinderQueue/ FinderDataSource
     
-    //completion／visited
-    
     //path finder queue type
     typealias _Queue: FinderQueue;
     
