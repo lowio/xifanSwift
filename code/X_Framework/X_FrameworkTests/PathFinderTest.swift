@@ -9,58 +9,37 @@
 import UIKit
 @testable import X_Framework;
 
-extension XPFinderTile2D: CustomStringConvertible
-{
-    var description:String{
-        return "\(movementCost)";
-    }
-}
+
 
 func pathFinderTest() {
     
-//    let size = 50;
-//    var config = Array2D<XPFScannable._Tile>(columns: size, rows: size);
-//    for c in 0..<size
-//    {
-//        for r in 0..<size
-//        {
-//            var v = XPFScannable._Tile.init(c, r);
-//            v.movementCost = 1;
-//            config[c, r] = v;
-//        }
-//    }
-//    var xpf = XPFinder2D<XPFScannable>(config: config, algorithm: XPFAlgorithm2D.Manhattan);
-//    xpf.start = XPFScannable._Tile(3, 3);
-//    xpf.goal = XPFScannable._Tile(20, 23);
-//    
-//    var c = xpf.config;
-//    
-//    var path:[XPFScannable._Tile] = [];
-//    xpf.findPath({
-//        path = $0;
-//    })
-//    {
-//        for v in $0{
-//            var temp = v;
-//            temp.movementCost = 0;
-//            c[v.x, v.y] = temp;
-//        }
-//        for v in path
-//        {
-//            var temp = v;
-//            temp.movementCost = 3;
-//            c[v.x, v.y] = temp;
-//        }
-//        print(c);
-//        print($0.count, "", path.count)
-//    }
+    let size = 50;
+    let config = Array2D<Int>(columns: size, rows: size, repeatValue: 1);
+    let queue = FinderBreadthFirstQueue<FinderElement<Point2D>>();
+    let dataSource = FinderDataSource2D<Point2D>(config: config, diagonal: false);
+    let heuristic = FinderHuristic2D<Point2D>.Manhattan;
+    let start = Point2D(x: 24, y: 24, cost: 1);
+    let goal = Point2D(x: 13, y: 13, cost: 1);
+    let finder = OFinder<FinderElement<Point2D>>();
+    
+    var tempConfig = Array2D<String>(columns: size, rows: size, repeatValue: "@");
+    var path:[Point2D] = [];
+    finder.find(start, goal: goal, dataSource: dataSource, finderQueue: queue, heuristic: heuristic, completion: {
+        path = $0;
+        }){
+            for v in $0{
+                tempConfig[v.x, v.y] = "+";
+            }
+            for v in path
+            {
+                tempConfig[v.x, v.y] = "*";
+            }
+            tempConfig[start.x , start.y] = "$"
+            tempConfig[goal.x, goal.y] = "¥";
+        }
     
     
-    
-    
-    //    Queue create/ completion/ getneighbors/ Queue Element create heuristic movementcost/ check g and update (可以提出update方法， 根据不同的queue.element的权重g来更新）
-
-    //    tile 中的 passable也不应该出现
+    print(tempConfig);
     //    jump point search
     //    dic不可取 效率太低 想其他办法 index ...
     //    diagoanl算法有问题

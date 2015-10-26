@@ -8,7 +8,7 @@
 
 import Foundation
 
-//BreadthFirst finder queue
+//MARK: BreadthFirst finder queue
 public struct FinderBreadthFirstQueue<Element: FinderComparable> {
     
     //key came from value
@@ -88,3 +88,51 @@ extension FinderBreadthFirstQueue where Element: Equatable
         return true;
     }
 }
+
+//MARK: finder comparable struct
+public struct FinderElement<T:Hashable>
+{
+    //point type
+    public typealias _Point = T;
+    
+    //'self' is closed
+    public var closed:Bool;
+    
+    //g score, real cost from start point to 'self' point
+    public var g: Int = 0;
+    
+    //h score, hurisctic cost from 'self' point to goal point
+    private (set) public var h: Int = 0;
+    
+    //sub chainable
+    public var subChainable: FinderChainable? = nil;
+    
+    //point
+    private (set) public var point: T? = nil;
+    
+    //init required
+    public init(g: Int, h: Int, point: _Point)
+    {
+        self.g = g;
+        self.h = h;
+        self.point = point;
+        self.closed = false;
+    }
+}
+extension FinderElement: FinderComparable
+{
+    //weight f = g + h
+    public var f:Int{return self.g + self.h}
+}
+
+//MARK: optimum finder 2d
+public struct OFinder<T: FinderComparable>
+{
+}
+extension OFinder: OptimumFinder
+{
+    //element type
+    public typealias _Element = T;
+}
+
+

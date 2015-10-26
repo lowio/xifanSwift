@@ -11,8 +11,8 @@ import UIKit
 
 func commonTest() {
 //    jsonTest()
-    priorityQueueTest();
-//    arrayNDTest();
+//    priorityQueueTest();
+    arrayNDTest();
 }
 
 func arrayNDTest()
