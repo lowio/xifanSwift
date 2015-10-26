@@ -16,7 +16,7 @@ func pathFinderTest() {
     let size = 50;
     let config = Array2D<Int>(columns: size, rows: size, repeatValue: 1);
     let queue = FinderBreadthFirstQueue<FinderElement<Point2D>>();
-    let dataSource = FinderDataSource2D<Point2D>(config: config, diagonal: false);
+    let dataSource = FinderDataSource2D<Point2D>(config: config, diagonal: true);
     let heuristic = FinderHuristic2D<Point2D>.Manhattan;
     let start = Point2D(x: 24, y: 24, cost: 1);
     let goal = Point2D(x: 13, y: 13, cost: 1);
