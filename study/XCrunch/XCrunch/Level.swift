@@ -30,7 +30,7 @@ class Level {
     func createNodes() -> Set<XNodeData>
     {
         var set:Set<XNodeData>;
-        do
+        repeat
         {
         set = createInitialNodes();
         detectPossibleSwapNodes();
@@ -66,7 +66,7 @@ class Level {
     private func getRandomType(column:Int, row:Int) -> XNodeType
     {
         var t:XNodeType!
-        do{
+        repeat{
             t = XNodeType.random();
         }
         while (column > 1 && nodes[column - 1, row]?.nodeType == t && nodes[column - 2, row]?.nodeType == t)
@@ -197,9 +197,9 @@ class Level {
                     (node.nodeType == nodes[column + 1, row]?.nodeType) &&
                     (nodes[column + 2, row]?.nodeType == node.nodeType)
                 {
-                    var nodeType = node.nodeType;
+                    let nodeType = node.nodeType;
                     let chian = Chian(chianType: Chian.ChianType.Horizontal);
-                    do
+                    repeat
                     {
                     chian.addNode(nodes[column, row]!);
                     ++column
@@ -228,7 +228,7 @@ class Level {
                 {
                     let nodeType = node.nodeType;
                     let chian = Chian(chianType: Chian.ChianType.Vertical);
-                    do
+                    repeat
                     {
                     chian.addNode(nodes[column, row]!);
                     row++;
@@ -312,7 +312,7 @@ class Level {
             {
                 if tiles[column, row] == nil { continue; }
                 var type:XNodeType;
-                do{
+                repeat{
                 type = XNodeType.random();
                 }while type == nodeType;
                 nodeType = type;
@@ -383,10 +383,10 @@ class Level {
         {
             if let ta: AnyObject = td["tiles"]
             {
-                for (row, rows) in enumerate(ta as! [[Int]])
+                for (row, rows) in (ta as! [[Int]]).enumerate()
                 {
                     let r = numRows - row - 1;  //最底部一行才是第0行
-                    for (column, flag) in enumerate(rows)
+                    for (column, flag) in rows.enumerate()
                     {
                         if flag == 1
                         {

@@ -15,12 +15,14 @@ extension JSONParser
         if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json", inDirectory: directory)
         {
             var error:NSError?
-            if let data = NSData(contentsOfFile: path, options: NSDataReadingOptions(), error: &error)
-            {
+            do {
+                let data = try NSData(contentsOfFile: path, options: NSDataReadingOptions())
                 return JSONParser(data: data);
+            } catch let error1 as NSError {
+                error = error1
             }
         }
-        println("can not find \(fileName)");
+        print("can not find \(fileName)");
         return nil;
     }
 }
@@ -33,27 +35,26 @@ extension Dictionary
         if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json", inDirectory: "Levels")
         {
             var error:NSError?
-            if let data = NSData(contentsOfFile: path, options: NSDataReadingOptions(), error: &error)
-            {
-                if let dic: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(), error: &error)
+            do {
+                let data = try NSData(contentsOfFile: path, options: NSDataReadingOptions())
+                if let dic: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
                     where dic is Dictionary<String, AnyObject>
                 {
                     return dic as? Dictionary<String, AnyObject>;
                 }
                 else
                 {
-                    println("file is not json type, error:\(error)");
+                    print("file is not json type, error:\(error)");
                     return nil;
                 }
-            }
-            else
-            {
-                println("can not load \(fileName), error:\(error)");
+            } catch let error1 as NSError {
+                error = error1
+                print("can not load \(fileName), error:\(error)");
                 return nil;
             }
         }
         
-        println("can not find \(fileName)");
+        print("can not find \(fileName)");
         return nil;
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Swap: Printable, Hashable {
+struct Swap: CustomStringConvertible, Hashable {
     
     //当前选中的node
     let current:XNodeData;

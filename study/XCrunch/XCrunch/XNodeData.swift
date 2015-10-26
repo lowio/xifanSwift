@@ -9,7 +9,7 @@
 import SpriteKit
 
 //xnode data
-class XNodeData: Printable {
+class XNodeData: CustomStringConvertible {
     
     //行列
     var column, row:Int;
@@ -70,7 +70,7 @@ enum XNodeType:Int
 }
 
 //打印相关
-extension XNodeType:Printable
+extension XNodeType:CustomStringConvertible
 {
     var description: String{
         return spriteName;

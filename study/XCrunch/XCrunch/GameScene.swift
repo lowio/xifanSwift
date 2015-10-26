@@ -66,7 +66,7 @@ class GameScene: SKScene {
     {
         for node in nodeDatas
         {
-            var sprite = SKSpriteNode(imageNamed: node.nodeType.spriteName);
+            let sprite = SKSpriteNode(imageNamed: node.nodeType.spriteName);
             sprite.position = getPointAt(node.column, row: node.row);
             nodeLayer.addChild(sprite);
             node.sprite = sprite;
@@ -113,7 +113,7 @@ class GameScene: SKScene {
     var swipeFromColumn:Int?;
     var swipeFromRow:Int?;
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touch = touches.first as! UITouch;
         
         var point = touch.locationInNode(nodeLayer);
@@ -132,7 +132,7 @@ class GameScene: SKScene {
     
     
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
         if swipeFromColumn == nil
         {
@@ -255,7 +255,7 @@ class GameScene: SKScene {
 //        runAction(invalidSwipeSound);
     }
     
-    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if lightSprite.parent != nil && swipeFromColumn != nil
         {
             hideLightSprite();
@@ -264,7 +264,7 @@ class GameScene: SKScene {
         swipeFromRow = nil;
     }
     
-    override func touchesCancelled(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
         touchesEnded(touches, withEvent: event);
     }
     
@@ -336,7 +336,7 @@ class GameScene: SKScene {
         
         for arr in nodes
         {
-            for (index, node) in enumerate(arr)
+            for (index, node) in arr.enumerate()
             {
                 let newpos = getPointAt(node.column, row: node.row);
                 
@@ -371,7 +371,7 @@ class GameScene: SKScene {
         for array in fillNodes {
             let startRow = array[0].row + 1
             
-            for (idx, node) in enumerate(array) {
+            for (idx, node) in array.enumerate() {
                 let sprite = SKSpriteNode(imageNamed: node.nodeType.spriteName)
                 sprite.position = getPointAt(node.column, row: startRow);
                 nodeLayer.addChild(sprite)

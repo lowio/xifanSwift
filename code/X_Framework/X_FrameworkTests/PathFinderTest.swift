@@ -16,23 +16,25 @@ func pathFinderTest() {
     let size = 50;
     let config = Array2D<Int>(columns: size, rows: size, repeatValue: 1);
     let queue = FinderBreadthFirstQueue<FinderElement<Point2D>>();
-    let dataSource = FinderDataSource2D<Point2D>(config: config, diagonal: true);
-    let heuristic = FinderHuristic2D<Point2D>.Manhattan;
-    let start = Point2D(x: 24, y: 24, cost: 1);
-    let goal = Point2D(x: 13, y: 13, cost: 1);
+    let dataSource = FinderDataSource2D<Point2D>(config: config, diagonal: false);
+    let heuristic = FinderHuristic2D<Point2D>.None;
+    let start = Point2D(x: 0, y: 0, cost: 1);
+    let goal = Point2D(x: 49, y: 49, cost: 1);
     let finder = OFinder<FinderElement<Point2D>>();
     
     var tempConfig = Array2D<String>(columns: size, rows: size, repeatValue: "@");
     var path:[Point2D] = [];
     finder.find(start, goal: goal, dataSource: dataSource, finderQueue: queue, heuristic: heuristic, completion: {
         path = $0;
-        }){
-            for v in $0{
+        })
+        {
+            let vlist = $0;
+            for v in vlist{
                 tempConfig[v.x, v.y] = "+";
             }
             for v in path
             {
-                tempConfig[v.x, v.y] = "*";
+                tempConfig[v.x, v.y] = "x";
             }
             tempConfig[start.x , start.y] = "$"
             tempConfig[goal.x, goal.y] = "¥";

@@ -21,7 +21,7 @@ enum JSONParser
     //构造器（根据json原数据创建JSONParser)
     init(data:NSData)
     {
-        if let jsonData:AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil)
+        if let jsonData:AnyObject = try? NSJSONSerialization.JSONObjectWithData(data, options: [])
         {
             self = JSONParser(jsonObject: jsonData);
         }
@@ -225,7 +225,7 @@ extension JSONParser
 
 
 //打印相关
-extension JSONParser: Printable
+extension JSONParser: CustomStringConvertible
 {
     var description: String {
         switch self{

@@ -65,8 +65,8 @@ public protocol FinderQueue
     //update element
     mutating func updateElement(element: Self.Element) -> Bool
     
-    //all visited point
-    func allVisitedPoints() -> [Self.Element._Point]
+    //all visited point in order
+    func visitedPointsInOrder() -> [Self.Element._Point]
 }
 
 //MARK: finder datasource
@@ -145,7 +145,7 @@ extension OptimumFinder
             completion(path);
             if let _visitation = visitation
             {
-                let visitedPoints = queue.allVisitedPoints();
+                let visitedPoints = queue.visitedPointsInOrder();
                 _visitation(visitedPoints);
             }
         }

@@ -9,7 +9,7 @@
 import Foundation
 
 //可消除的链子
-class Chian:Printable, Hashable {
+class Chian:CustomStringConvertible, Hashable {
     
     //列表
     var nodes:[XNodeData] = [];
@@ -48,11 +48,11 @@ class Chian:Printable, Hashable {
     }
     
     var hashValue:Int{
-        return reduce(nodes, 0){ $0.hashValue ^ $1.hashValue }
+        return nodes.reduce(0){ $0.hashValue ^ $1.hashValue }
     }
     
     //chian type
-    enum ChianType:Printable
+    enum ChianType:CustomStringConvertible
     {
         case Horizontal, Vertical, Diagonal
         

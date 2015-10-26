@@ -48,7 +48,7 @@ public func ==(rsh:Point2D, lsh:Point2D) -> Bool
 //MARK: finder huristic 2d
 public enum FinderHuristic2D<T: FinderPoint2D>
 {
-    case Manhattan, Euclidean, Octile, Chebyshev
+    case Manhattan, Euclidean, Octile, Chebyshev, None
 }
 extension FinderHuristic2D: FinderHeuristic
 {
@@ -69,6 +69,8 @@ extension FinderHuristic2D: FinderHeuristic
             return Int(_dx < _dy ? f * _dx + _dy : f * _dy + _dx);
         case .Chebyshev:
             return max(dx, dy);
+        case .None:
+            return 0;
         }
     }
 }

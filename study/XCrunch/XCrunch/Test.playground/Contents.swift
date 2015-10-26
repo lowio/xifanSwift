@@ -5,6 +5,6 @@ import SpriteKit
 
 
 var arr:[Int] = [0, 1, 2, 3, 4];
-arr.sort(){$0>$1}
+arr.sortInPlace(){$0>$1}
 
 

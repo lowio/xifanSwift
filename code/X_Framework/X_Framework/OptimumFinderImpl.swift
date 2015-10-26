@@ -73,9 +73,11 @@ extension FinderBreadthFirstQueue: FinderQueue
     }
     
     //all visited point
-    public func allVisitedPoints() -> [Element._Point]
+    public func visitedPointsInOrder() -> [Element._Point]
     {
-        return Array<Element._Point>(self.camefrom.keys);
+        return self.openedList.map{
+            return $0.point!
+        }
     }
 }
 extension FinderBreadthFirstQueue where Element: Equatable
