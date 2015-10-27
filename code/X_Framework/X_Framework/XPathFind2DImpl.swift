@@ -169,7 +169,7 @@ extension XPFinder2D: XPathFinderType
     //pop
     mutating func pop() -> _Scannable
     {
-        return self.openedQueue.popFirst()!;
+        return self.openedQueue.popBest()!;
     }
     
     //reset

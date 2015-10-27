@@ -70,7 +70,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         sortArray.sortInPlace({$0 > $1})
         while !queue.isEmpty
         {
-            let e1 = queue.popFirst()!;
+            let e1 = queue.popBest()!;
             let e2 = sortArray.removeLast();
             print("\(e1)-\(e2)=\(e1 - e2)  count:\(queue.count)");
         }
@@ -83,7 +83,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         for _ in 0...c
         {
             let temp = Int(arc4random() % 500);
-            if(!queue.isEmpty){queue.popFirst();}
+            if(!queue.isEmpty){queue.popBest();}
             
             for _ in 0...3
             {
@@ -94,7 +94,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         var temp = 0;
         while(!queue.isEmpty)
         {
-            let e = queue.popFirst()!;
+            let e = queue.popBest()!;
             temp += e;
 //            print(e)
         }

@@ -9,31 +9,22 @@
 import Foundation
 
 //MARK: collection 2d type
-public protocol Collection2DType
+public protocol Collection2DType: CollectionType
 {
-    //element type
-    typealias Element
-    
     //columns
     var columns: Int{get}
     
     //rows
     var rows: Int{get}
     
-    //cuont
-    var count: Int{get}
-    
     //subscript
-    subscript(column:Int, row:Int) -> Element {get set}
-    
-    //column, row is valid
-    func isValid(column:Int, _ row:Int) -> Bool
+    subscript(column:Int, row:Int) -> Self.Generator.Element {get set}
 }
 //MARK: extension public
-extension Collection2DType
+public extension Collection2DType
 {
     //column, row is valid
-    public func isValid(column:Int, _ row:Int) -> Bool
+    func isValid(column:Int, _ row:Int) -> Bool
     {
         return column >= 0 && column < columns && row >= 0 && row < rows;
     }
@@ -56,7 +47,7 @@ extension Collection2DType
     }
 }
 //MARK: extension CollectionType
-extension Collection2DType where Self: CollectionType, Self.Generator.Element == Self.Element, Self.Index == Int
+extension Collection2DType where Self.Index == Int
 {
     //return element position
     @warn_unused_result
@@ -71,11 +62,11 @@ extension Collection2DType where Self: CollectionType, Self.Generator.Element ==
         return nil;
     }
 }
-extension Collection2DType where Self: CollectionType, Self.Generator.Element == Self.Element, Self.Index == Int, Self.Generator.Element: Equatable
+extension Collection2DType where Self.Index == Int, Self.Generator.Element: Equatable
 {
     //if exist, return position else return nil
     @warn_unused_result
-    public func positionOf(element: Self.Element) -> (column:Int, row:Int)?
+    public func positionOf(element: Self.Generator.Element) -> (column:Int, row:Int)?
     {
         guard let index = self.indexOf(element) else {return nil;}
         let temp = positionAt(index);
@@ -136,7 +127,7 @@ extension Array2D where T: NilLiteralConvertible
     }
 }
 //MARK: extension Array2DType
-extension Array2D: Collection2DType, CollectionType
+extension Array2D: Collection2DType
 {
     //subscript
     public subscript(column:Int, row:Int) -> T {
