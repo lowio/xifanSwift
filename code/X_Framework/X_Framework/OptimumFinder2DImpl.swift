@@ -17,9 +17,6 @@ public protocol FinderPoint2D: Hashable
     //y position
     var y:Int{get}
     
-    //cost
-    var cost:Int{get}
-    
     init(x:Int, y:Int, cost:Int)
 }
 
@@ -76,52 +73,52 @@ extension FinderHuristic2D: FinderHeuristic
 }
 
 
-//MARK: finder data source 2d
-public struct FinderDataSource2D<T: FinderPoint2D>
-{
-    //config
-    private let config:Array2D<Int>;
-    
-    //dx dy
-    private var dpoints:[(Int, Int)];
-    
-    init(config: Array2D<Int>, diagonal:Bool)
-    {
-        self.config = config;
-        self.dpoints = [];
-        self.useDiagonal(diagonal);
-    }
-    
-    //set diagoanl;
-    public mutating func useDiagonal(value:Bool)
-    {
-        self.dpoints = value ? [(-1, -1), (-1, 0), (-1, 1), (0, 1),(1, 1),  (1, 0), (1, -1), (0, -1)] : [(-1, 0), (0, 1), (1, 0), (0, -1)];
-    }
-}
-extension FinderDataSource2D: FinderDataSource
-{
-    public typealias _Point = T;
-    
-    //get neighbors
-    public func getNeighborsOf(point: _Point) -> [_Point]
-    {
-        var points:[_Point] = [];
-        for dp in self.dpoints
-        {
-            let x = dp.0 + point.x;
-            let y = dp.1 + point.y;
-            guard config.isValid(x, y) else {continue;}
-            let cost = self.config[x, y];
-            guard cost > 0 else {continue;}
-            let p = _Point(x: x, y: y, cost: cost);
-            points.append(p);
-        }
-        return points;
-    }
-    
-    //get cost
-    public func getCostFrom(point: _Point, toPoint: _Point) -> Int
-    {
-        return point.cost;
-    }
-}
+////MARK: finder data source 2d
+//public struct FinderDataSource2D<T: FinderPoint2D>
+//{
+//    //config
+//    private let config:Array2D<Int>;
+//    
+//    //dx dy
+//    private var dpoints:[(Int, Int)];
+//    
+//    init(config: Array2D<Int>, diagonal:Bool)
+//    {
+//        self.config = config;
+//        self.dpoints = [];
+//        self.useDiagonal(diagonal);
+//    }
+//    
+//    //set diagoanl;
+//    public mutating func useDiagonal(value:Bool)
+//    {
+//        self.dpoints = value ? [(-1, -1), (-1, 0), (-1, 1), (0, 1),(1, 1),  (1, 0), (1, -1), (0, -1)] : [(-1, 0), (0, 1), (1, 0), (0, -1)];
+//    }
+//}
+//extension FinderDataSource2D: FinderDataSource
+//{
+//    public typealias _Point = T;
+//    
+//    //get neighbors
+//    public func getNeighborsOf(point: _Point) -> [_Point]
+//    {
+//        var points:[_Point] = [];
+//        for dp in self.dpoints
+//        {
+//            let x = dp.0 + point.x;
+//            let y = dp.1 + point.y;
+//            guard config.isValid(x, y) else {continue;}
+//            let cost = self.config[x, y];
+//            guard cost > 0 else {continue;}
+//            let p = _Point(x: x, y: y, cost: cost);
+//            points.append(p);
+//        }
+//        return points;
+//    }
+//    
+//    //get cost
+//    public func getCostFrom(point: _Point, toPoint: _Point) -> Int
+//    {
+//        return point.cost;
+//    }
+//}

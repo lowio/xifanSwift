@@ -11,8 +11,8 @@ import UIKit
 
 func commonTest() {
 //    jsonTest()
-//    priorityQueueTest();
-    arrayNDTest();
+    priorityQueueTest();
+//    arrayNDTest();
 }
 
 func arrayNDTest()
@@ -50,7 +50,7 @@ func arrayNDTest()
 }
 
 //XPriorityQueue test
-func priorityQueueTest(testRebuild:Bool = true)
+func priorityQueueTest(testRebuild:Bool = false)
 {
     var queue:PriorityArray<Int>;
     if(testRebuild)//测试创建优先队列
