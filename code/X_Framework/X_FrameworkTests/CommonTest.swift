@@ -49,7 +49,13 @@ func arrayNDTest()
     print(a);
 }
 
+private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
+{
+    return PriorityArray<Int>(isOrderedBefore:{return $0 < $1}, source:source);
+}
+
 //XPriorityQueue test
+//PriorityArray<Int> average: 0.168 -- MAC air, 4000 insert 4000 popBest
 func priorityQueueTest(testRebuild:Bool = false)
 {
     var queue:PriorityArray<Int>;
@@ -61,10 +67,10 @@ func priorityQueueTest(testRebuild:Bool = false)
             sortArray.append(random());
         }
         
-        queue = PriorityArray<Int>(source: sortArray){$0 < $1};
-        let index = queue.indexOf(999);
-        let index2 = queue.indexOf{return $0 == 999;}
-        print(index, index2);
+        queue = createPQ(sortArray);
+//        let index = queue.indexOf(999);
+//        let index2 = queue.indexOf{return $0 == 999;}
+//        print(index, index2);
         
         print(queue)
         sortArray.sortInPlace({$0 > $1})
@@ -78,26 +84,27 @@ func priorityQueueTest(testRebuild:Bool = false)
     }
     else
     {   //测试优先队列效率
-        queue = PriorityArray<Int>{$0 < $1}
-        let c = 400;
-        for _ in 0...c
-        {
-            let temp = Int(arc4random() % 500);
-            if(!queue.isEmpty){queue.popBest();}
+        queue = createPQ();
+        let count = 400;
+        var total = count;
+        var i = 0;
+        repeat{
             
-            for _ in 0...3
+            for _ in 0...9
             {
-                queue.append(temp);
+                queue.insert(total * 100 + 10000);
+                i++;
             }
-        }
+            
+            queue.popBest();
+            
+            total--;
+        }while total > 0
         
-        var temp = 0;
-        while(!queue.isEmpty)
-        {
-            let e = queue.popBest()!;
-            temp += e;
-//            print(e)
-        }
+        repeat{
+            queue.popBest();
+        }while !queue.isEmpty;
+        print("insert: \(i) popBest: \(i)");
     }
     
 }

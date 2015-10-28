@@ -27,14 +27,13 @@ func tempTest(active:Bool = false)
 //    let temp = TempSeq();
     let temp = TempCol()
     
-    print(TempCol.Generator.Element.self, temp.count, temp.isEmpty)
+    print(TempCol.SubSequence.self)
     
     print(temp.maxElement());
     for n in temp
     {
         print(n);
     }
-    
     
     print("tempTest================================end")
 }

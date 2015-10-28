@@ -63,7 +63,7 @@ public protocol OptimumFinder
     typealias Element: FinderComparable;
     
     //priority type
-    typealias PQ: BinaryHeapCollectionType, CollectionType;
+    typealias PQ: PrioritySequence, CollectionType;
     
     //data source type
     typealias DS: FinderDataSource;

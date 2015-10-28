@@ -43,7 +43,7 @@ func pathFinderTest() {
 //    
 //    print(tempConfig);
     
-    //具体文章：Enum链表 继承collectiontype的subsquence相关， indexinggrenator是字符串索引效率低
+    //具体文章：Enum链表 自定义一个2dgenerator static竟然效率高很多
     
     //    jump point search
     //    dic不可取 效率太低 想其他办法 index ...
