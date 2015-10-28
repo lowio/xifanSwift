@@ -8,6 +8,130 @@
 
 import Foundation
 
+
+//MARK: PrioritySequenceType
+public protocol PrioritySequenceType: SequenceType, Indexable
+{
+    //count
+    var count: Self.Index.Distance{get}
+    
+    //'self' is empty
+    var isEmpaty: Bool{get}
+    
+    //append element and resort
+    mutating func insert(element: Self.Generator.Element)
+    
+    //return(and remove) first element and resort
+    mutating func popBest() -> Self.Generator.Element?
+    
+    //update element and resort
+    mutating func updateElement(element: Self.Generator.Element, atIndex: Self.Index)
+}
+extension PrioritySequenceType where Self._Element == Self.Generator.Element, Self.Generator.Element: Equatable
+{
+    //indexof
+    public func indexOf(element: Self.Generator.Element) -> Self.Index?
+    {
+        for i in self.startIndex..<self.endIndex
+        {
+            guard element != self[i] else{continue;}
+            return i;
+        }
+        return nil;
+    }
+}
+
+//MARK: TreeIndexable
+public protocol TreeIndexable: Indexable, GeneratorType
+{
+    //self[index] return (branchCount == nil ? branch index : trunk index)
+    var branchCount: Int?{get set}
+    
+    //index
+    var index: Self.Index{get set}
+    
+    //self[index] return trunk index
+    init(index: Self.Index, branchCount: Int)
+    
+    //self[index] return branch index
+    init(index: Self.Index);
+    
+    //trunkIndex
+    func trunkIndex(index: Self.Index) -> Self.Index
+    
+    //branchIndex
+    func branchIndex(index: Self.Index) -> Self.Index
+}
+extension TreeIndexable where Self._Element == Self.Index, Self.Element == Self.Index
+{
+    public subscript (position: Self.Index) -> Self._Element{
+        guard let _ = branchCount else{return self.trunkIndex(position);}
+        return self.branchIndex(position);
+    }
+    
+    public mutating func next() -> Self.Element? {
+//        //根据 startindex 和 endindex 判断
+//        
+//        var i = self.index;
+//        
+//        if let bc = branchCount
+//        {
+//            guard bc > 0 else{return nil;}
+//            i = self.index;
+//            let bc2 = bc - 1;
+//            if bc2 > 0
+//            {
+//                self.index = self.index.advancedBy(1);
+//                self.branchCount = bc2;
+//            }
+//        }
+//        else
+//        {
+//            i = self.trunkIndex(self.index);
+//        }
+//        
+//        guard i.distanceTo(0) > 0 || i.distanceTo(self.endIndex) <= 0 else {return i;}
+        return nil;
+    }
+    
+    public init(index: Self.Index, branchCount: Int)
+    {
+        self.init(index: index);
+        self.branchCount = branchCount;
+        self.index = self.branchIndex(self.index);
+    }
+}
+
+//MARK: PrioritySequenceConvertible
+public protocol PrioritySequenceConvertible: MutableIndexable
+{
+    //tree index , create tree and get next()
+    typealias TreeIndex: TreeIndexable;
+    
+    //sort according to isOrderedBefore
+    var isOrderedBefore: (Self._Element, Self._Element)->Bool {get}
+    
+    //shift up element at index
+    mutating func shiftUp(index: Self.Index)
+    
+    //shift down element at index
+    mutating func shiftDown(index: Self.Index)
+    
+    //update element at index
+    //return nil when collection no change
+    mutating func updateElement(element: Self._Element, atIndex: Self.Index)
+    
+    //build sequence to priority sequence use isOrderedBefore function
+    //return nil when sequence no change
+    @warn_unused_result
+    mutating func build<Seq: MutableIndexable>(sequence: Seq) -> Seq?
+}
+
+
+//================================================================================================
+
+
+
 //MARK: PrioritySequence
 public protocol PrioritySequence: SequenceType
 {
