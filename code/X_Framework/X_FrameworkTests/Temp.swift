@@ -49,9 +49,9 @@ public struct TempSeq: SequenceType {
 
 public struct TempCol: CollectionType
 {
-        public var startIndex: Int {return 0}
-        public var endIndex: Int {return 10;}
-        public subscript(i: Int) -> String {return "a"}
+    public var startIndex: Int {return 0}
+    public var endIndex: Int {return 10;}
+    public subscript(i: Int) -> String {return "a"}
 }
 
 

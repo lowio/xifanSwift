@@ -56,6 +56,7 @@ private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 
 //XPriorityQueue test
 //PriorityArray<Int> average: 0.168 -- MAC air, insert: 4000 popBest: 4000
+//PriorityArray<Int> average: 0.085 -- MAC mini, insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
     var queue:PriorityArray<Int>;
