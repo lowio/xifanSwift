@@ -37,6 +37,7 @@ class X_FrameworkTests: XCTestCase {
     }
     
     private var testPerformance:Bool = true;
+    
     private func waitForTest()
     {
 //        pathFinderTest();
@@ -44,3 +45,12 @@ class X_FrameworkTests: XCTestCase {
     }
 }
 
+
+struct A {
+    
+    var b = 0;
+    init(_ b: Int)
+    {
+        self.b = b;
+    }
+}

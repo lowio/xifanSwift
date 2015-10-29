@@ -41,72 +41,36 @@ extension PrioritySequenceType where Self._Element == Self.Generator.Element, Se
     }
 }
 
-//MARK: TreeIndexable
-public protocol TreeIndexable: Indexable, GeneratorType
+//MARK: TreeIndexType
+public protocol TreeIndexType
 {
-    //self[index] return (branchCount == nil ? branch index : trunk index)
-    var branchCount: Int?{get set}
+    //index type
+    typealias Index: ForwardIndexType;
     
-    //index
-    var index: Self.Index{get set}
+    //max branch count for every trunk
+    var branchMaximum: Self.Index.Distance{get}
     
-    //self[index] return trunk index
-    init(index: Self.Index, branchCount: Int)
+    //trunk index
+    func trunkIndexOf(branchIndex: Self.Index) -> Self.Index
     
-    //self[index] return branch index
-    init(index: Self.Index);
-    
-    //trunkIndex
-    func trunkIndex(index: Self.Index) -> Self.Index
-    
-    //branchIndex
-    func branchIndex(index: Self.Index) -> Self.Index
-}
-extension TreeIndexable where Self._Element == Self.Index, Self.Element == Self.Index
-{
-    public subscript (position: Self.Index) -> Self._Element{
-        guard let _ = branchCount else{return self.trunkIndex(position);}
-        return self.branchIndex(position);
-    }
-    
-    public mutating func next() -> Self.Element? {
-//        //根据 startindex 和 endindex 判断
-//        
-//        var i = self.index;
-//        
-//        if let bc = branchCount
-//        {
-//            guard bc > 0 else{return nil;}
-//            i = self.index;
-//            let bc2 = bc - 1;
-//            if bc2 > 0
-//            {
-//                self.index = self.index.advancedBy(1);
-//                self.branchCount = bc2;
-//            }
-//        }
-//        else
-//        {
-//            i = self.trunkIndex(self.index);
-//        }
-//        
-//        guard i.distanceTo(0) > 0 || i.distanceTo(self.endIndex) <= 0 else {return i;}
-        return nil;
-    }
-    
-    public init(index: Self.Index, branchCount: Int)
-    {
-        self.init(index: index);
-        self.branchCount = branchCount;
-        self.index = self.branchIndex(self.index);
-    }
+    //branch index
+    func branchIndexOf(trunkIndex: Self.Index) -> Self.Index
 }
 
 //MARK: PrioritySequenceConvertible
 public protocol PrioritySequenceConvertible: MutableIndexable
 {
     //tree index , create tree and get next()
-    typealias TreeIndex: TreeIndexable;
+    typealias TreeIndex: TreeIndexType;
+    
+    //treeIndex
+    var treeIndex: Self.TreeIndex{get};
+    
+    //count
+    var count: Self.Index.Distance{get}
+    
+    //'self' is empty
+    var isEmpaty: Bool{get}
     
     //sort according to isOrderedBefore
     var isOrderedBefore: (Self._Element, Self._Element)->Bool {get}
@@ -118,17 +82,128 @@ public protocol PrioritySequenceConvertible: MutableIndexable
     mutating func shiftDown(index: Self.Index)
     
     //update element at index
-    //return nil when collection no change
     mutating func updateElement(element: Self._Element, atIndex: Self.Index)
     
-    //build sequence to priority sequence use isOrderedBefore function
-    //return nil when sequence no change
-    @warn_unused_result
-    mutating func build<Seq: MutableIndexable>(sequence: Seq) -> Seq?
+    //priority sequence use isOrderedBefore function
+    mutating func build()
+}
+//extension public
+extension PrioritySequenceConvertible where Self.Index == Self.TreeIndex.Index
+{
+    //shift up element at index
+    public mutating func shiftUp(index: Self.Index)
+    {
+        self._shiftUp(index);
+    }
+    
+    //shift down element at index
+    public mutating func shiftDown(index: Self.Index)
+    {
+        //if index < endIndex continue otherwise return;
+        guard self._greatthan(self.endIndex, index) else{return;}
+        
+        //get branch index, if branch index < endIndex continue otherwise return;
+        var branchIndex = self.treeIndex.branchIndexOf(index);
+        guard self._greatthan(self.endIndex, branchIndex) else{return;}
+//
+//        //shift down element and index
+//        let shiftElement = trunkElement ?? self[trunkIndex];
+//        var shiftIndex = trunkIndex;
+//        
+//        //sort , if can shift swap index otherwise continue
+//        if self.isOrderedBefore(self[branchIndex], shiftElement){shiftIndex = branchIndex;}
+//        
+//        //check next branch element
+//        branchIndex = branchIndex.advancedBy(1);
+//        if self._greatthan(self.endIndex, branchIndex) && self.isOrderedBefore(self[branchIndex], self[shiftIndex])
+//        {
+//            shiftIndex = branchIndex;
+//        }
+//        
+//        //if shift index changed swap otherwise return;
+//        guard shiftIndex != trunkIndex else{return;}
+//        self[trunkIndex] = self[shiftIndex];
+//        self[shiftIndex] = shiftElement;
+//        
+//        //recursion, try shift down to it's branchs
+//        self.shiftDown(shiftIndex, element: shiftElement);
+    }
+    
+    //update element at index
+    public mutating func updateElement(element: Self._Element, atIndex: Self.Index)
+    {
+        guard self._greatthan(atIndex, self.startIndex, -1) && self._greatthan(self.endIndex, atIndex) else {return;}
+        self[atIndex] = element;
+        
+        let trunkIndex = self.treeIndex.trunkIndexOf(atIndex);
+        guard self.isOrderedBefore(element, self[trunkIndex]) else{
+            self.shiftDown(atIndex);
+            return;
+        }
+        self.shiftUp(atIndex);
+    }
+    
+    //priority sequence use isOrderedBefore function
+    public mutating func build()
+    {
+        guard self._greatthan(self.endIndex, self.startIndex, 1) else {return;}
+        var _index = self.treeIndex.trunkIndexOf(self.endIndex.advancedBy(-1))
+        repeat{
+            self.shiftDown(_index);
+            _index = _index.advancedBy(-1);
+        }while self._greatthan(_index, self.startIndex, -1)
+    }
+}
+//extension internal
+extension PrioritySequenceConvertible  where Self.Index == Self.TreeIndex.Index
+{
+    //shift down element at index
+    mutating func _shiftDown(_shiftIndex: Self.Index, _branchIndex:Self.Index, branchCount: Self.Index)
+    {
+       
+    }
+    
+    //recursion: shift up branchElement at branchIndex
+    mutating func _shiftUp(branchIndex: Self.Index, branchElement:Self._Element? = nil)
+    {
+        //if index > startIndex continue otherwise return;
+        guard self._greatthan(branchIndex, self.startIndex) else{return;}
+        
+        //shift up element
+        let shiftElement = branchElement ?? self[branchIndex];
+        
+        //get trunk index and element
+        let trunkIndex = self.treeIndex.trunkIndexOf(branchIndex);
+        let trunkElement = self[trunkIndex];
+        
+        //sort
+        guard self.isOrderedBefore(shiftElement, trunkElement) else{return;}
+        self[branchIndex] = trunkElement;
+        self[trunkIndex] = shiftElement;
+        
+        //recursion, try shift up to it's trunk
+        self._shiftUp(trunkIndex, branchElement: shiftElement);
+    }
+    
+    //return lsh - rsh > distance ? true : false
+    func _greatthan(lsh: Self.Index, _ rsh: Self.Index, _ distance: Self.Index.Distance = 0) -> Bool
+    {
+        return rsh.distanceTo(lsh) > distance;
+    }
 }
 
-
 //================================================================================================
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -275,7 +350,7 @@ extension PrioritySequenceProcessor where Self.MC.Index == Int
     @warn_unused_result
     func build(sequence: Self.MC, isOrderedBefore iob: (_Ele, _Ele)->Bool) -> Self.MC?
     {
-        var _index:Int = sequence.count >> 1 - 1;
+         var _index:Int = self.trunkIndex(sequence.count - 1);
         guard _index > -1 else{return nil;}
         var _temp = sequence;
         repeat{
