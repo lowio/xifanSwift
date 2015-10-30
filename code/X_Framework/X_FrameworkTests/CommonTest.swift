@@ -49,10 +49,10 @@ func arrayNDTest()
     print(a);
 }
 
-//private func createPQ(source:Array<Int>? = nil) -> HeapConvertor<Int>
-//{
-//    return HeapConvertor<Int>(source: source ?? [], isOrderedBefore:{return $0 < $1});
-//}
+private func createPQ(source:Array<Int>? = nil) -> BinaryPriorityQueue<Int>
+{
+    return BinaryPriorityQueue<Int>(source: source ?? [], isOrderedBefore:{return $0 < $1});
+}
 
 private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 {
@@ -64,7 +64,7 @@ private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 //PriorityArray<Int> average: 0.085 -- MAC mini, insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
-    var queue:PriorityArray<Int>;
+    var queue:BinaryPriorityQueue<Int>;
     
     if(testRebuild)//测试创建优先队列
     {
@@ -109,9 +109,12 @@ func priorityQueueTest(testRebuild:Bool = false)
         }while total > 0
         
         repeat{
-            queue.popBest();
+            let e = queue.popBest();
+            print(e!);
         }while !queue.isEmpty;
         print("insert: \(i) popBest: \(i)");
+        
+        print("现在两个queue输出内容不一致，请检查")
     }
     
 }

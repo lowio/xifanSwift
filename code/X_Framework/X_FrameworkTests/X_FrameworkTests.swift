@@ -36,43 +36,12 @@ class X_FrameworkTests: XCTestCase {
         }
     }
     
-    private var testPerformance:Bool = true;
+    private var testPerformance:Bool = false;
     
     private func waitForTest()
     {
 //        pathFinderTest();
-//        commonTest();
-        
-        var abs = ABs();
-        for i in 0...199
-        {
-            abs.source.append(i);
-            
-        }
-        
-        abs._shiftUp();
-//        print(abs.source)
+        commonTest();
     }
 }
 
-
-struct ABs {
-    var source:[Int] = []
-    
-    var ii = 0;
-    
-    mutating func _shiftUp()
-    {
-        guard source.count > 1 else{return;}
-        self.source.removeAtIndex(self.source.count/2);
-        self.source = self.source.sort();
-    }
-    
-    mutating func shiftUp()
-    {
-        repeat{
-            self.source.removeAtIndex(self.source.count/2);
-            self.source = self.source.sort();
-        }while self.source.count > 1
-    }
-}
