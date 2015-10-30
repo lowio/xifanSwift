@@ -41,16 +41,38 @@ class X_FrameworkTests: XCTestCase {
     private func waitForTest()
     {
 //        pathFinderTest();
-        commonTest();
+//        commonTest();
+        
+        var abs = ABs();
+        for i in 0...199
+        {
+            abs.source.append(i);
+            
+        }
+        
+        abs._shiftUp();
+//        print(abs.source)
     }
 }
 
 
-struct A {
+struct ABs {
+    var source:[Int] = []
     
-    var b = 0;
-    init(_ b: Int)
+    var ii = 0;
+    
+    mutating func _shiftUp()
     {
-        self.b = b;
+        guard source.count > 1 else{return;}
+        self.source.removeAtIndex(self.source.count/2);
+        self.source = self.source.sort();
+    }
+    
+    mutating func shiftUp()
+    {
+        repeat{
+            self.source.removeAtIndex(self.source.count/2);
+            self.source = self.source.sort();
+        }while self.source.count > 1
     }
 }

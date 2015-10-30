@@ -49,6 +49,11 @@ func arrayNDTest()
     print(a);
 }
 
+//private func createPQ(source:Array<Int>? = nil) -> HeapConvertor<Int>
+//{
+//    return HeapConvertor<Int>(source: source ?? [], isOrderedBefore:{return $0 < $1});
+//}
+
 private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 {
     return PriorityArray<Int>(isOrderedBefore:{return $0 < $1}, source:source);
@@ -60,6 +65,7 @@ private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 func priorityQueueTest(testRebuild:Bool = false)
 {
     var queue:PriorityArray<Int>;
+    
     if(testRebuild)//测试创建优先队列
     {
         var sortArray = [999];
