@@ -41,23 +41,6 @@ class X_FrameworkTests: XCTestCase {
     private func waitForTest()
     {
 //        pathFinderTest();
-//        commonTest();
-        
-        var a = 0;
-        for i in 0...9999999
-        {
-            a += ttt(i);
-        }
-        print(a);
-    }
-    
-    
-    private func ttt<T:Hashable>(a:T) -> Int
-    {
-        return (a as! Int).hashValue;
-    }
-    private func ttt2(a:Int) -> Int
-    {
-        return (a).hashValue;
+        commonTest();
     }
 }

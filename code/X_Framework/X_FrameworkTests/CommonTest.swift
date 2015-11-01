@@ -60,12 +60,12 @@ private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 }
 
 //XPriorityQueue test
-//BinaryPriorityQueue<Int>  average: 0.214 -- MAC mini, insert: 4000 popBest: 4000
+//BinaryPriorityQueue<Int>  average: 0.212 -- MAC mini, insert: 4000 popBest: 4000
 //PriorityArray<Int>        average: 0.098 -- MAC mini, insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
-    var queue:BinaryPriorityQueue<Int>;
-//    var queue:PriorityArray<Int>;
+//    var queue:BinaryPriorityQueue<Int>;
+    var queue:PriorityArray<Int>;
     
     if(testRebuild)//测试创建优先队列
     {

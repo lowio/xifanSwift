@@ -9,16 +9,31 @@
 import Foundation
 
 //MARK: == HeapConvertible ==
-public protocol HeapConvertible: MutableIndexable
+public protocol HeapConvertible
 {
+    //element type
+    typealias Element;
+    
+    //index type
+    typealias Index: ForwardIndexType = Int
+    
     //MARK: properties
     //============================= properties ===================================
+    
+    //start index
+    var startIndex: Self.Index{get}
+    
+    //end index
+    var endIndex: Self.Index{get}
     
     //branch size, default = 2 <==> binary heap, 4 , 8 etc...
     var branchSize: Self.Index.Distance{get}
     
     //sort according to isOrderedBefore
-    var isOrderedBefore: (Self._Element, Self._Element) -> Bool {get}
+    var isOrderedBefore: (Self.Element, Self.Element) -> Bool {get}
+    
+    //subscript
+    subscript(position: Self.Index) -> Self.Element{get set}
     
     //MARK: functions
     //============================= functions ===================================
@@ -29,7 +44,7 @@ public protocol HeapConvertible: MutableIndexable
     mutating func shiftDown(index: Self.Index)
     
     //replace element at index, shift element to heap position
-    mutating func replaceElement(element: Self._Element, atIndex: Self.Index)
+    mutating func replaceElement(element: Self.Element, atIndex: Self.Index)
     
     //priority sequence use isOrderedBefore function
     mutating func build()
@@ -48,7 +63,7 @@ extension HeapConvertible
     {
         //shift element
         let shiftElement = self[index];
-        
+
         //shift index
         var shiftIndex = index;
         
@@ -114,7 +129,7 @@ extension HeapConvertible
     }
     
     //replace element at index
-    public mutating func replaceElement(element: Self._Element, atIndex: Self.Index)
+    public mutating func replaceElement(element: Self.Element, atIndex: Self.Index)
     {
         //out of bounds return otherwise continue
         guard self.startIndex.distanceTo(atIndex) >= 0 && atIndex.distanceTo(self.endIndex) > 0 else {return;}
@@ -164,10 +179,13 @@ extension HeapConvertible
 //*********************************************************************************************************************
 
 //MARK: == PriorityQueueType ==
-public protocol PriorityQueueType: SequenceType, MutableIndexable
+public protocol PriorityQueueType
 {
     //indexable _Element type
-    typealias _Element = Self.Generator.Element;
+    typealias Element;
+    
+    //index
+    typealias Index: ForwardIndexType = Int;
     
     //MARK: properties
     //============================= properties ===================================
@@ -177,18 +195,19 @@ public protocol PriorityQueueType: SequenceType, MutableIndexable
     //'self' is empty
     var isEmpty: Bool{get}
     
+    //subscript
+    subscript(position: Self.Index) -> Self.Element{get}
+    
     //MARK: functions
     //============================= functions ===================================
     //append element and resort
-    mutating func insert(element: Self.Generator.Element)
+    mutating func insert(element: Self.Element)
     
     //return(and remove) first element and resort
-    mutating func popBest() -> Self.Generator.Element?
-}
-extension PriorityQueueType
-{
-    public var count: Self.Index.Distance{ return self.startIndex.distanceTo(self.endIndex); }
-    public var isEmpty: Bool{return self.count > 0;}
+    mutating func popBest() -> Self.Element?
+    
+    //replace element at index, shift element to heap position
+    mutating func replaceElement(element: Self.Element, atIndex: Self.Index)
 }
 
 //*********************************************************************************************************************
@@ -203,23 +222,16 @@ public struct ArrayBinaryHeap<T>
     public let branchSize: Int = 2;
     
     //sort according to isOrderedBefore
-    public var isOrderedBefore: (T, T) -> Bool;
+    private (set) public var isOrderedBefore: (T, T) -> Bool;
     
     //source
-    private (set) var source: [T];
+    public var source: [T];
     
     init(source: [T], isOrderedBefore: (T, T) -> Bool)
     {
         self.isOrderedBefore = isOrderedBefore;
         self.source = source;
         self.build();
-    }
-}
-//extension SequenceType
-extension ArrayBinaryHeap: SequenceType
-{
-    public func generate() -> IndexingGenerator<[T]> {
-        return self.source.generate();
     }
 }
 
@@ -252,76 +264,6 @@ extension ArrayBinaryHeap: HeapConvertible
     {
         return trunkIndex << 1 + 1;
     }
-    
-    //shift up element at index
-    public mutating func shiftUp(index: ArrayBinaryHeap.Index)
-    {
-        //shift element
-        let shiftElement = self[index];
-        
-        //shift index
-        var shiftIndex = index;
-        
-        //shift up
-        repeat{
-            //trunk index
-            let trunkIndex = self.trunkIndexOf(shiftIndex);
-            
-            //if trunkIndex is startIndex reuturn, otherwise shift next trunk
-            guard self.startIndex.distanceTo(trunkIndex) > -1 else{break;}
-            let trunkElement = self[trunkIndex];
-            
-            //compare: if shiftElement is better swap, otherwise return;
-            guard self.isOrderedBefore(shiftElement, trunkElement) else {break;}
-            self[shiftIndex] = self[trunkIndex];
-            self[trunkIndex] = shiftElement;
-            shiftIndex = trunkIndex;
-        }while true
-    }
-    
-    //shift down element at index
-    public mutating func shiftDown(index: ArrayBinaryHeap.Index)
-    {
-        //if index < endIndex continue otherwise return;
-        guard index.distanceTo(self.endIndex) > 0 else {return;}
-        
-        //endindex
-        let endi = self.endIndex;
-        
-        //shift element
-        let shiftElement = self[index];
-        
-        //trunk index
-        var trunkIndex = index;
-        
-        repeat{
-            //shift index
-            var shiftIndex = trunkIndex;
-            
-            //first branch index
-            var branchIndex = self.branchIndexOf(shiftIndex);
-            guard branchIndex.distanceTo(endi) > 0 else{break;}
-            
-            //branch count
-            var branchCount = self.branchSize;
-            //repeat branch elements, make shiftIndex as best branchIndex
-            repeat{
-                if isOrderedBefore(self[branchIndex], self[shiftIndex]){
-                    shiftIndex = branchIndex;
-                }
-                branchIndex = branchIndex.advancedBy(1);
-                branchCount -= 1;
-            }while branchIndex.distanceTo(endi) > 0 && branchCount > 0
-            
-            //if shiftIndex != trunkIndex swap otherwise return;
-            guard shiftIndex != trunkIndex else{break;}
-            self[trunkIndex] = self[shiftIndex];
-            self[shiftIndex] = shiftElement;
-            
-            //shift index as trunk index
-            trunkIndex = shiftIndex;
-        }while true;
-    }
 }
 
 //*********************************************************************************************************************
@@ -345,23 +287,25 @@ public struct BinaryPriorityQueue<T>
         self.heap = HeapType(source: source, isOrderedBefore: isOrderedBefore);
     }
 }
-//extension BinaryPriorityQueue where T: Equatable
-//{
-//    public init(minimum source: [T])
-//    {
-//        self.init(source: source){return $0 > $1;}
-//    }
-//    
-//    public init(maximum source: [T])
-//    {
-//        self.init(source: source){return $0 < $1;}
-//    }
-//}
+extension BinaryPriorityQueue where T: Comparable
+{
+    //minimum heap
+    public init(minimum source: [T])
+    {
+        self.init(source: source){return $0 > $1;}
+    }
+    
+    //maximum heap
+    public init(maximum source: [T])
+    {
+        self.init(source: source){return $0 < $1;}
+    }
+}
 
 //MARK: extension PriorityQueueType
 extension BinaryPriorityQueue: PriorityQueueType
 {
-//    public typealias _Element = Source.Generator.Element;
+    
     
     //MARK: properties
     //============================= properties ===================================
@@ -379,19 +323,14 @@ extension BinaryPriorityQueue: PriorityQueueType
     
     //subscript (get)
     public subscript(position: Int) -> T{
-        set{
-            self.heap.replaceElement(newValue, atIndex: position);
-        }
-        get{
-            return self.heap[position];
-        }
+        return self.heap[position];
     }
     
     //MARK: functions
     //============================= functions ===================================
     
     public func generate() -> IndexingGenerator<[T]> {
-        return self.heap.generate();
+        return self.heap.source.generate();
     }
     
     //append element and resort
@@ -411,6 +350,12 @@ extension BinaryPriorityQueue: PriorityQueueType
         self.heap[0] = end;
         self.heap.shiftDown(0);
         return first;
+    }
+    
+    //replace
+    mutating public func replaceElement(element: T, atIndex: Int)
+    {
+        self.heap.replaceElement(element, atIndex: atIndex);
     }
 }
 
