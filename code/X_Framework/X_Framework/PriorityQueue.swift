@@ -474,7 +474,7 @@ extension PrioritySequenceProcessor where Self.MC.Index == Int
             var _childIndex = self.branchIndex(_tempIndex);
             guard _childIndex < _c else{break;}
             if iob(_temp[_childIndex], _trunk){_tempIndex = _childIndex;}
-        
+            
             _childIndex++;
             if _childIndex < _c && iob(_temp[_childIndex], _temp[_tempIndex]){_tempIndex = _childIndex;}
             
