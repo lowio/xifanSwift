@@ -41,6 +41,25 @@ class X_FrameworkTests: XCTestCase {
     private func waitForTest()
     {
 //        pathFinderTest();
-        commonTest();
+//        commonTest();
+        
+        let ss = SS();
+        for _ in 0...99999
+        {
+            ss.test1([0, 1])
+//            ss.test2([0, 1])
+        }
+    }
+}
+
+
+struct SS{
+    
+    func test1<TT: MutableCollectionType>(a:TT){
+        let _ = a.startIndex.distanceTo(a.endIndex);
+    }
+    
+    func test2(a:[Int]){
+        let _ = a.startIndex.distanceTo(a.endIndex);
     }
 }
