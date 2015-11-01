@@ -60,26 +60,26 @@ private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
 }
 
 //XPriorityQueue test
-//PriorityArray<Int> average: 0.168 -- MAC air, insert: 4000 popBest: 4000
-//PriorityArray<Int> average: 0.085 -- MAC mini, insert: 4000 popBest: 4000
+//BinaryPriorityQueue<Int>  average: 0.214 -- MAC mini, insert: 4000 popBest: 4000
+//PriorityArray<Int>        average: 0.098 -- MAC mini, insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
     var queue:BinaryPriorityQueue<Int>;
+//    var queue:PriorityArray<Int>;
     
     if(testRebuild)//测试创建优先队列
     {
-        var sortArray = [999];
+        var sortArray:[Int] = [];
+        
+        queue = createPQ();
         for _ in 0...100
         {
             sortArray.append(random());
         }
         
         queue = createPQ(sortArray);
-//        let index = queue.indexOf(999);
-//        let index2 = queue.indexOf{return $0 == 999;}
-//        print(index, index2);
         
-        print(queue)
+        
         sortArray.sortInPlace({$0 > $1})
         while !queue.isEmpty
         {
@@ -92,29 +92,23 @@ func priorityQueueTest(testRebuild:Bool = false)
     else
     {   //测试优先队列效率
         queue = createPQ();
-        let count = 400;
-        var total = count;
-        var i = 0;
+        var count = 4000;
+        let i = count;
         repeat{
-            
-            for _ in 0...9
-            {
-                queue.insert(total * 100 + 10000);
-                i++;
-            }
-            
-            queue.popBest();
-            
-            total--;
-        }while total > 0
-        
+            queue.insert(count);
+            count--;
+        }while count > 0;
+//        print(queue);
+//        return;
+        var a = 0;
         repeat{
-            let e = queue.popBest();
-            print(e!);
-        }while !queue.isEmpty;
-        print("insert: \(i) popBest: \(i)");
+            let e = queue.popBest()!;
+//            print(e, e - a);
+            a = e;
+        }
+        while !queue.isEmpty
         
-        print("现在两个queue输出内容不一致，请检查")
+        print("insert: \(i) popBest: \(i)" , a);
     }
     
 }

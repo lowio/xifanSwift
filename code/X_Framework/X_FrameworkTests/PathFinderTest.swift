@@ -43,7 +43,9 @@ func pathFinderTest() {
 //    
 //    print(tempConfig);
     
-    //具体文章：Enum链表 自定义一个2dgenerator static竟然效率高很多
+    //实现协议后 实现协议中已经实现的方法效率会高很多，static能快，是因为泛型在参数传人方法后已经确定, 需要进行类型转换
+    
+    //具体文章：Enum链表 自定义一个2dgenerator
     
     //    jump point search
     //    dic不可取 效率太低 想其他办法 index ...
