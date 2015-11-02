@@ -49,23 +49,18 @@ func arrayNDTest()
     print(a);
 }
 
-private func createPQ(source:Array<Int>? = nil) -> BinaryPriorityQueue<Int>
+private func createPQ(source:Array<Int>? = nil) -> BinaryPriorityArray<Int>
 {
-    return BinaryPriorityQueue<Int>(source: source ?? [], isOrderedBefore:{return $0 < $1});
-}
-
-private func createPQ(source:Array<Int>? = nil) -> PriorityArray<Int>
-{
-    return PriorityArray<Int>(isOrderedBefore:{return $0 < $1}, source:source);
+    return BinaryPriorityArray<Int>(source: source ?? [], isOrderedBefore:{return $0 < $1});
 }
 
 //XPriorityQueue test
 //BinaryPriorityQueue<Int>  average: 0.212 -- MAC mini, insert: 4000 popBest: 4000
-//PriorityArray<Int>        average: 0.098 -- MAC mini, insert: 4000 popBest: 4000
+//BinaryPriorityQueue<Int>  average: 0.177 -- MAC air,  insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
-//    var queue:BinaryPriorityQueue<Int>;
-    var queue:PriorityArray<Int>;
+    var queue:BinaryPriorityArray<Int>;
+//    var queue:PriorityArray<Int>;
     
     if(testRebuild)//测试创建优先队列
     {
@@ -90,7 +85,8 @@ func priorityQueueTest(testRebuild:Bool = false)
         
     }
     else
-    {   //测试优先队列效率
+    {
+        //测试优先队列效率
         queue = createPQ();
         var count = 4000;
         let i = count;
@@ -107,7 +103,6 @@ func priorityQueueTest(testRebuild:Bool = false)
             a = e;
         }
         while !queue.isEmpty
-        
         print("insert: \(i) popBest: \(i)" , a);
     }
     
