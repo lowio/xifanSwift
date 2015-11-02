@@ -24,8 +24,8 @@ func tempTest(active:Bool = false)
     print("tempTest================================start")
 
     
-//    let temp = TempSeq();
-    let temp = TempCol()
+    let temp = TempSeq();
+//    let temp = TempCol()
     
     print(TempCol.SubSequence.self)
     

@@ -8,6 +8,349 @@
 
 import Foundation
 
+//MARK: == HeapIndexTranslatorType ==
+public protocol HeapTranslatorIndexType: BidirectionalIndexType
+{
+    //branch size, default = 2 <==> binary heap, 4 , 8 etc...
+    var branchSize: Self.Distance{get}
+    
+    //index
+    var index:Self.Distance{get set}
+    
+    //trunk index
+    func trunkIndexOf() -> Self
+    
+    //branch index
+    func branchIndexOf() -> Self
+    
+    //init
+    init(_ index: Self.Distance)
+}
+extension HeapTranslatorIndexType
+{
+    //trunk index, implement yourself for better efficiency
+    public func trunkIndexOf() -> Self
+    {
+        print("trunkIndexOf @warn :: trunk index, implement yourself for better efficiency")
+        let i = (self.index - 1) / self.branchSize;
+        return Self.init(i);
+    }
+    
+    //branch index implement yourself for better efficiency
+    public func branchIndexOf() -> Self
+    {
+        print("branchIndexOf @warn :: branch index implement yourself for better efficiency")
+        let i = self.index * self.branchSize + 1;
+        return Self.init(i);
+    }
+    
+    public func successor() -> Self {
+        return Self.init(self.index + 1);
+    }
+    
+    public func predecessor() -> Self {
+        return Self.init(self.index - 1);
+    }
+}
+
+//MARK: == HeapTranslatorType ==
+public protocol HeapTranslatorType: CollectionType
+{
+    typealias Index: HeapTranslatorIndexType;
+    
+    //MARK: properties
+    //============================= properties ===================================
+    
+    //sort according to isOrderedBefore
+    var isOrderedBefore: (Self.Generator.Element, Self.Generator.Element) -> Bool {get}
+    
+    //subscript
+    subscript(position: Self.Index) -> Self.Generator.Element{get set}
+    
+    //MARK: functions
+    //============================= functions ===================================
+    //shift up element at index
+    mutating func shiftUp(index: Self.Index)
+    
+    //shift down element at index
+    mutating func shiftDown(index: Self.Index)
+    
+    //priority sequence use isOrderedBefore function
+    mutating func build()
+}
+extension HeapTranslatorType
+{
+    //shift up element at index
+    public mutating func shiftUp(index: Self.Index)
+    {
+        //shift element
+        let shiftElement = self[index];
+        
+        //shift index
+        var shiftIndex = index;
+        
+        //shift up
+        repeat{
+            //trunk index
+            let trunkIndex = shiftIndex.trunkIndexOf();
+            
+            //if trunkIndex is startIndex reuturn, otherwise shift next trunk
+            guard trunkIndex.index > -1 else{break;}
+            let trunkElement = self[trunkIndex];
+            
+            //compare: if shiftElement is better swap, otherwise return;
+            guard self.isOrderedBefore(shiftElement, trunkElement) else {break;}
+            self[shiftIndex] = self[trunkIndex];
+            self[trunkIndex] = shiftElement;
+            shiftIndex = trunkIndex;
+        }while true
+    }
+    
+    //shift down element at index
+    public mutating func shiftDown(index: Self.Index)
+    {
+        //if index < endIndex continue otherwise return;
+        guard index.index < self.endIndex.index else {return;}
+        
+        //endindex
+        let endi = self.endIndex.index;
+        
+        //shift element
+        let shiftElement = self[index];
+        
+        //trunk index
+        var trunkIndex = index;
+        
+        let bc = index.branchSize;
+        
+        repeat{
+            //shift index
+            var shiftIndex = trunkIndex;
+            
+            //first branch index
+            var branchIndex = shiftIndex.branchIndexOf();
+            guard branchIndex.index < endi else{break;}
+            
+            //branch count
+            var branchCount = bc;
+            //repeat branch elements, make shiftIndex as best branchIndex
+            repeat{
+                if isOrderedBefore(self[branchIndex], self[shiftIndex]){
+                    shiftIndex = branchIndex;
+                }
+                branchIndex = branchIndex.successor();
+                branchCount -= 1;
+            }while branchIndex.index < endi && branchCount > 0
+            
+            //if shiftIndex != trunkIndex swap otherwise return;
+            guard shiftIndex != trunkIndex else{break;}
+            self[trunkIndex] = self[shiftIndex];
+            self[shiftIndex] = shiftElement;
+            
+            //shift index as trunk index
+            trunkIndex = shiftIndex;
+        }while true;
+    }
+    
+    //priority sequence use isOrderedBefore function
+    public mutating func build()
+    {
+        guard self.endIndex.index - self.startIndex.index > 1 else {return;}
+        var _index = self.endIndex.predecessor().trunkIndexOf();
+        repeat{
+            self.shiftDown(_index);
+            _index = _index.predecessor();
+        }while _index.index > -1
+    }
+}
+
+
+//MARK: == BinaryHeapIndex ==
+public struct BinaryHeapIndex: HeapTranslatorIndexType {
+    
+    //branch size
+    public let branchSize = 2;
+    
+    //index
+    public var index:Int;
+    
+    public init(_ index: Int)
+    {
+        self.index = index;
+    }
+    
+    //trunk index
+    public func trunkIndexOf() -> BinaryHeapIndex
+    {
+        let i = (self.index - 1) >> 1;
+        return BinaryHeapIndex(i);
+    }
+    
+    //branch index
+    public func branchIndexOf() -> BinaryHeapIndex
+    {
+        let i = self.index << 1 + 1;
+        return BinaryHeapIndex(i);
+    }
+}
+public func ==(lsh: BinaryHeapIndex, rsh: BinaryHeapIndex) -> Bool
+{
+    return lsh.index == rsh.index;
+}
+
+public struct BinaryHeapArray<T> {
+    
+    //MARK: properties
+    //============================= properties ===================================
+    
+    //sort according to isOrderedBefore
+    private(set) public var isOrderedBefore: (T, T) -> Bool;
+    
+    private(set) var source: [T];
+    
+    //init
+    public init(source: [T], isOrderedBefore: (T, T) -> Bool)
+    {
+        self.isOrderedBefore = isOrderedBefore;
+        self.source = source;
+        self.build();
+    }
+    
+}
+extension BinaryHeapArray: HeapTranslatorType
+{
+    public var startIndex: BinaryHeapIndex{return BinaryHeapIndex(0);}
+    public var endIndex: BinaryHeapIndex{return BinaryHeapIndex(self.source.endIndex);}
+    //subscript
+    public subscript(position: BinaryHeapIndex) -> T{
+        set{
+            self.source[position.index] = newValue;
+        }
+        get{
+            return self.source[position.index];
+        }
+    }
+}
+extension BinaryHeapArray
+{
+    //MARK: properties
+    //============================= properties ===================================
+    //count
+    public var count: Int{return self.source.count;}
+    
+    //'self' is empty
+    public var isEmpty: Bool{return self.source.isEmpty}
+    
+    //MARK: functions
+    //============================= functions ===================================
+    
+    //append element and resort
+    mutating public func insert(element: T)
+    {
+        self.source.append(element);
+        self.shiftUp(self.endIndex.predecessor());
+    }
+    
+    //return(and remove) first element and resort
+    mutating public func popBest() -> T?
+    {
+        if(self.isEmpty){return nil;}
+        let first = self.source[0];
+        let end = self.source.removeLast();
+        guard !self.isEmpty else{return first;}
+        self.source[0] = end;
+        self.shiftDown(self.startIndex);
+        return first;
+    }
+    
+    //shift up element at index
+    public mutating func shiftUp(index: BinaryHeapIndex)
+    {
+        //shift element
+        let shiftElement = self[index];
+        
+        //shift index
+        var shiftIndex = index;
+        
+        //shift up
+        repeat{
+            //trunk index
+            let trunkIndex = shiftIndex.trunkIndexOf();
+            
+            //if trunkIndex is startIndex reuturn, otherwise shift next trunk
+            guard trunkIndex.index > -1 else{break;}
+            let trunkElement = self[trunkIndex];
+            
+            //compare: if shiftElement is better swap, otherwise return;
+            guard self.isOrderedBefore(shiftElement, trunkElement) else {break;}
+            self[shiftIndex] = self[trunkIndex];
+            self[trunkIndex] = shiftElement;
+            shiftIndex = trunkIndex;
+        }while true
+    }
+    
+    //shift down element at index
+    public mutating func shiftDown(index: BinaryHeapIndex)
+    {
+        //if index < endIndex continue otherwise return;
+        guard index.index < self.endIndex.index else {return;}
+        
+        //endindex
+        let endi = self.endIndex.index;
+        
+        //shift element
+        let shiftElement = self[index];
+        
+        //trunk index
+        var trunkIndex = index;
+        
+        let bc = index.branchSize;
+        
+        repeat{
+            //shift index
+            var shiftIndex = trunkIndex;
+            
+            //first branch index
+            var branchIndex = shiftIndex.branchIndexOf();
+            guard branchIndex.index < endi else{break;}
+            
+            //branch count
+            var branchCount = bc;
+            //repeat branch elements, make shiftIndex as best branchIndex
+            repeat{
+                if isOrderedBefore(self[branchIndex], self[shiftIndex]){
+                    shiftIndex = branchIndex;
+                }
+                branchIndex = branchIndex.successor();
+                branchCount -= 1;
+            }while branchIndex.index < endi && branchCount > 0
+            
+            //if shiftIndex != trunkIndex swap otherwise return;
+            guard shiftIndex != trunkIndex else{break;}
+            self[trunkIndex] = self[shiftIndex];
+            self[shiftIndex] = shiftElement;
+            
+            //shift index as trunk index
+            trunkIndex = shiftIndex;
+        }while true;
+    }
+
+}
+
+
+//===================
+//===================
+//===================
+//===================
+//===================
+//===================
+//===================
+//===================
+//===================
+//===================
+
+
+
 //MARK: == HeapConvertible ==
 public protocol HeapConvertible
 {
@@ -48,24 +391,6 @@ public protocol HeapConvertible
     
     //branch index
     func branchIndexOf(trunkIndex: Self.Index) -> Self.Index
-}
-extension HeapConvertible where Self.Source: CollectionType
-{
-    //indexof
-    @warn_unused_result
-    public func indexOf(@noescape predicate: (Self.Source.Generator.Element) throws -> Bool) rethrows -> Self.Source.Index?
-    {
-        return try self.source.indexOf(predicate);
-    }
-}
-extension HeapConvertible where Self.Source: CollectionType, Self.Source.Generator.Element: Equatable
-{
-    //indexof
-    @warn_unused_result
-    public func indexOf(element: Self.Source.Generator.Element) -> Self.Source.Index?
-    {
-        return self.source.indexOf(element);
-    }
 }
 //MARK: extension public
 extension HeapConvertible where Self.Index == Self.Source.Index, Self.Element == Self.Source._Element
@@ -241,6 +566,14 @@ extension BinaryPriorityArray where T: Comparable
         self.init(source: source){return $0 < $1;}
     }
 }
+extension BinaryPriorityArray: CollectionType
+{
+    public var startIndex: Int{return 0;}
+    public var endIndex: Int{return self.source.endIndex;}
+    public subscript(position: Int) -> T{
+        return self.source[position];
+    }
+}
 //MARK: extension PriorityQueueType
 extension BinaryPriorityArray: PriorityQueueType
 {
@@ -382,12 +715,5 @@ extension BinaryPriorityArray: HeapConvertible
             return;
         }
         self.shiftDown(atIndex);
-    }
-}
-extension BinaryPriorityArray: SequenceType
-{
-    public func generate() -> IndexingGenerator<[T]>
-    {
-        return self.source.generate();
     }
 }
