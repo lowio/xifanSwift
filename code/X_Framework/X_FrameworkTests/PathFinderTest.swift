@@ -43,7 +43,7 @@ func pathFinderTest() {
 //    
 //    print(tempConfig);
     
-    //实现协议后 实现协议中已经实现的方法效率会高很多，static能快，是因为泛型在参数传人方法后已经确定, 需要进行类型转换
+    //实现协议后 实现协议中已经实现的方法效率会高很多
     
     //具体文章：Enum链表 自定义一个2dgenerator
     

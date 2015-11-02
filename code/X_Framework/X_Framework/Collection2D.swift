@@ -8,10 +8,6 @@
 
 import Foundation
 
-struct Collection2DIndex {
-    
-}
-
 //MARK: collection 2d type
 public protocol Collection2DType: CollectionType
 {
