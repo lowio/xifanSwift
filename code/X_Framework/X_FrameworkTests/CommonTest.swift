@@ -56,7 +56,7 @@ private func createPQ(source:Array<Int>? = nil) -> BinaryPriorityQueue<Int>
 //XPriorityQueue test
 //old impl best:                    average: 0.088 -- MAC mini, insert: 4000 popBest: 4000
 //BinaryPriorityQueue<Int>          average: 0.100 -- MAC mini, insert: 4000 popBest: 4000
-//BinaryPriorityQueue<Int>          average: 0.177 -- MAC air,  insert: 4000 popBest: 4000
+//BinaryPriorityQueue<Int>          average: 0.200 -- MAC air,  insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
     var queue:BinaryPriorityQueue<Int>;
@@ -94,12 +94,12 @@ func priorityQueueTest(testRebuild:Bool = false)
             queue.insert(count);
             count--;
         }while count > 0;
-        print(queue.indexOf(1));
+//        print(queue.indexOf(1));
 //        print(queue);
         var a = 0;
         repeat{
             let e = queue.popBest()!;
-            print("current:", e, "last:", a, "current-last=", e - a);
+//            print("current:", e, "last:", a, "current-last=", e - a);
             a = e;
         }
         while !queue.isEmpty
