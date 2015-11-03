@@ -43,6 +43,7 @@ func pathFinderTest() {
 //    
 //    print(tempConfig);
     
+    //CGflaot 比 Int 快？
     //实现协议后 实现协议中已经实现的方法效率会高很多
     
     //具体文章：Enum链表 自定义一个2dgenerator
