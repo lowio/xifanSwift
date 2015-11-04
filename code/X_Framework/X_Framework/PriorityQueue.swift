@@ -9,16 +9,10 @@
 import Foundation
 
 //MARK: == HeapIndexGenerator ==
-public protocol HeapIndexGenerator: GeneratorType, Indexable
+public protocol HeapIndexGeneratorType: GeneratorType
 {
-    //init
-    init(_ index: Int, _ startIndex: Int, _ endIndex:Int)
-    
-    //subscript
-    subscript(position: Self.Index) -> Self.Index{get}
-    
-    //next
-    mutating func next() -> Self.Index?
+    //next index of index
+    func nextIndexOf(index: Self.Element) -> Self.Element
 }
 
 //*********************************************************************************************************************
@@ -28,10 +22,10 @@ public protocol HeapIndexGenerator: GeneratorType, Indexable
 public protocol HeapTranslatorType: CollectionType
 {
     //trunk index generator type
-    typealias TIG: HeapIndexGenerator;
+    typealias TIG: HeapIndexGeneratorType;
     
     //branch index generator type
-    typealias BIG: HeapIndexGenerator;
+    typealias BIG: HeapIndexGeneratorType;
     
     //MARK: properties
     //============================= properties ===================================
@@ -60,7 +54,7 @@ public protocol HeapTranslatorType: CollectionType
     //priority sequence use isOrderedBefore function
     mutating func build()
 }
-extension HeapTranslatorType where Self.TIG.Index == Self.Index, Self.BIG.Index == Self.Index
+extension HeapTranslatorType where Self.TIG.Element == Self.Index, Self.BIG.Element == Self.Index
 {
     //shift up element at index
     public mutating func shiftUp(index: Self.Index)
@@ -157,72 +151,70 @@ public protocol PriorityQueueType: CollectionType
 //======================================== implement =================================================
 
 //MARK: == BinaryTrunkIndexGenerator ==
-public struct BinaryTrunkIndexGenerator: HeapIndexGenerator
+public struct BinaryTrunkIndexGenerator
 {
     //current index
     private var index: Int;
     
-    //start index
-    public let startIndex: Int;
-    
     //end index
-    public let endIndex: Int;
+    private let endIndex: Int;
     
     //init
-    public init(_ index: Int, _ startIndex: Int, _ endIndex:Int)
+    public init(_ index: Int, _ endIndex:Int)
     {
         self.index = index;
-        self.startIndex = startIndex;
         self.endIndex = endIndex;
     }
+}
+extension BinaryTrunkIndexGenerator: HeapIndexGeneratorType
+{
+    //next trunk index of index
+    public func nextIndexOf(index: Int) -> Int {return (index - 1) >> 1;}
     
     //next trunk element
     public mutating func next() -> Int? {
-        guard self.index > self.startIndex else{return nil;}
-        self.index = (self.index - 1) >> 1;
+        guard self.index > self.endIndex else{return nil;}
+        self.index = self.nextIndexOf(self.index);
         return self.index;
     }
-    
-    //subscript
-    public subscript(position: Int) -> Int{return (position - 1) >> 1;}
 }
 
 //MARK: == BinaryBranchIndexGenerator ==
-public struct BinaryBranchIndexGenerator: HeapIndexGenerator
+public struct BinaryBranchIndexGenerator
 {
-    //start index
-    public let startIndex: Int;
+    //branch size
+    private let branchSize = 2;
     
     //end index
-    public let endIndex: Int;
-    
-    //current branch count
-    private var bc: Int;
+    private let endIndex: Int;
     
     //current index
     private var index: Int;
     
+    private var bc: Int;
+    
     //init
-    public init(_ index: Int, _ startIndex: Int, _ endIndex:Int)
+    public init(_ index: Int, _ endIndex:Int)
     {
         self.index = index;
-        self.startIndex = startIndex;
         self.endIndex = endIndex;
-        self.bc = 2;
-        self.index = self[index];
+        self.bc = self.branchSize;
+        self.index = self.nextIndexOf(index);
     }
-    
+}
+extension BinaryBranchIndexGenerator: HeapIndexGeneratorType
+{
     //next branch
     public mutating func next() -> Int? {
-        guard self.bc > 0 && index < self.endIndex else{return nil;}
-        let i = index;
-        index = index.successor();
+        guard self.bc > 0 && self.index < self.endIndex else{return nil;}
+        let i = self.index;
+        self.index = self.index.successor();
         self.bc--;
         return i;
     }
     
-    //subscript
-    public subscript(position: Int) -> Int{return position << 1 + 1;}
+    //next branch index of index
+    public func nextIndexOf(index: Int) -> Int {return index << 1 + 1;}
 }
 
 //*********************************************************************************************************************
@@ -299,13 +291,13 @@ extension BinaryPriorityQueue: HeapTranslatorType
     //trunk generator
     public func trunkIndexGenerate(index: Int) -> BinaryTrunkIndexGenerator
     {
-        return BinaryTrunkIndexGenerator(index, self.startIndex, self.endIndex);
+        return BinaryTrunkIndexGenerator(index, self.startIndex);
     }
     
     //branch generator
     public func branchIndexGenerate(index: Int) -> BinaryBranchIndexGenerator
     {
-        return BinaryBranchIndexGenerator(index, self.startIndex, self.endIndex);
+        return BinaryBranchIndexGenerator(index, self.endIndex);
     }
     
     //shift up element at index

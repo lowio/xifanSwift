@@ -96,6 +96,7 @@ func priorityQueueTest(testRebuild:Bool = false)
         }while count > 0;
 //        print(queue.indexOf(1));
 //        print(queue);
+//        return;
         var a = 0;
         repeat{
             let e = queue.popBest()!;
