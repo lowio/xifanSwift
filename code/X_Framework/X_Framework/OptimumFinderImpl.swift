@@ -8,45 +8,108 @@
 
 import Foundation
 
-
-//MARK: finder comparable struct
-public struct FinderElement<T:Hashable>
-{
-    //point type
-    public typealias _Point = T;
-    
-    //'self' is closed
-    public var isClosed:Bool;
+//MARK: == FinderElement ==
+public struct FinderElement<T: Hashable>{
+    //'self' is closed default false
+    public var isClosed:Bool = false;
     
     //g score, real cost from start point to 'self' point
-    public var g: Int = 0;
+    public var g: CGFloat;
     
-    //h score, hurisctic cost from 'self' point to goal point
-    private (set) public var h: Int = 0;
+    //weight f = g + h
+    public private (set) var h:CGFloat;
     
     //point
-    private (set) public var point: T? = nil;
+    public private (set) var point: T;
     
-    //init required
-    public init(g: Int, h: Int, point: _Point)
+    init(g: CGFloat, h:CGFloat, point: T)
     {
         self.g = g;
         self.h = h;
         self.point = point;
-        self.isClosed = false;
     }
 }
-extension FinderElement: FinderComparable
-{
-    //weight f = g + h
-    public var f:Int{return self.g + self.h}
+extension FinderElement: FinderComparable{
+    public var f: CGFloat{return self.g + self.h;}
 }
+public func ==<T: Hashable>(lsh: FinderElement<T>, rsh: FinderElement<T>) -> Bool {return lsh == rsh;}
+public func > <T: Hashable>(lsh: FinderElement<T>, rsh: FinderElement<T>) -> Bool{return lsh.f > rsh.f;}
+public func < <T: Hashable>(lsh: FinderElement<T>, rsh: FinderElement<T>) -> Bool{return lsh.f < rsh.f;}
 
 
 
 
-
-
+//MARK: == BreadFirstFinder ==
+public struct BreadFirstFinder<T: Hashable> {
+    
+}
+extension BreadFirstFinder: OptimumFinder
+{
+    public typealias Element = FinderElement<T>;
+    
+    //get neighbors
+    public func getNeighbors(around point: Element._Point) -> [Element._Point] {
+        return [];
+    }
+    
+    //get cost from sub point to point
+    public func getCost(subPoint sp: Element._Point, toPoint tp: Element._Point) -> CGFloat {
+        return 0;
+    }
+    
+    //point is valid
+    public func pointIsValid(point: Element._Point) -> Bool {
+        return true;
+    }
+    
+    //get heuristic
+    public func getHeuristic(from: Element._Point, toPoint: Element._Point) -> CGFloat {
+        return 0;
+    }
+    
+    
+    
+    //create element
+    public func createElement(g: CGFloat, h:CGFloat, point: Element._Point, chainFrom: Element?) -> Element {
+        return Element(g: 0, h: 0, point: point);
+    }
+    
+    //get visited element of point
+    public func visitedElementOf(point: Element._Point) -> Element? {
+        return nil;
+    }
+    
+    //set element visited
+    public mutating func visitedElement(element: Element) {
+        
+    }
+    
+    //set element closed
+    public mutating func closedElement(element: Element) {
+        
+    }
+    
+    //pop next element
+    public mutating func popNext() -> Element? {
+        return nil;
+    }
+    
+    //insert element
+    public mutating func insert(element: Element) {
+        
+    }
+    
+    //update visited element
+    public mutating func updateVisited(element: Element) {
+        
+    }
+    
+    
+    //completion
+    public mutating func completion(endElement: Element) {
+        
+    }
+}
 
 
 ////MARK: BreadthFirst finder queue

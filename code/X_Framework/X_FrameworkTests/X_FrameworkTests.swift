@@ -21,9 +21,17 @@ class X_FrameworkTests: XCTestCase {
         super.tearDown()
     }
     
+    var dic:[Int: Int] = [:]
+    
     func testFramework()
     {
         tempTest();
+        
+        for i in 0...4000
+        {
+            dic[i] = i;
+        }
+        
         if testPerformance
         {
             self.measureBlock{
@@ -40,8 +48,8 @@ class X_FrameworkTests: XCTestCase {
     
     private func waitForTest()
     {
-//        pathFinderTest();
-        commonTest();
+        pathFinderTest();
+//        commonTest();
     }
 }
 

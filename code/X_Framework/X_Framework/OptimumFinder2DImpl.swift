@@ -8,69 +8,69 @@
 
 import Foundation
 
-//MARK: finder point 2d
-public protocol FinderPoint2D: Hashable
-{
-    //x position
-    var x:Int{get}
-    
-    //y position
-    var y:Int{get}
-    
-    init(x:Int, y:Int, cost:Int)
-}
-
-public struct Point2D: FinderPoint2D
-{
-    //x, y
-    public private(set) var x, y, cost:Int;
-    
-    public init(x:Int, y:Int, cost:Int)
-    {
-        self.x = x;
-        self.y = y;
-        self.cost = cost;
-    }
-    
-    public var hashValue:Int{
-        return "\(x), \(y)".hashValue;
-    }
-}
-
-public func ==(rsh:Point2D, lsh:Point2D) -> Bool
-{
-    return rsh.x == lsh.x && rsh.y == lsh.y;
-}
-
-//MARK: finder huristic 2d
-public enum FinderHuristic2D<T: FinderPoint2D>
-{
-    case Manhattan, Euclidean, Octile, Chebyshev, None
-}
-extension FinderHuristic2D: FinderHeuristic
-{
-    public typealias _Point = T;
-    
-    public func getHeuristic(from: _Point, toPoint: _Point) -> Int {
-        let dx = abs(from.x - toPoint.x);
-        let dy = abs(from.y - toPoint.y);
-        switch self{
-        case .Manhattan:
-            return dx + dy;
-        case .Euclidean:
-            return Int(sqrt(CGFloat(dx * dx + dy * dy)));
-        case .Octile:
-            let f:CGFloat = CGFloat(M_SQRT2) - 1;
-            let _dx = CGFloat(dx);
-            let _dy = CGFloat(dy);
-            return Int(_dx < _dy ? f * _dx + _dy : f * _dy + _dx);
-        case .Chebyshev:
-            return max(dx, dy);
-        case .None:
-            return 0;
-        }
-    }
-}
+////MARK: finder point 2d
+//public protocol FinderPoint2D: Hashable
+//{
+//    //x position
+//    var x:Int{get}
+//    
+//    //y position
+//    var y:Int{get}
+//    
+//    init(x:Int, y:Int, cost:Int)
+//}
+//
+//public struct Point2D: FinderPoint2D
+//{
+//    //x, y
+//    public private(set) var x, y, cost:Int;
+//    
+//    public init(x:Int, y:Int, cost:Int)
+//    {
+//        self.x = x;
+//        self.y = y;
+//        self.cost = cost;
+//    }
+//    
+//    public var hashValue:Int{
+//        return "\(x), \(y)".hashValue;
+//    }
+//}
+//
+//public func ==(rsh:Point2D, lsh:Point2D) -> Bool
+//{
+//    return rsh.x == lsh.x && rsh.y == lsh.y;
+//}
+//
+////MARK: finder huristic 2d
+//public enum FinderHuristic2D<T: FinderPoint2D>
+//{
+//    case Manhattan, Euclidean, Octile, Chebyshev, None
+//}
+//extension FinderHuristic2D: FinderHeuristic
+//{
+//    public typealias _Point = T;
+//    
+//    public func getHeuristic(from: _Point, toPoint: _Point) -> Int {
+//        let dx = abs(from.x - toPoint.x);
+//        let dy = abs(from.y - toPoint.y);
+//        switch self{
+//        case .Manhattan:
+//            return dx + dy;
+//        case .Euclidean:
+//            return Int(sqrt(CGFloat(dx * dx + dy * dy)));
+//        case .Octile:
+//            let f:CGFloat = CGFloat(M_SQRT2) - 1;
+//            let _dx = CGFloat(dx);
+//            let _dy = CGFloat(dy);
+//            return Int(_dx < _dy ? f * _dx + _dy : f * _dy + _dx);
+//        case .Chebyshev:
+//            return max(dx, dy);
+//        case .None:
+//            return 0;
+//        }
+//    }
+//}
 
 
 ////MARK: finder data source 2d

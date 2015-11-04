@@ -9,7 +9,7 @@
 import Foundation
 
 //MARK: optimum finder comparable element
-public protocol FinderComparable
+public protocol FinderComparable: Comparable
 {
     //point type
     typealias _Point: Hashable;
@@ -18,42 +18,16 @@ public protocol FinderComparable
     var isClosed:Bool{get set}
     
     //g score, real cost from start point to 'self' point
-    var g: Int{get set}
+    var g: CGFloat{get set}
     
     //h score, hurisctic cost from 'self' point to goal point
-    var h: Int{get}
+    var h: CGFloat{get}
     
     //weight f = g + h
-    var f:Int{get}
+    var f:CGFloat{get}
     
     //point
-    var point: Self._Point?{get}
-    
-    //init required
-    init(g: Int, h: Int, point: Self._Point)
-}
-
-//MARK: finder heuristic
-public protocol FinderHeuristic
-{
-    typealias _Point
-    //get heuristic
-    func getHeuristic(from: Self._Point, toPoint: Self._Point) -> Int
-}
-
-//MARK: finder datasource
-public protocol FinderDataSource
-{
-    typealias _Point;
-    
-    //get neighbors
-    func getNeighbors(around point: Self._Point) -> [Self._Point]
-    
-    //get cost from sub point to point
-    func getCost(subPoint sp: Self._Point, toPoint tp: Self._Point) -> Int
-    
-    //point is valid
-    func pointIsValid(point: Self._Point) -> Bool
+    var point: Self._Point{get}
 }
 
 //MARK: OptimumFinder
@@ -62,104 +36,104 @@ public protocol OptimumFinder
     //element type
     typealias Element: FinderComparable;
     
-    //priority type
-    typealias PQ: PriorityQueueType;
+    //get neighbors
+    func getNeighbors(around point: Self.Element._Point) -> [Self.Element._Point]
     
-    //data source type
-    typealias DS: FinderDataSource;
+    //get cost from sub point to point
+    func getCost(subPoint sp: Self.Element._Point, toPoint tp: Self.Element._Point) -> CGFloat
     
-    //heuristic type
-    typealias HT: FinderHeuristic;
+    //point is valid
+    func pointIsValid(point: Self.Element._Point) -> Bool
     
-    //set and get element which at point;
-    subscript(point: Self.Element._Point) -> Self.Element?{get set}
+    //get heuristic
+    func getHeuristic(from: Self.Element._Point, toPoint: Self.Element._Point) -> CGFloat
     
-    //create element, chain to element, isVisited = false;
-    func createElement(g:Int, h:Int, point: Self.Element._Point, chainFrom: Self.Element?) -> Self.Element
     
-    //completion end, last element
-    mutating func completion(end: Self.Element);
+    
+    //create element
+    func createElement(g: CGFloat, h:CGFloat, point: Self.Element._Point, chainFrom: Self.Element?) -> Self.Element
+    
+    //get visited element of point
+    func visitedElementOf(point: Self.Element._Point) -> Self.Element?
+    
+    //set element visited
+    mutating func visitedElement(element: Self.Element)
+    
+    //set element closed
+    mutating func closedElement(element: Self.Element)
+    
+    //pop next element
+    mutating func popNext() -> Self.Element?
+    
+    //insert element
+    mutating func insert(element: Self.Element)
+    
+    //update visited element
+    mutating func updateVisited(element: Self.Element)
+    
+    
+    //completion
+    mutating func completion(endElement: Self.Element)
 }
+extension OptimumFinder
+{
+    mutating public func find(start: Self.Element._Point, goal: Self.Element._Point)
+    {
+        //check start / goal
+        guard self.pointIsValid(start) && self.pointIsValid(goal) else {return;}
 
-//extension public
-//extension OptimumFinder where Self.PQ.Element == Self.Element, Self.DS._Point == Self.Element._Point, Self.HT._Point == Self.Element._Point
-//{
-//    //point type
-//    private typealias _Point = Self.Element._Point;
-//    
-//    //find
-//    public mutating func find(start: _Point, goal: _Point, dataSource: Self.DS, pQueue: Self.PQ, heuristic: Self.HT)
-//    {
-//        //check start / goal
-//        guard dataSource.pointIsValid(start) && dataSource.pointIsValid(goal) else {return;}
-//        
-//        //openlist
-//        var openList = pQueue;
-//        
-//        //current element;
-//        var current = self.createElement(0, h: heuristic.getHeuristic(start, toPoint: goal), point: start, chainFrom: nil);
-//        
-//        //set current element visited
-//        self[start] = current;
-//        //append current
-//        openList.append(current);
-//        
-//        //completion
-//        defer{
-//            self.completion(current);
-//        }
-//        
-//        //repeat
-//        repeat{
-//            guard let _next = openList.popFirst() else {break;}
-//
-//            //current element , current point
-//            current = _next;
-//            guard let point = current.point else {break;}
-//
-//            //set current point closed
-//            current.isClosed = true;
-//            self[point] = current;
-//            
-//            //compare current point with goal
-//            guard point != goal else{break;}
-//
-//            //explore neighbors
-//            let neighbors = dataSource.getNeighbors(around: point);
-//            for n in neighbors
-//            {
-//                let cost = dataSource.getCost(subPoint: point, toPoint: n);
-//                let g = current.g + cost;
-//                
-//                //get element at n
-//                guard let visited = self[n] else{
-//                    //create new element appent it and set it visited
-//                    let h = heuristic.getHeuristic(point, toPoint: n);
-//                    let newElement = self.createElement(g, h: h, point: n, chainFrom: current);
-//                    self[n] = newElement;
-//                    openList.append(newElement);
-//                    continue;
-//                }
-//                
-//                guard !visited.isClosed && g < visited.g else {continue;}
-//                
-//                
-//                let updateElement = self.createElement(g, h: visited.h, point: n, chainFrom: current);
-//                self[n] = updateElement;
-//                openList.append(updateElement);
-//                print("前方高能！请注意, 替换append为update===============", __LINE__)
-////                let index = openList.indexOf{
-//////                    let ele = $0;
-//////                    return ele.point! == n;
-////                }
-//        
-//                //update openlist================
-//                //openList.updateElement(visited, atIndex: )
-//            }
-//        }while true
-//    }
-//}
+        //current element;
+        var current = self.createElement(0, h: self.getHeuristic(start, toPoint: goal), point: start, chainFrom: nil);
 
+        //set current element visited
+        self.visitedElement(current);
+        //append current
+        self.insert(current);
+        
+        defer{
+            self.completion(current);
+        }
+
+        //repeat
+        repeat{
+            guard let _next = self.popNext() else {break;}
+
+            //current element , current point
+            current = _next;
+            let point = current.point;
+
+            //set current point closed
+            current.isClosed = true;
+            self.closedElement(current);
+
+            //compare current point with goal
+            guard point != goal else{break;}
+
+            //explore neighbors
+            let neighbors = self.getNeighbors(around: point);
+            neighbors.forEach{
+                let n = $0;
+                let cost = self.getCost(subPoint: point, toPoint: n);
+                let g = current.g + cost;
+                
+                guard let visited = self.visitedElementOf(n) else{
+                    let h = self.getHeuristic(point, toPoint: n);
+                    let newElement = self.createElement(g, h: h, point: n, chainFrom: current);
+                    //set parent
+                    self.visitedElement(newElement);
+                    self.insert(newElement);
+                    return;
+                }
+                
+                guard !visited.isClosed && g < visited.g else {return;}
+                let updateElement = self.createElement(g, h: visited.h, point: n, chainFrom: current);
+                self.visitedElement(updateElement);
+                self.updateVisited(updateElement);
+                print("前方高能！请注意, update===============", __LINE__)
+            }
+        }while true
+    }
+}
 
 
 
