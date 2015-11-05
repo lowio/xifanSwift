@@ -49,12 +49,11 @@ public protocol FinderProcessor
     //element type
     typealias Element: FinderComparable;
     
-    //MARK: point
-    //search start point
-    var start: Self.Element.Point{get}
+    //request type
+    typealias Request: FinderRequestType;
     
-    //return neighbor points around point
-    func neighborsOf(point: Self.Element.Point) -> [Self.Element.Point]
+    //request
+    var request: Self.Request{get}
     
     //MARK: element
     //if element is visited update it, otherwise set it visited
@@ -73,13 +72,16 @@ public protocol FinderProcessor
     //2.create element depend on point, insert element and return it.
     @warn_unused_result
     mutating func exploreSuccessor(point: Self.Element.Point, chainFrom: Self.Element?) -> Self.Element?
+    
+    //execute
+    mutating func execute(request: Self.Request)
 }
-extension FinderProcessor
+extension FinderProcessor where Self.Element.Point == Self.Request.Point
 {
     //execute
-    mutating public func execute() {
+    mutating func execute() {
         //start element
-        guard let startElement = self.exploreSuccessor(start, chainFrom: nil) else {return;}
+        guard let startElement = self.exploreSuccessor(self.request.start, chainFrom: nil) else {return;}
         var current = startElement;
         self.setVisitedElement(current);
 
@@ -96,13 +98,63 @@ extension FinderProcessor
             guard self.terminationOf(current) else{break;}
             
             //explore neighbors
-            let neighbors = self.neighborsOf(point);
+            let neighbors = self.request.neighborsOf(point);
             neighbors.forEach{
                 let n = $0;
                 guard let ele = self.exploreSuccessor(n, chainFrom: current) else {return;}
                 self.setVisitedElement(ele);
             }
         }while true
+    }
+}
+//MARK: extension where Self: FinderWeightQueue
+extension FinderProcessor where Self: FinderWeightQueue
+{
+    //pop next element
+    public mutating func popNext() -> Self.Element?{
+        return self.openList.popBest();
+    }
+    
+    //if element is visited update it, otherwise set it visited
+    public mutating func setVisitedElement(element: Self.Element)
+    {
+        self.visitedList[element.point] = element;
+    }
+    
+    //if point was visited return element otherwise return nil;
+    func getVisitedElement(point: Self.Element.Point) -> Self.Element? {
+        return self.visitedList[point];
+    }
+}
+
+//MARK: == FinderSingleGoalProcessor ==
+public protocol FinderSingleGoalProcessor: FinderProcessor
+{
+    typealias Request: FinderSingleGoalRequest;
+}
+extension FinderSingleGoalProcessor where Self.Element.Point == Self.Request.Point
+{
+    //termination of element
+    public mutating func terminationOf(element: Self.Element) -> Bool {
+        guard element.point == self.request.goal else {return false;}
+        print("WARN::::::: ========== terminationOf")
+        return true;
+    }
+}
+
+
+//MARK: == FinderMultiGoalsProcessor ==
+public protocol FinderMultiGoalsProcessor: FinderProcessor
+{
+    typealias Request: FinderMiltiGoalRequest;
+}
+extension FinderMultiGoalsProcessor where Self.Element.Point == Self.Request.Point
+{
+    //termination of element
+    public mutating func terminationOf(element: Self.Element) -> Bool {
+        guard let _ = (self.request.goals.indexOf{element.point == $0}) else {return false;}
+        print("WARN::::::: ========== terminationOf delete")
+        return self.request.goals.isEmpty;
     }
 }
 
@@ -139,147 +191,46 @@ extension FinderWeightQueue where Self.Element: Equatable
     }
 }
 
-//MARK: extension where FinderWeightQueue is FinderProcessor
-extension FinderWeightQueue where Self: FinderProcessor
+//MARK: ==============FinderRequest=============
+//MARK: == FinderRequestType ==
+public protocol FinderRequestType
 {
-    //pop next element
-    public mutating func popNext() -> Self.Element?{
-        return self.openList.popBest();
-    }
+    //point type
+    typealias Point: Hashable;
     
-    //if element is visited update it, otherwise set it visited
-    public mutating func setVisitedElement(element: Self.Element)
-    {
-        self.visitedList[element.point] = element;
-    }
+    //start point
+    var start: Self.Point{get}
     
-    //if point was visited return element otherwise return nil;
-    func getVisitedElement(point: Self.Element.Point) -> Self.Element? {
-        return self.visitedList[point];
-    }
-}
-
-
-//MARK: == FinderSingleGoal ==
-public protocol FinderSingleGoal
-{
-    //element type
-    typealias Element: FinderComparable;
-    
-    //goal
-    var goal: Self.Element.Point{get}
-}
-//MARK: extension where FinderSingleGoal is FinderProcessor
-extension FinderSingleGoal where Self: FinderProcessor
-{
-    //termination of element
-    public mutating func terminationOf(element: Self.Element) -> Bool {
-        guard element.point == self.goal else {return false;}
-        return true;
-    }
-}
-
-//MARK: == FinderMultiGoal ==
-public protocol FinderMultiGoal
-{
-    //element type
-    typealias Element: FinderComparable;
-    
-    //goal
-    var goals: [Self.Element.Point]{get set}
-}
-//MARK: extension where FinderSingleGoal is FinderProcessor
-extension FinderMultiGoal where Self: FinderProcessor
-{
-    //termination of element
-    public mutating func terminationOf(element: Self.Element) -> Bool {
-        guard let i = (self.goals.indexOf{element.point == $0}) else {return false;}
-        //find one
-        self.goals.removeAtIndex(i);
-        return self.goals.isEmpty;
-    }
-}
-
-//MARK: == FinderHeuristicType ==
-public protocol FinderHeuristicType
-{
-    //element type
-    typealias Element: FinderComparable;
+    //neighbors of point
+    func neighborsOf(point: Self.Point) -> [Self.Point]
     
     //heuristic h value of point to point
-    func heuristicOf(point: Self.Element.Point, _ toPoint: Self.Element.Point) -> CGFloat
-}
-//MARK: extension where FinderHeuristicType is FinderProcessor, FinderWeightQueue, FinderSingleGoal
-extension FinderHeuristicType where Self: FinderProcessor, Self: FinderWeightQueue, Self: FinderSingleGoal
-{
-    //explore successor point
-    @warn_unused_result
-    public mutating func exploreSuccessor(point: Self.Element.Point, chainFrom: Self.Element?) -> Self.Element?
-    {
-        guard let _ = self.getVisitedElement(point) else {
-            let ele = Element(g: CGFloat(), h: self.heuristicOf(point, self.goal), point: point, parent: chainFrom);
-            self.openList.insert(ele);
-            return ele;
-        }
-        return nil;
-    }
-}
-
-
-//MARK: == FinderCostType ==
-public protocol FinderCostType
-{
-    //element type
-    typealias Element: FinderComparable;
+    func heuristicOf(point: Self.Point, _ toPoint: Self.Point) -> CGFloat
     
     //cost value of point to point
-    func costOf(point: Self.Element.Point, _ toPoint: Self.Element.Point) -> CGFloat
-}
-//MARK: extension where FinderCostType is FinderProcessor, FinderWeightQueue
-extension FinderCostType where Self: FinderProcessor, Self: FinderWeightQueue
-{
-    //explore successor point
-    @warn_unused_result
-    public mutating func exploreSuccessor(point: Self.Element.Point, chainFrom: Self.Element?) -> Self.Element?
-    {
-        guard let _ = self.getVisitedElement(point) else {
-            var g:CGFloat = 0;
-            if let cf = chainFrom{
-                g = cf.g + self.costOf(cf.point, point);
-            }
-            let ele = Element(g: g, h: 0, point: point, parent: chainFrom as? FinderChainable);
-            self.openList.insert(ele);
-            return ele;
-        }
-        return nil;
-    }
+    func costOf(point: Self.Point, _ toPoint: Self.Point) -> CGFloat
 }
 
-//extension where is FinderCostType, FinderHeuristicType, FinderSingleGoal, FinderWeightQueue
-extension FinderProcessor where Self: FinderCostType, Self:FinderHeuristicType, Self: FinderSingleGoal, Self: FinderWeightQueue
+//MARK: == FinderSingleGoalRequest ==
+public protocol FinderSingleGoalRequest: FinderRequestType
 {
-    //explore successor point
-    @warn_unused_result
-    public mutating func exploreSuccessor(point: Self.Element.Point, chainFrom: Self.Element?) -> Self.Element?
-    {
-        var g:CGFloat = 0;
-        if let cf = chainFrom{
-            g = cf.g + self.costOf(cf.point, point);
-        }
-        
-        guard let visited = self.getVisitedElement(point) else {
-            let h = self.heuristicOf(point, self.goal);
-            let ele = Element(g: g, h: h, point: point, parent: chainFrom as? FinderChainable);
-            self.openList.insert(ele);
-            return ele;
-        }
-        
-        guard !visited.isClosed && g < visited.g else{return nil;}
-        let ele = Element(g: g, h: visited.h, point: point, parent: chainFrom as? FinderChainable);
-        self.updateElement(ele);
-        return ele;
-    }
+    //goal point
+    var goal: Self.Point{get}
 }
+
+
+//MARK: == FinderMiltiGoalRequest ==
+public protocol FinderMiltiGoalRequest: FinderRequestType
+{
+    //goals point
+    var goals: [Self.Point]{get}
+}
+
+
+
+
+
+
 
 /**
 one - one: 

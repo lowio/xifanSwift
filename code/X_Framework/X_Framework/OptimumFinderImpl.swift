@@ -46,150 +46,166 @@ public func ==<T: Hashable>(lsh: FinderElement<T>, rsh: FinderElement<T>) -> Boo
 
 
 //MARK: == GreedyBestFirstFinder ==
-public struct GreedyBestFirstFinder<T: Hashable>
+public struct GreedyBestFirstFinder<T: FinderSingleGoalRequest>
 {
-    //search start point
-    public private (set) var start: T;
+    public typealias Request = T;
     
-    //search goal point
-    public private (set) var goal: T;
+    //reqeust
+    public private (set) var request: Request;
     
     //queue
     public var openList: BinaryPriorityQueue<Element>;
     
     //dic
-    public var visitedList: [T: Element];
+    public var visitedList: [Element.Point: Element];
     
-    public init(_ start: T, _ goal: T)
+    public init(request: Request)
     {
-        self.start = start;
-        self.goal = goal;
+        self.request = request;
         self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
         self.visitedList = [:];
     }
 }
 //MARK: extension FinderWeightQueue
 extension GreedyBestFirstFinder: FinderWeightQueue{}
-//MARK: extension FinderSingleGoal
-extension GreedyBestFirstFinder: FinderSingleGoal{}
-//MARK: extension FinderHeuristicType
-extension GreedyBestFirstFinder: FinderHeuristicType{
-    
-    //heuristic h value of point to point
-    public func heuristicOf(point: T, _ toPoint: T) -> CGFloat
-    {
-        return 0;
-    }
-}
+//MARK: extension FinderSingleGoalProcessor
+extension GreedyBestFirstFinder: FinderSingleGoalProcessor{}
 //MARK: extension FinderProcessor
 extension GreedyBestFirstFinder: FinderProcessor {
     
-    public typealias Element = FinderElement<T>;
+    public typealias Element = FinderElement<Request.Point>;
     
-    //return neighbor points around point
-    public func neighborsOf(point: T) -> [T] {
-        return []
+    public mutating func execute(request: Request) {
+        self.request = request;
+        self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
+        self.visitedList = [:];
+        self.execute();
+    }
+    
+    //explore successor point
+    @warn_unused_result
+    public mutating func exploreSuccessor(point: Element.Point, chainFrom: Element?) -> Element?
+    {
+        guard let _ = self.getVisitedElement(point) else {
+            let ele = Element(g: CGFloat(), h: self.request.heuristicOf(point, self.request.goal), point: point, parent: chainFrom as? FinderChainable);
+            self.openList.insert(ele);
+            return ele;
+        }
+        return nil;
     }
 }
 
 
 //MARK: == DijkstraFinder ==
-public struct DijkstraFinder<T: Hashable>
+public struct DijkstraFinder<T: FinderMiltiGoalRequest>
 {
-    //search start point
-    public private (set) var start: T;
+    public typealias Request = T;
     
-    //search goal point
-    public var goals: [T];
+    //reqeust
+    public private (set) var request: T;
     
     //queue
     public var openList: BinaryPriorityQueue<Element>;
     
     //dic
-    public var visitedList: [T: Element];
+    public var visitedList: [Element.Point: Element];
     
-    public init(_ start: T, _ goals: T...)
+    public init(request: Request)
     {
-        self.start = start;
-        self.goals = goals;
-        self.openList = BinaryPriorityQueue<Element>{return $0.g < $1.g;}
+        self.request = request;
+        self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
         self.visitedList = [:];
     }
+
 }
 //MARK: extension FinderWeightQueue
 extension DijkstraFinder: FinderWeightQueue{}
-//MARK: extension FinderSingleGoal
-extension DijkstraFinder: FinderMultiGoal{}
-//MARK: extension FinderCostType
-extension DijkstraFinder: FinderCostType{
-    //cost value of point to point
-    public func costOf(point: T, _ toPoint: T) -> CGFloat
-    {
-        return 0;
-    }
-}
+//MARK: extension FinderMultiGoalsProcessor
+extension DijkstraFinder: FinderMultiGoalsProcessor{}
 //MARK: extension FinderProcessor
 extension DijkstraFinder: FinderProcessor {
     
-    public typealias Element = FinderElement<T>;
+    public typealias Element = FinderElement<Request.Point>;
     
-    //return neighbor points around point
-    public func neighborsOf(point: T) -> [T] {
-        return []
+    public mutating func execute(request: Request) {
+        self.request = request;
+        self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
+        self.visitedList = [:];
+        self.execute();
+    }
+    
+    //explore successor point
+    @warn_unused_result
+    public mutating func exploreSuccessor(point: Element.Point, chainFrom: Element?) -> Element?
+    {
+        guard let _ = self.getVisitedElement(point) else {
+            var g:CGFloat = 0;
+            if let cf = chainFrom{
+                g = cf.g + self.request.costOf(cf.point, point);
+            }
+            let ele = Element(g: g, h: 0, point: point, parent: chainFrom as? FinderChainable);
+            self.openList.insert(ele);
+            return ele;
+        }
+        return nil;
     }
 }
 
 //MARK: == AstarFinder ==
-public struct AstarFinder<T: Hashable>
+public struct AstarFinder<T: FinderSingleGoalRequest>
 {
-    //search start point
-    public private (set) var start: T;
+    public typealias Request = T;
     
-    //search goal point
-    public private (set) var goal: T;
+    //reqeust
+    public private (set) var request: Request;
     
     //queue
     public var openList: BinaryPriorityQueue<Element>;
     
     //dic
-    public var visitedList: [T: Element];
+    public var visitedList: [Element.Point: Element];
     
-    public init(_ start: T, _ goal: T)
+    public init(request: Request)
     {
-        self.start = start;
-        self.goal = goal;
+        self.request = request;
         self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
         self.visitedList = [:];
     }
 }
 //MARK: extension FinderWeightQueue
 extension AstarFinder: FinderWeightQueue{}
-//MARK: extension FinderSingleGoal
-extension AstarFinder: FinderSingleGoal{}
-//MARK: extension FinderHeuristicType
-extension AstarFinder: FinderHeuristicType{
-    
-    //heuristic h value of point to point
-    public func heuristicOf(point: T, _ toPoint: T) -> CGFloat
-    {
-        return 0;
-    }
-}
-//MARK: extension FinderCostType
-extension AstarFinder: FinderCostType{
-    //cost value of point to point
-    public func costOf(point: T, _ toPoint: T) -> CGFloat
-    {
-        return 0;
-    }
-}
+//MARK: extension FinderSingleGoalProcessor
+extension AstarFinder: FinderSingleGoalProcessor{}
 //MARK: extension FinderProcessor
 extension AstarFinder: FinderProcessor {
+    public typealias Element = FinderElement<Request.Point>;
     
-    public typealias Element = FinderElement<T>;
+    public mutating func execute(request: Request) {
+        self.request = request;
+        self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
+        self.visitedList = [:];
+        self.execute();
+    }
     
-    //return neighbor points around point
-    public func neighborsOf(point: T) -> [T] {
-        return []
+    //explore successor point
+    @warn_unused_result
+    public mutating func exploreSuccessor(point: Element.Point, chainFrom: Element?) -> Element?
+    {
+        var g:CGFloat = 0;
+        if let cf = chainFrom{
+            g = cf.g + self.request.costOf(cf.point, point);
+        }
+
+        guard let visited = self.getVisitedElement(point) else {
+            let h = self.request.heuristicOf(point, self.request.goal);
+            let ele = Element(g: g, h: h, point: point, parent: chainFrom as? FinderChainable);
+            self.openList.insert(ele);
+            return ele;
+        }
+
+        guard !visited.isClosed && g < visited.g else{return nil;}
+        let ele = Element(g: g, h: visited.h, point: point, parent: chainFrom as? FinderChainable);
+        self.updateElement(ele);
+        return ele;
     }
 }
