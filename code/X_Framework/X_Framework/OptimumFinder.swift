@@ -43,6 +43,7 @@ public protocol FinderComparable: FinderChainable
     init(g: CGFloat, h:CGFloat, point: Self.Point, parent: FinderChainable?)
 }
 
+
 //MARK: == FinderProcessor ==
 public protocol FinderProcessor
 {
