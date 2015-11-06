@@ -237,7 +237,11 @@ extension PFGreedyBestFirst
 
 
 
-//next: extension employer
+//next: 
+/**
+    1. do neighbor
+    2. protocol: Dijkstra, GreedyBestFirst, AstarFinder, BreadthFirst
+*/
 
 
 
