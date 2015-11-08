@@ -8,10 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1B0F4D5B1BD7EDB900148AE7 /* PathFinderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */; };
-		1B6895471BDBE39700F82D8F /* OptimumFinder2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6895461BDBE39700F82D8F /* OptimumFinder2DImpl.swift */; };
 		1BF42AA81BEDCCDB0070B13D /* PathFinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF42AA71BEDCCDB0070B13D /* PathFinderImpl.swift */; };
-		1BFCFA561BDA7C1700AA05A2 /* OptimumFinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFCFA551BDA7C1700AA05A2 /* OptimumFinderImpl.swift */; };
-		655FCD741BDA0DF500B14198 /* OptimumFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655FCD731BDA0DF500B14198 /* OptimumFinder.swift */; };
 		65CCF3501BAAB3D800BCCD5E /* X_Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65CCF3571BAAB3D800BCCD5E /* X_Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */; };
 		65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */; };
@@ -36,10 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1B6895461BDBE39700F82D8F /* OptimumFinder2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimumFinder2DImpl.swift; sourceTree = "<group>"; };
 		1BF42AA71BEDCCDB0070B13D /* PathFinderImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderImpl.swift; sourceTree = "<group>"; };
-		1BFCFA551BDA7C1700AA05A2 /* OptimumFinderImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimumFinderImpl.swift; sourceTree = "<group>"; };
-		655FCD731BDA0DF500B14198 /* OptimumFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimumFinder.swift; sourceTree = "<group>"; };
 		65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = X_Framework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = X_Framework.h; sourceTree = "<group>"; };
 		65CCF3511BAAB3D800BCCD5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -140,9 +134,6 @@
 		65CCF3681BAAB58300BCCD5E /* optimumFinder */ = {
 			isa = PBXGroup;
 			children = (
-				655FCD731BDA0DF500B14198 /* OptimumFinder.swift */,
-				1BFCFA551BDA7C1700AA05A2 /* OptimumFinderImpl.swift */,
-				1B6895461BDBE39700F82D8F /* OptimumFinder2DImpl.swift */,
 				65F3EAC11BEC85F2002261CC /* PathFinder.swift */,
 				1BF42AA71BEDCCDB0070B13D /* PathFinderImpl.swift */,
 			);
@@ -284,11 +275,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				655FCD741BDA0DF500B14198 /* OptimumFinder.swift in Sources */,
 				65F3EAC21BEC85F2002261CC /* PathFinder.swift in Sources */,
 				65CCF36F1BAAB61A00BCCD5E /* Collection2D.swift in Sources */,
-				1B6895471BDBE39700F82D8F /* OptimumFinder2DImpl.swift in Sources */,
-				1BFCFA561BDA7C1700AA05A2 /* OptimumFinderImpl.swift in Sources */,
 				1BF42AA81BEDCCDB0070B13D /* PathFinderImpl.swift in Sources */,
 				65FC3B6B1BE0793900FF7EE9 /* PriorityQueue.swift in Sources */,
 			);

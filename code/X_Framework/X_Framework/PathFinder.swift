@@ -8,15 +8,15 @@
 
 import Foundation
 
-//MARK: == PathChainable ==
-public protocol PathChainable
+//MARK: == PFinderChainable ==
+public protocol PFinderChainable
 {
     //parent
-    var parent: PathChainable?{get}
+    var parent: PFinderChainable?{get}
 }
 
-//MARK: == PathPositionElement ==
-public protocol PathPositionElementType: PathChainable
+//MARK: == PFinderPositional ==
+public protocol PFinderPositional: PFinderChainable
 {
     //Position type
     typealias Position: Hashable;
@@ -28,72 +28,115 @@ public protocol PathPositionElementType: PathChainable
     var position: Self.Position{get}
     
     //init
-    init(position: Self.Position, parent: PathChainable?)
+    init(position: Self.Position, parent: PFinderChainable?)
     
     //set parent
-    mutating func setParent(parent: PathChainable)
+    mutating func setParent(parent: PFinderChainable)
 }
 
-//MARK: == PathHElementType ==
-public protocol PathHElementType: PathPositionElementType
+//MARK: == PFinderHPositional ==
+public protocol PFinderHPositional: PFinderPositional
 {
     //h score, hurisctic cost from 'self' point to goal point
     var h: CGFloat{get}
     
     //init
-    init(h: CGFloat, position: Self.Position, parent: PathChainable?);
+    init(h: CGFloat, position: Self.Position, parent: PFinderChainable?);
 }
 
-//MARK: == PathGElementType ==
-public protocol PathGElementType: PathPositionElementType
+//MARK: == PFinderGPositional ==
+public protocol PFinderGPositional: PFinderPositional
 {
     //g score, real cost from start point to 'self' point
     var g: CGFloat{get}
     
     //init
-    init(g: CGFloat, position: Self.Position, parent: PathChainable?);
+    init(g: CGFloat, position: Self.Position, parent: PFinderChainable?);
     
     //set parent and g
-    mutating func setParent(parent: PathChainable, g: CGFloat)
+    mutating func setParent(parent: PFinderChainable, g: CGFloat)
 }
 
-//MARK: == PathFElementType ==
-public protocol PathFElementType: PathHElementType, PathGElementType
+//MARK: == PFinderFPositional ==
+public protocol PFinderFPositional: PFinderHPositional, PFinderGPositional
 {
     //weight f = g + h
     var f:CGFloat{get}
     
     //init
-    init(g: CGFloat, h:CGFloat, position: Self.Position, parent: PathChainable?)
+    init(g: CGFloat, h:CGFloat, position: Self.Position, parent: PFinderChainable?)
 }
 
-//MARK: == PFElementGreneratorType ==
-public protocol PFElementGreneratorType: GeneratorType
+//MARK: == PFinderProcessor ==
+public protocol PFinderProcessor
 {
     //element type
-    typealias Element: PathPositionElementType;
+    typealias Element: PFinderPositional;
+    
+    //request type
+    typealias Request: PFinderRequestType;
     
     //next best element
-    mutating func next() -> Self.Element?
+    mutating func popBest() -> Self.Element?
     
-    //if contains element at position return it, otherwise return nil
+    //subscript get set
     subscript(position: Self.Element.Position) -> Self.Element?{get set}
-}
-
-//MARK: == PathFinderProcessorType ==
-public protocol PathFinderProcessorType
-{
-    //element generator
-    typealias Element: PathPositionElementType;
     
-    //return element
-    mutating func getElementBy<R: PathFinderRequest where R.Position == Self.Element.Position>(position: Self.Element.Position, _ request: R, _ chainFrom: Self.Element?) -> Self.Element?
     
-    //execute
-    mutating func execute<R: PathFinderRequest where R.Position == Self.Element.Position>(request: R, success: ([Self.Element.Position])->())
+    //is complete
+    var isComplete:Bool{get}
+    
+    //position is goal
+    mutating func isGoal(position: Self.Element.Position) -> Bool
+    
+    //return neighbors of position
+    func neighborsOf(position: Self.Element.Position) -> [Self.Element.Position]
+    
+    //search position
+    mutating func searchOf(position: Self.Element.Position, _ parent: Self.Element?) -> Self.Element?
+    
+    //find
+    mutating func find(request: Self.Request, findOne: ([Self.Element.Position]) -> (), completion: (() -> ())?)
 }
-extension PathFinderProcessorType
-{
+extension PFinderProcessor{
+    //execute at start
+    mutating func searching(origin: Self.Element.Position, findOne: ([Self.Element.Position]) -> (), completion: (() -> ())?){
+        
+        defer{
+            completion?();
+        }
+        
+        guard let originElement = self.searchOf(origin, nil) else{return;}
+        
+        var current = originElement;
+        self[current.position] = current;
+        
+        //repeat
+        repeat{
+            guard let _next = self.popBest() else {break;}
+            current = _next;
+            let position = current.position;
+            
+            current.isClosed = true;
+            self[position] = current;
+            
+            //find goal
+            if self.isGoal(current.position) {
+                let path = self.decompress(current);
+                findOne(path);
+                if self.isComplete {return;}
+            }
+            
+            //explore neighbors
+            let neighbors = self.neighborsOf(position);
+            neighbors.forEach{
+                let n = $0;
+                guard let element = self.searchOf(n, current) else {return;}
+                self[element.position] = element;
+            }
+        }while true
+    }
+    
     //decompress path
     func decompress(element: Self.Element) -> [Self.Element.Position]
     {
@@ -108,53 +151,12 @@ extension PathFinderProcessorType
     }
 }
 
-extension PathFinderProcessorType
-{
-    //execute
-    mutating func execute<G: PFElementGreneratorType, R: PathFinderRequest where G.Element == Self.Element, R.Position == Self.Element.Position>(request: R, openList o: G, success: ([Self.Element.Position])->()){
-        
-        var req = request;
-        guard let start = request.start else {return;}
-        var openList = o;
-        guard let se = self.getElementBy(start, req, nil) else{return;}
-        var current = se;
-        openList[start] = current;
-        
-        //repeat
-        repeat{
-            guard let _next = openList.next() else {break;}
-            current = _next;
-            let position = current.position;
-            
-            current.isClosed = true;
-            openList[position] = current;
-            
-            //find goal
-            if req.findGoal(current.position) {
-                let path = self.decompress(current);
-                success(path);
-                if req.isComplete {return;}
-            }
-            
-            //explore neighbors
-            let neighbors = req.neighborsOf(position);
-            neighbors.forEach{
-                let n = $0;
-                guard let element = self.getElementBy(n, req, current) else {return;}
-                openList[element.position] = element;
-            }
-        }while true
-    }
-}
 
-//MARK: == PathFinderRequest ==
-public protocol PathFinderRequest
+//MARK: == PFinderRequestType ==
+public protocol PFinderRequestType
 {
     //position type
     typealias Position: Hashable;
-    
-    //start position
-    var start: Self.Position?{get}
     
     //return neighbors of position
     func neighborsOf(position: Self.Position) -> [Self.Position]
@@ -163,33 +165,26 @@ public protocol PathFinderRequest
     func costBetween(position: Self.Position, and: Self.Position) -> CGFloat
     
     //return h value
-    func heuristicOf(position: Self.Position) -> CGFloat
+    func heuristicOf(position: Self.Position, _ andPosition: Self.Position) -> CGFloat
     
-    //is complete
-    var isComplete: Bool{get}
-    
-    //find goal
-    mutating func findGoal(element: Self.Position) -> Bool
+    //start point
+    var start: Self.Position{get}
 }
 
-//MARK: == PathSingleRequest ==
-public protocol PathSingleRequest: PathFinderRequest
+//MARK: == PFinderSingleRequest ==
+public protocol PFinderSingleRequest: PFinderRequestType
 {
     var goal: Self.Position{get}
-    var isComplete: Bool{get set}
 }
-extension PathSingleRequest
+
+//MARK: == PFinderMultiRequest ==
+public protocol PFinderMultiRequest: PFinderRequestType
 {
-    public mutating func findGoal(element: Self.Position) -> Bool {
-        guard goal == element else {return false;}
-        self.isComplete = true;
-        return true;
-    }
+    var goals: [Self.Position]{get}
 }
 
-
-//MARK: == PathPositionElement ==
-public struct PathPositionElement<T: Hashable>
+//MARK: == PFinderElement ==
+public struct PFinderElement<T: Hashable>
 {
     //'self' is closed default false
     public var isClosed:Bool = false;
@@ -198,25 +193,25 @@ public struct PathPositionElement<T: Hashable>
     public private (set) var position: T;
     
     //parent
-    public private(set) var parent: PathChainable?
+    public private(set) var parent: PFinderChainable?
 }
-extension PathPositionElement: PathPositionElementType
+extension PFinderElement: PFinderPositional
 {
     //init
-    public init(position: T, parent: PathChainable?){
+    public init(position: T, parent: PFinderChainable?){
         self.position = position;
         self.parent = parent;
     }
     
     //set parent
-    public mutating func setParent(parent: PathChainable)
+    public mutating func setParent(parent: PFinderChainable)
     {
         self.parent = parent;
     }
 }
 
-//MARK: == PathGElement ==
-public struct PathGElement<T: Hashable>
+//MARK: == PFinderGElement ==
+public struct PFinderGElement<T: Hashable>
 {
     //'self' is closed default false
     public var isClosed:Bool = false;
@@ -228,35 +223,35 @@ public struct PathGElement<T: Hashable>
     public private (set) var position: T;
     
     //parent
-    public private(set) var parent: PathChainable?
+    public private(set) var parent: PFinderChainable?
 }
-extension PathGElement: PathGElementType
+extension PFinderGElement: PFinderGPositional
 {
     //init
-    public init(position: T, parent: PathChainable?){
+    public init(position: T, parent: PFinderChainable?){
         self.position = position;
         self.parent = parent;
     }
     
-    public init(g: CGFloat, position: T, parent: PathChainable?) {
+    public init(g: CGFloat, position: T, parent: PFinderChainable?) {
         self.init(position: position, parent: parent);
         self.g = g;
     }
     
     //set parent
-    public mutating func setParent(parent: PathChainable)
+    public mutating func setParent(parent: PFinderChainable)
     {
         self.parent = parent;
     }
     
-    public mutating func setParent(parent: PathChainable, g: CGFloat) {
+    public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
         self.g = g;
         self.setParent(parent);
     }
 }
 
-//MARK: == PathHElement ==
-public struct PathHElement<T: Hashable>
+//MARK: == PFinderHElement ==
+public struct PFinderHElement<T: Hashable>
 {
     //'self' is closed default false
     public var isClosed:Bool = false;
@@ -268,32 +263,30 @@ public struct PathHElement<T: Hashable>
     public private (set) var position: T;
     
     //parent
-    public private(set) var parent: PathChainable?
+    public private(set) var parent: PFinderChainable?
 }
-extension PathHElement: PathHElementType
+extension PFinderHElement: PFinderHPositional
 {
     //init
-    public init(position: T, parent: PathChainable?){
+    public init(position: T, parent: PFinderChainable?){
         self.position = position;
         self.parent = parent;
     }
     
-    public init(h: CGFloat, position: T, parent: PathChainable?) {
+    public init(h: CGFloat, position: T, parent: PFinderChainable?) {
         self.init(position: position, parent: parent);
         self.h = h;
     }
     
     //set parent
-    public mutating func setParent(parent: PathChainable)
+    public mutating func setParent(parent: PFinderChainable)
     {
         self.parent = parent;
     }
 }
 
-
-
-//MARK: == PathFElement ==
-public struct PathFElement<T: Hashable>
+//MARK: == PFinderFElement ==
+public struct PFinderFElement<T: Hashable>
 {
     //'self' is closed default false
     public var isClosed:Bool = false;
@@ -305,12 +298,12 @@ public struct PathFElement<T: Hashable>
     public private (set) var position: T;
     
     //parent
-    public private(set) var parent: PathChainable?
+    public private(set) var parent: PFinderChainable?
 }
-extension PathFElement: PathFElementType
+extension PFinderFElement: PFinderFPositional
 {
     //init
-    public init(position: T, parent: PathChainable?){
+    public init(position: T, parent: PFinderChainable?){
         self.position = position;
         self.parent = parent;
         self.f = 0;
@@ -318,19 +311,19 @@ extension PathFElement: PathFElementType
         self.h = 0;
     }
     
-    public init(g: CGFloat, position: T, parent: PathChainable?) {
+    public init(g: CGFloat, position: T, parent: PFinderChainable?) {
         self.init(position: position, parent: parent);
         self.g = g;
         self.f = g;
     }
     
-    public init(h: CGFloat, position: T, parent: PathChainable?) {
+    public init(h: CGFloat, position: T, parent: PFinderChainable?) {
         self.init(position: position, parent: parent);
         self.h = h;
         self.f = h;
     }
     
-    public init(g: CGFloat, h: CGFloat, position: T, parent: PathChainable?) {
+    public init(g: CGFloat, h: CGFloat, position: T, parent: PFinderChainable?) {
         self.init(position: position, parent: parent);
         self.g = g;
         self.h = h;
@@ -338,12 +331,12 @@ extension PathFElement: PathFElementType
     }
     
     //set parent
-    public mutating func setParent(parent: PathChainable)
+    public mutating func setParent(parent: PFinderChainable)
     {
         self.parent = parent;
     }
     
-    public mutating func setParent(parent: PathChainable, g: CGFloat) {
+    public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
         self.g = g;
         self.f = self.g + self.h;
         self.setParent(parent);
