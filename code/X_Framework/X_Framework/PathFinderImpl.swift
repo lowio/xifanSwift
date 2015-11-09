@@ -9,8 +9,10 @@
 import Foundation
 
 //MARK: == PriorityPFinder ==
-public protocol PriorityPFinderType: PFinderProcessor
+public protocol PriorityPFinderType
 {
+    typealias Element: PFinderElementType;
+    
     //open list
     var openList: BinaryPriorityQueue<Self.Element>! {get set}
     
@@ -41,17 +43,9 @@ extension PriorityPFinderType
 }
 
 //MARK: == GreedyBestPFinder ==
-public struct GreedyBestPFinder<T: PFinderSingleRequest>
+public struct GreedyBestPFinder<T: PFinderDataSource>
 {
-    public typealias Element = PFinderHElement<T.Position>;
-    
-    public typealias Request = T;
-    
-    //is complete
-    public private(set) var isComplete:Bool = false;
-    
-    //request
-    public private(set) var request: T!;
+    public typealias Element = PFinderElement<T.Position>;
     
     //open list
     public var openList: BinaryPriorityQueue<Element>!;
@@ -59,86 +53,83 @@ public struct GreedyBestPFinder<T: PFinderSingleRequest>
     //visite list
     public var visiteList: [T.Position: Element]!;
     
-    //return h value
-    private func heuristic(position: T.Position, _ andPosition: T.Position) -> CGFloat
+    //goal point
+    private var goal: T.Position!;
+    
+    //request
+    public private(set) var dataSource: T;
+    
+    //init
+    public init(dataSource: T)
     {
-        return self.request.heuristicOf(position, andPosition);
+        self.dataSource = dataSource;
     }
-    
 }
-extension GreedyBestPFinder: PriorityPFinderType
+extension GreedyBestPFinder: PriorityPFinderType{}
+extension GreedyBestPFinder: PFinderProcessor
 {
-    //position is goal
-    public mutating func isGoal(position: T.Position) -> Bool {
-        guard position == self.request.goal else {return false;}
-        self.isComplete = true;
-        return true;
-    }
-    
-    //return neighbors of position
-    public func neighborsOf(position: T.Position) -> [T.Position]{
-        return self.request.neighborsOf(position);
+    public mutating func preparation(start: T.Position, goal: T.Position) {
+        self.goal = goal;
+        self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
+        self.visiteList = [:];
     }
     
     //search position
     public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+        print("WARN: =======================check walkable");
         guard let _ = self[position] else {
-            return Element(h: self.heuristic(position, self.request.goal), position: position, parent: parent as? PFinderChainable);
+            let h = self.dataSource.heuristicOf(position, self.goal);
+            guard let p = parent else{
+                return Element(g: 0, h: h, position: position, parent: nil);
+            }
+            return Element(g: 0, h: h, position: position, parent: p);
         }
         return nil;
     }
-    
-    public mutating func find(request: T, findOne: ([T.Position]) -> (), completion: (() -> ())?) {
-        self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
-        self.visiteList = [:];
-        self.request = request;
-        self.searching(self.request.start, findOne: findOne, completion: completion);
-    }
 }
 
-
-
 //MARK: == AstarPFinder ==
-public struct AstarPFinder<T: PFinderSingleRequest>
+public struct AstarPFinder<T: PFinderDataSource>
 {
-    public typealias Element = PFinderFElement<T.Position>;
-    
-    public typealias Request = T;
-    
-    //is complete
-    public private(set) var isComplete:Bool = false;
-    
-    //request
-    public private(set) var request: T!;
+    public typealias Element = PFinderElement<T.Position>;
     
     //open list
     public var openList: BinaryPriorityQueue<Element>!;
     
     //visite list
     public var visiteList: [T.Position: Element]!;
-}
-extension AstarPFinder: PriorityPFinderType
-{
-    //position is goal
-    public mutating func isGoal(position: T.Position) -> Bool {
-        guard position == self.request.goal else {return false;}
-        self.isComplete = true;
-        return true;
-    }
     
-    //return neighbors of position
-    public func neighborsOf(position: T.Position) -> [T.Position]{
-        return self.request.neighborsOf(position);
+    //goal point
+    private var goal: T.Position!;
+    
+    //request
+    public private(set) var dataSource: T;
+    
+    //init
+    public init(dataSource: T)
+    {
+        self.dataSource = dataSource;
+    }
+}
+extension AstarPFinder: PriorityPFinderType{}
+extension AstarPFinder: PFinderProcessor
+{
+    public mutating func preparation(start: T.Position, goal: T.Position) {
+        self.goal = goal;
+        self.openList = BinaryPriorityQueue<Element>{return $0.f < $1.f;}
+        self.visiteList = [:];
     }
     
     //search position
     public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
-        let h = self.request.heuristicOf(position, self.request.goal);
+        print("WARN: =======================check walkable");
+        
+        let h = self.dataSource.heuristicOf(position, self.goal);
         guard let p = parent else{
-            return Element(h: h, position: position, parent: nil);
+            return Element(g: 0, h: h, position: position, parent: nil);
         }
 
-        let g = p.g + self.request.costBetween(p.position, and: position)
+        let g = p.g + self.dataSource.costBetween(p.position, and: position)
         guard let visited = self[position] else {
             return Element(g: g, h: h, position: position, parent: p);
         }
@@ -151,61 +142,52 @@ extension AstarPFinder: PriorityPFinderType
         self.visiteList[element.position] = element;
         return nil;
     }
-    
-    public mutating func find(request: T, findOne: ([T.Position]) -> (), completion: (() -> ())?) {
-        self.openList = BinaryPriorityQueue<Element>{return $0.f < $1.f;}
-        self.visiteList = [:];
-        self.request = request;
-        self.searching(self.request.start, findOne: findOne, completion: completion);
-    }
 }
 
+
+
 //MARK: == DijkstraPFinder ==
-public struct DijkstraPFinder<T: PFinderMultiRequest>
+public struct DijkstraPFinder<T: PFinderDataSource>
 {
-    public typealias Element = PFinderFElement<T.Position>;
-    
-    public typealias Request = T;
-    
-    //is complete
-    public var isComplete:Bool{return self.goals.isEmpty}
-    
-    //goals
-    private var goals: [T.Position]!;
-    
-    //request
-    public private(set) var request: T!;
+    public typealias Element = PFinderElement<T.Position>;
     
     //open list
     public var openList: BinaryPriorityQueue<Element>!;
     
     //visite list
     public var visiteList: [T.Position: Element]!;
-}
-extension DijkstraPFinder: PriorityPFinderType
-{
-    //position is goal
-    public mutating func isGoal(position: T.Position) -> Bool {
-        
-        guard let i = self.goals.indexOf(position) else {return false;}
-        self.goals.removeAtIndex(i);
-        return true;
-    }
     
-    //return neighbors of position
-    public func neighborsOf(position: T.Position) -> [T.Position]{
-        return self.request.neighborsOf(position);
+    //goal point
+    private var goal: T.Position!;
+    
+    //request
+    public private(set) var dataSource: T;
+    
+    //init
+    public init(dataSource: T)
+    {
+        self.dataSource = dataSource;
+    }
+}
+extension DijkstraPFinder: PriorityPFinderType{}
+extension DijkstraPFinder: PFinderMultiProcessor
+{
+    public mutating func preparation(start: T.Position, goal: T.Position) {
+        self.goal = goal;
+        self.openList = BinaryPriorityQueue<Element>{return $0.f < $1.f;}
+        self.visiteList = [:];
     }
     
     //search position
     public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+        print("WARN: =======================check walkable");
         guard let p = parent else{
-            return Element(g: 0, position: position, parent: nil);
+            return Element(g: 0, h: 0, position: position, parent: nil);
         }
         
-        let g = p.g + self.request.costBetween(p.position, and: position)
+        let g = p.g + self.dataSource.costBetween(p.position, and: position)
         guard let visited = self[position] else {
-            return Element(g: g, position: position, parent: p);
+            return Element(g: g, h: 0, position: position, parent: p);
         }
         guard !visited.isClosed && g < visited.g else {return nil;}
         
@@ -216,22 +198,11 @@ extension DijkstraPFinder: PriorityPFinderType
         self.visiteList[element.position] = element;
         return nil;
     }
-    
-    public mutating func find(request: T, findOne: ([T.Position]) -> (), completion: (() -> ())?) {
-        self.openList = BinaryPriorityQueue<Element>{return $0.g < $1.g;}
-        self.visiteList = [:];
-        self.request = request;
-        self.goals = self.request.goals;
-        self.searching(self.request.start, findOne: findOne, completion: completion);
-    }
 }
-
 
 /**
     next:
     breadthfirst
-    T ->
-
 */
 
 
