@@ -116,7 +116,7 @@
 		65CCF3661BAAB49C00BCCD5E /* yeah */ = {
 			isa = PBXGroup;
 			children = (
-				65CCF3681BAAB58300BCCD5E /* optimumFinder */,
+				65CCF3681BAAB58300BCCD5E /* pathFinder */,
 				65CCF3671BAAB4E800BCCD5E /* collection */,
 			);
 			name = yeah;
@@ -131,13 +131,13 @@
 			name = collection;
 			sourceTree = "<group>";
 		};
-		65CCF3681BAAB58300BCCD5E /* optimumFinder */ = {
+		65CCF3681BAAB58300BCCD5E /* pathFinder */ = {
 			isa = PBXGroup;
 			children = (
 				65F3EAC11BEC85F2002261CC /* PathFinder.swift */,
 				1BF42AA71BEDCCDB0070B13D /* PathFinderImpl.swift */,
 			);
-			name = optimumFinder;
+			name = pathFinder;
 			sourceTree = "<group>";
 		};
 		65CCF37D1BAAB87700BCCD5E /* components */ = {
