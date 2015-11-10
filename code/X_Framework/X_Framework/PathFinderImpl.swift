@@ -2,7 +2,7 @@
 //  PathFinderImpl.swift
 //  X_Framework
 //
-//  Created by 叶贤辉 on 15/11/7.
+//  Created by xifanGame on 15/11/7.
 //  Copyright © 2015年 yeah. All rights reserved.
 //
 
@@ -200,10 +200,69 @@ extension DijkstraPFinder: PFinderMultiProcessor
     }
 }
 
-/**
-    next:
-    breadthfirst
-*/
-
-
-
+//MARK: == BreadthBestPFinder ==
+public struct BreadthBestPFinder<T: PFinderDataSource>
+{
+    public typealias Element = PFinderElement<T.Position>;
+    
+    //open list
+    public var openList: [Element]!;
+    
+    //visite list
+    public var visiteList: [T.Position: Element]!;
+    
+    //current index
+    private var currentIndex: Int = 0;
+    
+    //goal point
+    private var goal: T.Position!;
+    
+    //request
+    public private(set) var dataSource: T;
+    
+    //init
+    public init(dataSource: T)
+    {
+        self.dataSource = dataSource;
+    }
+    
+}
+extension BreadthBestPFinder: PFinderMultiProcessor
+{
+    public mutating func popBest() -> Element? {
+        return self.openList[self.currentIndex++];
+    }
+    
+    public subscript(position: T.Position) -> Element? {
+        set{
+            guard let element = newValue else {return;}
+            guard !element.isClosed else{
+                self.visiteList[position] = element;
+                return;
+            }
+            
+            self.openList.append(element);
+            self.visiteList[position] = element;
+        }
+        get{
+            return self.visiteList[position];
+        }
+    }
+    public mutating func preparation(start: T.Position, goal: T.Position) {
+        self.goal = goal;
+        self.openList = []
+        self.visiteList = [:];
+    }
+    
+    //search position
+    public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+        print("WARN: =======================check walkable");
+        guard let _ = self[position] else {
+            guard let p = parent else{
+                return Element(g: 0, h: 0, position: position, parent: nil);
+            }
+            return Element(g: 0, h: 0, position: position, parent: p);
+        }
+        return nil;
+    }
+}

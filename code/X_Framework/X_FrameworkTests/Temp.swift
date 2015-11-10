@@ -2,7 +2,7 @@
 //  AboutCollection.swift
 //  X_Framework
 //
-//  Created by 173 on 15/10/23.
+//  Created by xifanGame on 15/10/23.
 //  Copyright © 2015年 yeah. All rights reserved.
 //
 
