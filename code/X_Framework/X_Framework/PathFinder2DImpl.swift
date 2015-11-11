@@ -25,9 +25,3 @@ public struct PFinderPosition2D: Hashable
 public func ==(lsh: PFinderPosition2D, rsh: PFinderPosition2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
 
 
-////MARK: == PFinderDataSource2D ==
-//public protocol PFinderDataSource2D: PFinderDataSource
-//{
-//    //position type
-//    typealias Position = PFinderPosition2D;
-//}

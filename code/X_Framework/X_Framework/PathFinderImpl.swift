@@ -43,42 +43,49 @@ extension PriorityPFinderType
 }
 
 //MARK: == GreedyBestPFinder ==
-public struct GreedyBestPFinder<T: PFinderDataSource>
+public struct GreedyBestPFinder<T: Hashable>
 {
-    public typealias Element = PFinderElement<T.Position>;
+    public typealias Element = PFinderElement<T>;
     
     //open list
     public var openList: BinaryPriorityQueue<Element>!;
     
     //visite list
-    public var visiteList: [T.Position: Element]!;
+    public var visiteList: [T: Element]!;
     
     //goal point
-    private var goal: T.Position!;
+    private var goal: T!;
     
-    //request
-    public private(set) var dataSource: T;
+    //valid neighbors of $0
+    public let neighborsOf: (T) -> [T];
+    
+    //cost between $0 and $1, if unweight of g return 0
+    public let costOf: (T, T) -> CGFloat = {_,_ in 0};
+    
+    //heuristic h value between $0 and $1, if unweight h return 0
+    public let heuristicOf: (T, T) -> CGFloat;
     
     //init
-    public init(dataSource: T)
+    public init(neighborsOf: (T) -> [T], heuristicOf: (T, T) -> CGFloat)
     {
-        self.dataSource = dataSource;
+        self.heuristicOf = heuristicOf;
+        self.neighborsOf = neighborsOf;
     }
 }
 extension GreedyBestPFinder: PriorityPFinderType{}
 extension GreedyBestPFinder: PFinderProcessor
 {
-    public mutating func preparation(start: T.Position, goal: T.Position) {
+    public mutating func preparation(start: T, goal: T) {
         self.goal = goal;
         self.openList = BinaryPriorityQueue<Element>{return $0.h < $1.h;}
         self.visiteList = [:];
     }
     
     //search position
-    public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+    public mutating func searchOf(position: T, _ parent: Element?) -> Element?{
         print("WARN: =======================check walkable");
         guard let _ = self[position] else {
-            let h = self.dataSource.heuristicOf(position, self.goal);
+            let h = self.heuristicOf(position, self.goal);
             guard let p = parent else{
                 return Element(g: 0, h: h, position: position, parent: nil);
             }
@@ -89,47 +96,55 @@ extension GreedyBestPFinder: PFinderProcessor
 }
 
 //MARK: == AstarPFinder ==
-public struct AstarPFinder<T: PFinderDataSource>
+public struct AstarPFinder<T: Hashable>
 {
-    public typealias Element = PFinderElement<T.Position>;
+    public typealias Element = PFinderElement<T>;
     
     //open list
     public var openList: BinaryPriorityQueue<Element>!;
     
     //visite list
-    public var visiteList: [T.Position: Element]!;
+    public var visiteList: [T: Element]!;
     
     //goal point
-    private var goal: T.Position!;
+    private var goal: T!;
     
-    //request
-    public private(set) var dataSource: T;
+    //valid neighbors of $0
+    public let neighborsOf: (T) -> [T];
+    
+    //cost between $0 and $1, if unweight of g return 0
+    public let costOf: (T, T) -> CGFloat;
+    
+    //heuristic h value between $0 and $1, if unweight h return 0
+    public let heuristicOf: (T, T) -> CGFloat;
     
     //init
-    public init(dataSource: T)
+    public init(neighborsOf: (T) -> [T], heuristicOf: (T, T) -> CGFloat, costOf: (T, T) -> CGFloat)
     {
-        self.dataSource = dataSource;
+        self.heuristicOf = heuristicOf;
+        self.costOf = costOf;
+        self.neighborsOf = neighborsOf;
     }
 }
 extension AstarPFinder: PriorityPFinderType{}
 extension AstarPFinder: PFinderProcessor
 {
-    public mutating func preparation(start: T.Position, goal: T.Position) {
+    public mutating func preparation(start: T, goal: T) {
         self.goal = goal;
         self.openList = BinaryPriorityQueue<Element>{return $0.f < $1.f;}
         self.visiteList = [:];
     }
     
     //search position
-    public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+    public mutating func searchOf(position: T, _ parent: Element?) -> Element?{
         print("WARN: =======================check walkable");
         
-        let h = self.dataSource.heuristicOf(position, self.goal);
+        let h = self.heuristicOf(position, self.goal);
         guard let p = parent else{
             return Element(g: 0, h: h, position: position, parent: nil);
         }
 
-        let g = p.g + self.dataSource.costBetween(p.position, and: position)
+        let g = p.g + self.costOf(p.position, position)
         guard let visited = self[position] else {
             return Element(g: g, h: h, position: position, parent: p);
         }
@@ -147,45 +162,52 @@ extension AstarPFinder: PFinderProcessor
 
 
 //MARK: == DijkstraPFinder ==
-public struct DijkstraPFinder<T: PFinderDataSource>
+public struct DijkstraPFinder<T: Hashable>
 {
-    public typealias Element = PFinderElement<T.Position>;
+    public typealias Element = PFinderElement<T>;
     
     //open list
     public var openList: BinaryPriorityQueue<Element>!;
     
     //visite list
-    public var visiteList: [T.Position: Element]!;
+    public var visiteList: [T: Element]!;
     
     //goal point
-    private var goal: T.Position!;
+    private var goal: T!;
     
-    //request
-    public private(set) var dataSource: T;
+    //valid neighbors of $0
+    public let neighborsOf: (T) -> [T];
+    
+    //cost between $0 and $1, if unweight of g return 0
+    public let costOf: (T, T) -> CGFloat;
+    
+    //heuristic h value between $0 and $1, if unweight h return 0
+    public let heuristicOf: (T, T) -> CGFloat = {_,_ in 0};
     
     //init
-    public init(dataSource: T)
+    public init(neighborsOf: (T) -> [T], costOf: (T, T) -> CGFloat)
     {
-        self.dataSource = dataSource;
+        self.costOf = costOf;
+        self.neighborsOf = neighborsOf;
     }
 }
 extension DijkstraPFinder: PriorityPFinderType{}
 extension DijkstraPFinder: PFinderMultiProcessor
 {
-    public mutating func preparation(start: T.Position, goal: T.Position) {
+    public mutating func preparation(start: T, goal: T) {
         self.goal = goal;
         self.openList = BinaryPriorityQueue<Element>{return $0.f < $1.f;}
         self.visiteList = [:];
     }
     
     //search position
-    public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+    public mutating func searchOf(position: T, _ parent: Element?) -> Element?{
         print("WARN: =======================check walkable");
         guard let p = parent else{
             return Element(g: 0, h: 0, position: position, parent: nil);
         }
         
-        let g = p.g + self.dataSource.costBetween(p.position, and: position)
+        let g = p.g + self.costOf(p.position, position)
         guard let visited = self[position] else {
             return Element(g: g, h: 0, position: position, parent: p);
         }
@@ -201,29 +223,35 @@ extension DijkstraPFinder: PFinderMultiProcessor
 }
 
 //MARK: == BreadthBestPFinder ==
-public struct BreadthBestPFinder<T: PFinderDataSource>
+public struct BreadthBestPFinder<T: Hashable>
 {
-    public typealias Element = PFinderElement<T.Position>;
+    public typealias Element = PFinderElement<T>;
     
     //open list
     public var openList: [Element]!;
     
     //visite list
-    public var visiteList: [T.Position: Element]!;
+    public var visiteList: [T: Element]!;
     
     //current index
     private var currentIndex: Int = 0;
     
     //goal point
-    private var goal: T.Position!;
+    private var goal: T!;
     
-    //request
-    public private(set) var dataSource: T;
+    //valid neighbors of $0
+    public let neighborsOf: (T) -> [T];
+    
+    //cost between $0 and $1, if unweight of g return 0
+    public let costOf: (T, T) -> CGFloat = {_,_ in 0};
+    
+    //heuristic h value between $0 and $1, if unweight h return 0
+    public let heuristicOf: (T, T) -> CGFloat = {_,_ in 0};
     
     //init
-    public init(dataSource: T)
+    public init(neighborsOf: (T) -> [T])
     {
-        self.dataSource = dataSource;
+        self.neighborsOf = neighborsOf;
     }
     
 }
@@ -233,7 +261,7 @@ extension BreadthBestPFinder: PFinderMultiProcessor
         return self.openList[self.currentIndex++];
     }
     
-    public subscript(position: T.Position) -> Element? {
+    public subscript(position: T) -> Element? {
         set{
             guard let element = newValue else {return;}
             guard !element.isClosed else{
@@ -248,14 +276,14 @@ extension BreadthBestPFinder: PFinderMultiProcessor
             return self.visiteList[position];
         }
     }
-    public mutating func preparation(start: T.Position, goal: T.Position) {
+    public mutating func preparation(start: T, goal: T) {
         self.goal = goal;
         self.openList = []
         self.visiteList = [:];
     }
     
     //search position
-    public mutating func searchOf(position: T.Position, _ parent: Element?) -> Element?{
+    public mutating func searchOf(position: T, _ parent: Element?) -> Element?{
         print("WARN: =======================check walkable");
         guard let _ = self[position] else {
             guard let p = parent else{

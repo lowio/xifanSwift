@@ -16,14 +16,17 @@ public protocol PFinderProcessor
     //element type
     typealias Element: PFinderElementType;
     
-    //data source type
-    typealias DataSource: PFinderDataSource;
-    
-    //data source
-    var dataSource: Self.DataSource{get}
-    
     //next best element
     mutating func popBest() -> Self.Element?
+    
+    //valid neighbors of $0
+    var neighborsOf: (Self.Element.Position) -> [Self.Element.Position]{get}
+    
+    //cost between $0 and $1, if unweight of g return 0
+    var costOf: (Self.Element.Position, Self.Element.Position) -> CGFloat{get}
+    
+    //heuristic h value between $0 and $1, if unweight h return 0
+    var heuristicOf: (Self.Element.Position, Self.Element.Position) -> CGFloat{get}
     
     //subscript get set
     subscript(position: Self.Element.Position) -> Self.Element?{get set}
@@ -34,7 +37,7 @@ public protocol PFinderProcessor
     //preparation
     mutating func preparation(start: Self.Element.Position, goal: Self.Element.Position)
 }
-extension PFinderProcessor where Self.DataSource.Position == Self.Element.Position{
+extension PFinderProcessor {
     //search
     public mutating func searching(start: Self.Element.Position, goal: Self.Element.Position, completion: ([Self.Element.Position]) -> ()){
         self.preparation(start, goal: goal);
@@ -65,7 +68,7 @@ extension PFinderProcessor where Self.DataSource.Position == Self.Element.Positi
             guard !termination(current) else {return;}
             
             //explore neighbors
-            let neighbors = self.dataSource.neighborsOf(position);
+            let neighbors = self.neighborsOf(position);
             neighbors.forEach{
                 let n = $0;
                 guard let element = self.searchOf(n, current) else {return;}
@@ -89,7 +92,7 @@ extension PFinderProcessor where Self.DataSource.Position == Self.Element.Positi
 }
 
 public protocol PFinderMultiProcessor: PFinderProcessor{}
-extension PFinderMultiProcessor where Self.DataSource.Position == Self.Element.Position{
+extension PFinderMultiProcessor {
     //search
     public mutating func searching(start: Self.Element.Position, goals gs: [Self.Element.Position], findGoal: ([Self.Element.Position]) -> (), completion: (() -> ())? = nil){
         guard !gs.isEmpty else {
@@ -119,22 +122,6 @@ extension PFinderMultiProcessor where Self.DataSource.Position == Self.Element.P
             return true;
         }
     }
-}
-
-//MARK: == PFinderDataSource ==
-public protocol PFinderDataSource
-{
-    //position type
-    typealias Position: Hashable;
-    
-    //return neighbors of position
-    func neighborsOf(position: Self.Position) -> [Self.Position]
-    
-    //return cost
-    func costBetween(position: Self.Position, and: Self.Position) -> CGFloat
-    
-    //return h value
-    func heuristicOf(position: Self.Position, _ andPosition: Self.Position) -> CGFloat
 }
 
 //MARK: == PFinderChainable ==
