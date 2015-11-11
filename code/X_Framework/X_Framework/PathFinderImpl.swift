@@ -258,6 +258,7 @@ public struct BreadthBestPFinder<T: Hashable>
 extension BreadthBestPFinder: PFinderMultiProcessor
 {
     public mutating func popBest() -> Element? {
+        guard currentIndex < self.openList.count else{return nil;}
         return self.openList[self.currentIndex++];
     }
     
@@ -284,7 +285,7 @@ extension BreadthBestPFinder: PFinderMultiProcessor
     
     //search position
     public mutating func searchOf(position: T, _ parent: Element?) -> Element?{
-        print("WARN: =======================check walkable");
+//        print("WARN: =======================check walkable");
         guard let _ = self[position] else {
             guard let p = parent else{
                 return Element(g: 0, h: 0, position: position, parent: nil);
