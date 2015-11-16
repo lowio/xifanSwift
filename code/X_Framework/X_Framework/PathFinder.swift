@@ -13,17 +13,14 @@ public protocol PathFinderQueueType {
     //element type
     typealias Element: PFinderElementType;
     
-    //insert element
+    //insert element and set element visited
     mutating func insert(element: Self.Element)
     
-    //pop best element
+    //pop best element and set element closed
     mutating func popBest() -> Self.Element?
     
-    //close element
-    mutating func closeElement(Element: Self.Element)
-    
-    //return element at position
-    func getElementAt(position: Self.Element.Position) -> Self.Element?
+    //return visited element at position
+    subscript(position: Self.Element.Position) -> Self.Element?{get}
 }
 
 //MARK: == PathFinderRequestType ==
@@ -32,7 +29,7 @@ public protocol PathFinderRequestType {
     //position type
     typealias Position: Hashable;
     
-    //return neighbors of position
+    //return neighbors(passable) of position
     func neighborsOf(position: Self.Position) -> [Self.Position];
     
     //return cost between position and toPosition
@@ -43,232 +40,99 @@ public protocol PathFinderRequestType {
 }
 
 //MARK: == PathFinderType ==
-public protocol PathFinderType{
-    //element type
-    typealias Element: PFinderElementType;
-    
+public protocol PathFinderType {
     //request type
     typealias Request: PathFinderRequestType;
     
     //queue type
     typealias Queue: PathFinderQueueType;
     
-    //queue
-    var queue: Self.Queue! {get set}
+    //position type
+    typealias Position: Hashable = Self.Queue.Element.Position;
     
-    //request
-    var request: Self.Request! {get}
+    //create queue
+    func queueGenerate() -> Self.Queue;
     
     //search position
-    mutating func searchPosition(position: Self.Element.Position, _ parent: Self.Element?) -> Self.Element?
-    
-    //preparation before doSearching
-    mutating func preparation(start: Self.Element.Position, goal: Self.Element.Position)
+    func searchPosition(position: Self.Position, _ goal: Self.Position, _ parent: Self.Queue.Element?, _ request: Self.Request, inout _ queue: Self.Queue)
     
     //execute single goal
-    mutating func execute(start: Self.Element.Position, goal: Self.Element.Position, completion: ([Self.Element.Position]) -> ())
+    func execute(start: Self.Position, goal: Self.Position, request: Self.Request, completion: ([Self.Position]) -> ())
 }
-extension PathFinderType where Self.Request.Position == Self.Element.Position, Self.Queue.Element == Self.Element {
-    //execute
-    public mutating func execute(start: Self.Element.Position, goal: Self.Element.Position, completion: ([Self.Element.Position]) -> ()){
-        self.preparation(start, goal: goal);
-        self.doSearching(start){
+extension PathFinderType where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
+    
+    //element type
+    typealias Element = Self.Queue.Element;
+    
+    //search
+    func doSearching(origin: Self.Position, _ goal: Self.Position, request: Self.Request, @noescape _ termination: (Element) -> Bool){
+        var queue = self.queueGenerate();
+        self.searchPosition(origin, goal, nil, request, &queue);
+        repeat{
+            guard let current = queue.popBest() else {break;}
+            let position = current.position;
+            guard !termination(current) else {return;}
+            let neighbors = request.neighborsOf(position);
+            neighbors.forEach{
+                self.searchPosition($0, goal, current, request, &queue);
+            }
+        }while true
+    }
+    
+    //decompress path
+    func decompress(element: Element) -> [Self.Position]
+    {
+        var path: [Self.Position] = [];
+        var ele = element;
+        repeat{
+            path.append(ele.position);
+            guard let parent = ele.parent as? Element else{break;}
+            ele = parent;
+        }while true
+        return path.reverse();
+    }
+    
+    //execute single goal
+    public func execute(start: Self.Position, goal: Self.Position, request: Self.Request, completion: ([Self.Position]) -> ()) {
+        self.doSearching(start, goal, request: request){
             let element = $0;
             guard goal == element.position else {return false;}
             let path = self.decompress(element);
             completion(path);
             return true
         }
-    }
-    
-    //search
-    mutating func doSearching(origin: Self.Element.Position, @noescape termination: (Self.Element) -> Bool){
-        guard let originElement = self.searchPosition(origin, nil) else{return;}
-        var current = originElement;
-        self.queue.insert(current);
-        
-        //repeat
-        repeat{
-            guard let _next = self.queue.popBest() else {break;}
-            current = _next;
-            let position = current.position;
-            
-            current.isClosed = true;
-            self.queue.closeElement(current);
-            
-            guard !termination(current) else {return;}
-            
-            //explore neighbors
-            let neighbors = self.request.neighborsOf(position);
-            neighbors.forEach{
-                let n = $0;
-                guard let element = self.searchPosition(n, current) else {return;}
-                self.queue.insert(element);
-            }
-        }while true
-    }
-    
-    //decompress path
-    func decompress(element: Self.Element) -> [Self.Element.Position]
-    {
-        var path: [Self.Element.Position] = [];
-        var ele = element;
-        repeat{
-            path.append(ele.position);
-            guard let parent = ele.parent as? Self.Element else{break;}
-            ele = parent;
-        }while true
-        return path.reverse();
     }
 }
 
 //MARK: == PathFinderMultiType ==
 public protocol PathFinderMultiType: PathFinderType {
     //execute multi goal
-    mutating func execute(start: Self.Element.Position, goals gs: [Self.Element.Position], findGoal: ([Self.Element.Position]) -> (), completion: (() -> ())?)
+    func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, findGoal: ([Self.Position]) -> (), completion: () -> ())
 }
-extension PathFinderMultiType where Self.Request.Position == Self.Element.Position, Self.Queue.Element == Self.Element {
-    //execute
-    public mutating func execute(start: Self.Element.Position, goals gs: [Self.Element.Position], findGoal: ([Self.Element.Position]) -> (), completion: (() -> ())? = nil){
+extension PathFinderMultiType  where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
+    //execute multi goal
+    public func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, findGoal: ([Self.Position]) -> (), completion: () -> ()) {
         guard !gs.isEmpty else {
-            completion?();
+            completion();
             return;
         }
-        
-        let first = gs[0];
+        let goal = gs[0];
         guard gs.count > 1 else{
-            self.execute(start, goal: first){
+            self.execute(start, goal: goal, request: request){
                 findGoal($0);
-                completion?();
+                completion();
             }
             return;
         }
         
-        self.preparation(start, goal: first)
         var goals = gs;
-        self.doSearching(start){
-            let position = $0.position;
-            guard let i = goals.indexOf(position) else {return false;}
+        self.doSearching(start, goal, request: request){
+            guard let i = goals.indexOf($0.position) else {return false;}
+            goals.removeAtIndex(i);
             let path = self.decompress($0);
             findGoal(path);
-            goals.removeAtIndex(i);
-            guard goals.isEmpty else{return false;}
-            completion?();
-            return true;
-        }
-    }
-}
-
-
-//MARK: == PFinderProcessor ==
-public protocol PFinderProcessor
-{
-    //element type
-    typealias Element: PFinderElementType;
-    
-    //next best element
-    mutating func popBest() -> Self.Element?
-    
-    //valid neighbors of $0
-    var neighborsOf: (Self.Element.Position) -> [Self.Element.Position]{get}
-    
-    //cost between $0 and $1, if unweight of g return 0
-    var costOf: (Self.Element.Position, Self.Element.Position) -> CGFloat{get}
-    
-    //heuristic h value between $0 and $1, if unweight h return 0
-    var heuristicOf: (Self.Element.Position, Self.Element.Position) -> CGFloat{get}
-    
-    //subscript get set
-    subscript(position: Self.Element.Position) -> Self.Element?{get set}
-    
-    //search position
-    mutating func searchOf(position: Self.Element.Position, _ parent: Self.Element?) -> Self.Element?
-    
-    //preparation
-    mutating func preparation(start: Self.Element.Position, goal: Self.Element.Position)
-}
-extension PFinderProcessor {
-    //search
-    public mutating func searching(start: Self.Element.Position, goal: Self.Element.Position, completion: ([Self.Element.Position]) -> ()){
-        self.preparation(start, goal: goal);
-        self.processing(start){
-            let element = $0;
-            guard goal == element.position else {return false;}
-            let path = self.decompress(element);
-            completion(path);
-            return true
-        }
-    }
-    
-    //search
-    mutating func processing(origin: Self.Element.Position, @noescape termination: (Self.Element) -> Bool){
-        guard let originElement = self.searchOf(origin, nil) else{return;}
-        var current = originElement;
-        self[current.position] = current;
-        
-        //repeat
-        repeat{
-            guard let _next = self.popBest() else {break;}
-            current = _next;
-            let position = current.position;
-            
-            current.isClosed = true;
-            self[position] = current;
-            
-            guard !termination(current) else {return;}
-            
-            //explore neighbors
-            let neighbors = self.neighborsOf(position);
-            neighbors.forEach{
-                let n = $0;
-                guard let element = self.searchOf(n, current) else {return;}
-                self[element.position] = element;
-            }
-        }while true
-    }
-    
-    //decompress path
-    func decompress(element: Self.Element) -> [Self.Element.Position]
-    {
-        var path: [Self.Element.Position] = [];
-        var ele = element;
-        repeat{
-            path.append(ele.position);
-            guard let parent = ele.parent as? Self.Element else{break;}
-            ele = parent;
-        }while true
-        return path.reverse();
-    }
-}
-
-public protocol PFinderMultiProcessor: PFinderProcessor{}
-extension PFinderMultiProcessor {
-    //search
-    public mutating func searching(start: Self.Element.Position, goals gs: [Self.Element.Position], findGoal: ([Self.Element.Position]) -> (), completion: (() -> ())? = nil){
-        guard !gs.isEmpty else {
-            completion?();
-            return;
-        }
-        
-        let first = gs[0];
-        guard gs.count > 1 else{
-            self.searching(start, goal: first){
-                findGoal($0);
-                completion?();
-            }
-            return;
-        }
-        
-        self.preparation(start, goal: first)
-        var goals = gs;
-        self.processing(start){
-            let position = $0.position;
-            guard let i = goals.indexOf(position) else {return false;}
-            let path = self.decompress($0);
-            findGoal(path);
-            goals.removeAtIndex(i);
-            guard goals.isEmpty else{return false;}
-            completion?();
+            guard goals.isEmpty else {return false;}
+            completion();
             return true;
         }
     }
@@ -336,6 +200,7 @@ extension PFinderElement: PFinderElementType
     
     public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
         self.g = g;
+        self.f = self.g + self.h;
         self.parent = parent;
     }
 }
