@@ -12,34 +12,34 @@ import UIKit
 
 
 func pathFinderTest() {
-    let start = PFinderPosition2D(x: 24, y: 24);
-    let goals = [PFinderPosition2D(x: 14, y: 14), PFinderPosition2D(x: 30, y: 30), PFinderPosition2D(x: 14, y: 30), PFinderPosition2D(x: 30, y: 14)];
-    let map = TestMap(heristic: .Euclidean, passMode: .Diagonal);
-    var finder = BreadthBestPFinder<PFinderPosition2D>(neighborsOf: map.neighbors);
-
-    var path: [[PFinderPosition2D]] = [];
-    finder.searching(start, goals: goals, findGoal: {
-        path.append($0);
-        })
-        {
-            var conf = Array2D(columns: map.size, rows: map.size, repeatValue: "1");
-            
-            for (k, _) in finder.visiteList{
-                conf[k.x, k.y] = "#";
-            }
-            
-            for ps in path{
-                for p in ps{
-                    conf[p.x, p.y] = "^";
-                }
-            }
-            conf[start.x, start.y] = "S";
-            for g in goals{
-                conf[g.x , g.y] = "G";
-            }
-            print(conf);
-            print("visited count: ", finder.visiteList.count);
-        }
+//    let start = PFinderPosition2D(x: 24, y: 24);
+//    let goals = [PFinderPosition2D(x: 14, y: 14), PFinderPosition2D(x: 30, y: 30), PFinderPosition2D(x: 14, y: 30), PFinderPosition2D(x: 30, y: 14)];
+//    let map = TestMap(heristic: .Euclidean, passMode: .Diagonal);
+//    var finder = BreadthBestPFinder<PFinderPosition2D>(neighborsOf: map.neighbors);
+//
+//    var path: [[PFinderPosition2D]] = [];
+//    finder.searching(start, goals: goals, findGoal: {
+//        path.append($0);
+//        })
+//        {
+//            var conf = Array2D(columns: map.size, rows: map.size, repeatValue: "1");
+//            
+//            for (k, _) in finder.visiteList{
+//                conf[k.x, k.y] = "#";
+//            }
+//            
+//            for ps in path{
+//                for p in ps{
+//                    conf[p.x, p.y] = "^";
+//                }
+//            }
+//            conf[start.x, start.y] = "S";
+//            for g in goals{
+//                conf[g.x , g.y] = "G";
+//            }
+//            print(conf);
+//            print("visited count: ", finder.visiteList.count);
+//        }
     
     
     //CGflaot 比 Int 快？

@@ -48,18 +48,18 @@ func arrayNDTest()
     let a = Array<Int>(nd);
     print(a);
 }
-private func createPQ(source:Array<Int>? = nil) -> BinaryPriorityQueue<Int>
+private func createPQ(source:Array<Int>? = nil) -> PriorityQueue<Int>
 {
-    return BinaryPriorityQueue<Int>(source: source ?? [], isOrderedBefore:{return $0 < $1});
+    return PriorityQueue<Int>(source ?? [], {return $0 < $1});
 }
 
 //XPriorityQueue test
 //old impl best:                    average: 0.088 -- MAC mini, insert: 4000 popBest: 4000
 //BinaryPriorityQueue<Int>          average: 0.100 -- MAC mini, insert: 4000 popBest: 4000
-//BinaryPriorityQueue<Int>          average: 0.200 -- MAC air,  insert: 4000 popBest: 4000
+//BinaryPriorityQueue<Int>          average: 0.165 -- MAC air,  insert: 4000 popBest: 4000
 func priorityQueueTest(testRebuild:Bool = false)
 {
-    var queue:BinaryPriorityQueue<Int>;
+    var queue:PriorityQueue<Int>;
     
     
     if(testRebuild)//测试创建优先队列
