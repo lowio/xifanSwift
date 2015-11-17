@@ -76,6 +76,19 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
     //element type
     typealias Element = Self.Queue.Element;
     
+    //decompress path
+    func decompress(element: Element) -> [Self.Position]
+    {
+        var path: [Self.Position] = [];
+        var ele = element;
+        repeat{
+            path.append(ele.position);
+            guard let parent = ele.parent as? Element else{break;}
+            ele = parent;
+        }while true
+        return path.reverse();
+    }
+    
     //execute
     public func execute(request req: Self.Request, findPath:([Self.Position]) -> (), _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) {
         guard let origin = req.origin else {return;}
@@ -89,7 +102,7 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
             if request.findTarget(position) {
                 let path = self.decompress(current);
                 findPath(path);
-                if request.isComplete{
+                if request.isComplete {
                     visitation?(queue.allVisitedList());
                     return;
                 }
@@ -100,19 +113,6 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
                 self.searchPosition($0, current, request, &queue);
             }
         }while true
-    }
-    
-    //decompress path
-    func decompress(element: Element) -> [Self.Position]
-    {
-        var path: [Self.Position] = [];
-        var ele = element;
-        repeat{
-            path.append(ele.position);
-            guard let parent = ele.parent as? Element else{break;}
-            ele = parent;
-        }while true
-        return path.reverse();
     }
 }
 
@@ -183,4 +183,4 @@ extension PFinderElement: PFinderElementType
     }
 }
 
-//next : break out ....
+//next : tile break out(diagonal = false), check neighbor passable, multi start & multi goal ....
