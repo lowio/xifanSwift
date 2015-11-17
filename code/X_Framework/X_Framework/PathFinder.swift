@@ -38,8 +38,17 @@ public protocol PathFinderRequestType {
     //return cost between position and toPosition
     func costOf(position: Self.Position, _ toPosition: Self.Position) -> CGFloat
     
-    //return h value between position and toPosition
-    func heuristicOf(position: Self.Position, _ toPosition: Self.Position) -> CGFloat
+    //return h value between position and goal
+    func heuristicOf(position: Self.Position) -> CGFloat
+    
+    //origin position
+    var origin: Self.Position?{get}
+    
+    //is complete
+    var isComplete: Bool{get}
+    
+    //postion is target?
+    mutating func findTarget(position: Self.Position) -> Bool
 }
 
 //MARK: == PathFinderType ==
@@ -57,30 +66,40 @@ public protocol PathFinderType {
     func queueGenerate() -> Self.Queue;
     
     //search position
-    func searchPosition(position: Self.Position, _ goal: Self.Position, _ parent: Self.Queue.Element?, _ request: Self.Request, inout _ queue: Self.Queue)
+    func searchPosition(position: Self.Position, _ parent: Self.Queue.Element?, _ request: Self.Request, inout _ queue: Self.Queue)
     
-    //execute single goal
-    func execute(start: Self.Position, goal: Self.Position, request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())?) -> [Self.Position]?
+    //execute
+    func execute(request req: Self.Request, findPath:([Self.Position]) -> (), _ visitation: (([Self.Position: Self.Position]) -> ())?)
 }
 extension PathFinderType where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
     
     //element type
     typealias Element = Self.Queue.Element;
     
-    //search
-    func doSearching(origin: Self.Position, _ goal: Self.Position, request: Self.Request, @noescape _ termination: (Element) -> Bool) -> Self.Queue{
+    //execute
+    public func execute(request req: Self.Request, findPath:([Self.Position]) -> (), _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) {
+        guard let origin = req.origin else {return;}
+        var request = req;
         var queue = self.queueGenerate();
-        self.searchPosition(origin, goal, nil, request, &queue);
+        self.searchPosition(origin, nil, request, &queue);
         repeat{
             guard let current = queue.popBest() else {break;}
             let position = current.position;
-            guard !termination(current) else {return queue;}
+            
+            if request.findTarget(position) {
+                let path = self.decompress(current);
+                findPath(path);
+                if request.isComplete{
+                    visitation?(queue.allVisitedList());
+                    return;
+                }
+            }
+            
             let neighbors = request.neighborsOf(position);
             neighbors.forEach{
-                self.searchPosition($0, goal, current, request, &queue);
+                self.searchPosition($0, current, request, &queue);
             }
         }while true
-        return queue;
     }
     
     //decompress path
@@ -94,50 +113,6 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
             ele = parent;
         }while true
         return path.reverse();
-    }
-    
-    //execute single goal
-    public func execute(start: Self.Position, goal: Self.Position, request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) -> [Self.Position]? {
-        var path: [Self.Position]?;
-        let queue = self.doSearching(start, goal, request: request){
-            let element = $0;
-            guard goal == element.position else {return false;}
-            path = self.decompress(element);
-            return true
-        }
-        visitation?(queue.allVisitedList());
-        return path;
-    }
-}
-
-//MARK: == PathFinderMultiType ==
-public protocol PathFinderMultiType: PathFinderType {
-    //execute multi goal
-    func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())?) -> [[Self.Position]]?
-}
-extension PathFinderMultiType  where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
-    //execute multi goal
-    public func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) -> [[Self.Position]]? {
-        guard !gs.isEmpty else {return nil}
-        let goal = gs[0];
-        guard gs.count > 1 else{
-            guard let path = self.execute(start, goal: goal, request: request, visitation) else {return nil;}
-            return [path];
-        }
-        
-        var goals = gs;
-        var paths: [[Self.Position]] = [];
-        let queue = self.doSearching(start, goal, request: request){
-            guard let i = goals.indexOf($0.position) else {return false;}
-            goals.removeAtIndex(i);
-            let path = self.decompress($0);
-            paths.append(path);
-            guard goals.isEmpty else {return false;}
-            return true;
-        }
-        visitation?(queue.allVisitedList());
-        guard !paths.isEmpty else{return nil;}
-        return paths;
     }
 }
 

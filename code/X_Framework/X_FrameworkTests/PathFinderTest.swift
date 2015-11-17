@@ -9,55 +9,69 @@
 import UIKit
 @testable import X_Framework;
 
-private func singleTest(start: PFPosition2D, goal: PFPosition2D, map: TestMap, visited: (([PFPosition2D:PFPosition2D]) -> ())?){
-    
-}
+private var isSingle: Bool = false;
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true) {
-    let start = PFPosition2D(x: 17, y: 17);
-    let goals = [PFPosition2D(x: 7, y: 7), PFPosition2D(x: 7, y: 27), PFPosition2D(x: 27, y: 27), PFPosition2D(x: 27, y: 7)];
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false) {
     
-//    let goals = [PFPosition2D(x: 30, y: 14)]
-    let map = TestMap(heristic: .Euclidean, passMode: .Diagonal);
     let finder = BreadthBestPathFinder<TestMap>();
 //    let finder = DijkstraPathFinder<TestMap>();
-    var visited: [PFPosition2D:PFPosition2D]?;
-    guard let path = (finder.execute(start, goals: goals, request: map)
-//        {
-//            visited = $0;
-//        }
-    )else {
-        print("WARN: ========= NO WAY!!!");
-        return;
-    }
-//    return;
+//    let finder = GreedyBestPathFinder<TestMap>();
+//    let finder = AstarPathFinder<TestMap>();
     
-    var conf = Array2D(columns: map.size, rows: map.size, repeatValue: "✅");
+    
+    
+    let size = 35;
+    var conf = Array2D(columns: size, rows: size, repeatValue: 1);
+    conf[0,0] = 0;
+    
+    let h = PFinderHuristic2D.Euclidean;
+    let m: PFinderPassMode2D = isDiagnal ? .Diagonal : .Straight;
+    
+    let start = PFPosition2D(x: 17, y: 17);
+    let goals = [PFPosition2D(x: 7, y: 7), PFPosition2D(x: 7, y: 27), PFPosition2D(x: 27, y: 27), PFPosition2D(x: 27, y: 7)];
+    var map = TestMap(goals: goals, heristic: h, passMode: m, conf);
+    map.origin = start;
+    
+    
+    var visited:[PFPosition2D: PFPosition2D]?;
+    var vsitation: (([PFPosition2D: PFPosition2D]) -> ())?
+    if markVisited{
+        vsitation = {visited = $0;}
+    }
+    
+    guard markPath else {return;}
+    var mp = Array2D(columns: size, rows: size, repeatValue: "✅");
+    
+    var path: [[PFPosition2D]] = [];
+    finder.execute(request: map, findPath: {
+        path.append($0);
+    }, vsitation);
     
     if let v = visited{
         for (p, pp) in v{
             let arrow = TestArrow.getArrow(p.x, y1: p.y, x2: pp.x, y2: pp.y).description;
-            conf[p.x, p.y] = arrow;
+            mp[p.x, p.y] = arrow;
         }
     }
     
     for ps in path{
-        var last: PFPosition2D?;
+//        var last: PFPosition2D?;
         for p in ps{
-            guard let lt = last else{
-                last = p;
-                continue;
-            }
-            last = p;
-            let arrow = TestArrow.getArrow(p.x, y1: p.y, x2: lt.x, y2: lt.y).description;
-            conf[p.x, p.y] = arrow;
+//            guard let lt = last else{
+//                last = p;
+//                continue;
+//            }
+//            last = p;
+//            let arrow = TestArrow.getArrow(p.x, y1: p.y, x2: lt.x, y2: lt.y).description;
+            let arrow = "📍";
+            mp[p.x, p.y] = arrow;
         }
     }
-    conf[start.x, start.y] = "🚹";
+    mp[start.x, start.y] = "🚹";
     for g in goals{
-        conf[g.x , g.y] = "🚺";
+        mp[g.x , g.y] = "🚺";
     }
-    print(conf);
+    print(mp);
     
     
     //CGflaot 比 Int 快？
@@ -75,20 +89,21 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true) {
 struct TestMap{
     let config: Array2D<Int>;
     
-    let size: Int;
-    
     let heuristic: PFinderHuristic2D;
     
     let passMode: PFinderPassMode2D;
     
+    var goals: [PFPosition2D];
+    var goal: PFPosition2D;
+    var isComplete: Bool = false;
     
-    init(heristic: PFinderHuristic2D, passMode: PFinderPassMode2D = .Straight, _ s: Int = 35){
-        var c = Array2D(columns: s, rows: s, repeatValue: 1);
-//        c[17, 17] = 0;
-//        c[16, 17] = 0;
-//        c[18, 17] = 0;
-        self.size = s;
-        self.config = c;
+    var origin: PFPosition2D?;
+    
+    
+    init(goals: [PFPosition2D], heristic: PFinderHuristic2D, passMode: PFinderPassMode2D = .Straight, _ conf: Array2D<Int>){
+        self.config = conf;
+        self.goals = goals;
+        self.goal = goals[0];
         self.heuristic = heristic;
         self.passMode = passMode;
     }
@@ -116,7 +131,23 @@ extension TestMap: PathFinderRequestType{
     }
     
     //return h value between position and toPosition
-    func heuristicOf(position: PFPosition2D, _ toPosition: PFPosition2D) -> CGFloat {
-        return self.heuristic.heuristicOf(position, toPosition);
+    func heuristicOf(position: PFPosition2D) -> CGFloat {
+        return self.heuristic.heuristicOf(position, self.goal);
+    }
+    
+    mutating func findTarget(position: PFPosition2D) -> Bool {
+        if isSingle{
+            guard position == self.goal else{return false;}
+            self.isComplete = true;
+            return true;
+        }
+        else{
+            guard let i = self.goals.indexOf(position) else {return false;}
+            self.goals.removeAtIndex(i);
+            if self.goals.isEmpty{
+                self.isComplete = true;
+            }
+            return true;
+        }
     }
 }
