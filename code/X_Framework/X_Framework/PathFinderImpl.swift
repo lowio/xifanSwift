@@ -44,6 +44,16 @@ extension PFPriorityQueue: PathFinderQueueType{
     public subscript(position: T) -> Element? {
         return self.visiteList[position];
     }
+    
+    //return all visited element
+    public func allVisitedList() -> [T: T] {
+        var list = [T: T]();
+        for (key, value) in self.visiteList{
+            guard let parent = value.parent as? Element else{continue;}
+            list[key] = parent.position;
+        }
+        return list;
+    }
 }
 
 
@@ -110,7 +120,7 @@ extension AstarPathFinder: PathFinderType{
 
 //MARK: == DijkstraPathFinder ==
 public struct DijkstraPathFinder<Request: PathFinderRequestType>{}
-extension DijkstraPathFinder: PathFinderType{
+extension DijkstraPathFinder: PathFinderMultiType{
     //queue type
     public typealias Queue = PFPriorityQueue<Request.Position>;
     
@@ -121,7 +131,7 @@ extension DijkstraPathFinder: PathFinderType{
     
     //search position
     public func searchPosition(position: Request.Position, _ goal: Request.Position ,_ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
-        print("WARN: =======================check walkable");
+//        print("WARN: =======================check walkable");
         guard let p = parent else{
             let ele = Element(g: 0, h: 0, position: position, parent: nil);
             queue.insert(ele);
@@ -184,11 +194,21 @@ extension PFinderQueue: PathFinderQueueType{
     public subscript(position: T) -> Element? {
         return self.visiteList[position];
     }
+    
+    //return all visited element
+    public func allVisitedList() -> [T: T] {
+        var list = [T: T]();
+        for (key, value) in self.visiteList{
+            guard let parent = value.parent as? Element else{continue;}
+            list[key] = parent.position;
+        }
+        return list;
+    }
 }
 
 //MARK: == BreadthBestPathFinder ==
 public struct BreadthBestPathFinder<Request: PathFinderRequestType>{}
-extension BreadthBestPathFinder: PathFinderType{
+extension BreadthBestPathFinder: PathFinderMultiType{
     //queue type
     public typealias Queue = PFinderQueue<Request.Position>;
     
@@ -199,7 +219,7 @@ extension BreadthBestPathFinder: PathFinderType{
     
     //search position
     public func searchPosition(position: Request.Position, _ goal: Request.Position ,_ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
-        print("WARN: =======================check walkable");
+//        print("WARN: =======================check walkable");
         guard let _ = queue[position] else {
             let element = Element(g: 0, h: 0, position: position, parent: parent as? PFinderChainable);
             queue.insert(element);

@@ -21,6 +21,9 @@ public protocol PathFinderQueueType {
     
     //return visited element at position
     subscript(position: Self.Element.Position) -> Self.Element?{get}
+    
+    //return all visited element
+    func allVisitedList() -> [Self.Element.Position: Self.Element.Position]
 }
 
 //MARK: == PathFinderRequestType ==
@@ -57,7 +60,7 @@ public protocol PathFinderType {
     func searchPosition(position: Self.Position, _ goal: Self.Position, _ parent: Self.Queue.Element?, _ request: Self.Request, inout _ queue: Self.Queue)
     
     //execute single goal
-    func execute(start: Self.Position, goal: Self.Position, request: Self.Request, completion: ([Self.Position]) -> ())
+    func execute(start: Self.Position, goal: Self.Position, request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())?) -> [Self.Position]?
 }
 extension PathFinderType where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
     
@@ -65,18 +68,19 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
     typealias Element = Self.Queue.Element;
     
     //search
-    func doSearching(origin: Self.Position, _ goal: Self.Position, request: Self.Request, @noescape _ termination: (Element) -> Bool){
+    func doSearching(origin: Self.Position, _ goal: Self.Position, request: Self.Request, @noescape _ termination: (Element) -> Bool) -> Self.Queue{
         var queue = self.queueGenerate();
         self.searchPosition(origin, goal, nil, request, &queue);
         repeat{
             guard let current = queue.popBest() else {break;}
             let position = current.position;
-            guard !termination(current) else {return;}
+            guard !termination(current) else {return queue;}
             let neighbors = request.neighborsOf(position);
             neighbors.forEach{
                 self.searchPosition($0, goal, current, request, &queue);
             }
         }while true
+        return queue;
     }
     
     //decompress path
@@ -93,48 +97,47 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
     }
     
     //execute single goal
-    public func execute(start: Self.Position, goal: Self.Position, request: Self.Request, completion: ([Self.Position]) -> ()) {
-        self.doSearching(start, goal, request: request){
+    public func execute(start: Self.Position, goal: Self.Position, request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) -> [Self.Position]? {
+        var path: [Self.Position]?;
+        let queue = self.doSearching(start, goal, request: request){
             let element = $0;
             guard goal == element.position else {return false;}
-            let path = self.decompress(element);
-            completion(path);
+            path = self.decompress(element);
             return true
         }
+        visitation?(queue.allVisitedList());
+        return path;
     }
 }
 
 //MARK: == PathFinderMultiType ==
 public protocol PathFinderMultiType: PathFinderType {
     //execute multi goal
-    func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, findGoal: ([Self.Position]) -> (), completion: () -> ())
+    func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())?) -> [[Self.Position]]?
 }
 extension PathFinderMultiType  where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
     //execute multi goal
-    public func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, findGoal: ([Self.Position]) -> (), completion: () -> ()) {
-        guard !gs.isEmpty else {
-            completion();
-            return;
-        }
+    public func execute(start: Self.Position, goals gs: [Self.Position], request: Self.Request, _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) -> [[Self.Position]]? {
+        guard !gs.isEmpty else {return nil}
         let goal = gs[0];
         guard gs.count > 1 else{
-            self.execute(start, goal: goal, request: request){
-                findGoal($0);
-                completion();
-            }
-            return;
+            guard let path = self.execute(start, goal: goal, request: request, visitation) else {return nil;}
+            return [path];
         }
         
         var goals = gs;
-        self.doSearching(start, goal, request: request){
+        var paths: [[Self.Position]] = [];
+        let queue = self.doSearching(start, goal, request: request){
             guard let i = goals.indexOf($0.position) else {return false;}
             goals.removeAtIndex(i);
             let path = self.decompress($0);
-            findGoal(path);
+            paths.append(path);
             guard goals.isEmpty else {return false;}
-            completion();
             return true;
         }
+        visitation?(queue.allVisitedList());
+        guard !paths.isEmpty else{return nil;}
+        return paths;
     }
 }
 
@@ -204,7 +207,5 @@ extension PFinderElement: PFinderElementType
         self.parent = parent;
     }
 }
-
-
 
 //next : break out ....

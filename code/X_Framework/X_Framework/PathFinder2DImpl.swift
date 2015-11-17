@@ -8,8 +8,8 @@
 
 import Foundation
 
-//MARK: == PFinderPosition2D ==
-public struct PFinderPosition2D: Hashable
+//MARK: == PFPosition2D ==
+public struct PFPosition2D: Hashable
 {
     //x, y
     var x, y: Int;
@@ -22,7 +22,7 @@ public struct PFinderPosition2D: Hashable
     
     public var hashValue: Int{return self.x ^ self.y;}
 }
-public func ==(lsh: PFinderPosition2D, rsh: PFinderPosition2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
+public func ==(lsh: PFPosition2D, rsh: PFPosition2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
 
 
 //MARK: == PFinderHuristic2D ==
@@ -30,7 +30,7 @@ public enum PFinderHuristic2D {
     case Manhattan, Euclidean, Octile, Chebyshev, None
 }
 extension PFinderHuristic2D {
-    public func heuristicOf(position: PFinderPosition2D, _ toPosition: PFinderPosition2D) -> CGFloat {
+    public func heuristicOf(position: PFPosition2D, _ toPosition: PFPosition2D) -> CGFloat {
         let dx = CGFloat(abs(position.x - toPosition.x));
         let dy = CGFloat(abs(position.y - toPosition.y));
         switch self{
@@ -61,7 +61,7 @@ extension PFinderPassMode2D{
         case .Straight:
             return [(-1, 0), (0, 1), (1, 0), (0, -1)];
         case .Diagonal:
-            return [(-1, -1), (-1, 0), (-1, 1), (0, 1),(1, 1),  (1, 0), (1, -1), (0, -1)];
+            return [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, -1), (1, 1)];
         }
     }
 }
