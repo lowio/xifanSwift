@@ -90,7 +90,7 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
     }
     
     //execute
-    public func execute(request req: Self.Request, findPath: ([Self.Position]) -> (), _ visitation: (([Self.Position: Self.Position]) -> ())? = nil) {
+    public func execute(request req: Self.Request, findPath: ([Self.Position]) -> (), _ completion: (([Self.Position: Self.Position]) -> ())? = nil) {
         guard let origin = req.origin else {return;}
         var request = req;
         var queue = self.queueGenerate();
@@ -103,7 +103,7 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
                 let path = self.decompress(current);
                 findPath(path);
                 if request.isComplete {
-                    visitation?(queue.allVisitedList());
+                    completion?(queue.allVisitedList());
                     return;
                 }
             }
