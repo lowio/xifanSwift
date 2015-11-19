@@ -196,7 +196,7 @@ extension PFinderQueue: PathFinderQueueType{
     
     //return all visited element
     public func allVisitedList() -> [T: T] {
-        var list = [T: T]();
+        var list: [T: T] = [:];
         for (key, value) in self.visiteList{
             guard let parent = value.parent as? Element else{continue;}
             list[key] = parent.position;
