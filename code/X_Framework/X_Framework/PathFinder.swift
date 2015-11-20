@@ -104,7 +104,7 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
                 findPath(path);
                 if request.isComplete {
                     completion?(queue.allVisitedList());
-                    return;
+                    break;
                 }
             }
             
@@ -149,38 +149,6 @@ public protocol PFinderElementType: PFinderChainable
     
     //set parent, g
     mutating func setParent(parent: PFinderChainable, g: CGFloat)
-}
-
-//MARK: == PFinderElement ==
-public struct PFinderElement<T: Hashable>
-{
-    //'self' is closed default false
-    public var isClosed:Bool = false;
-    
-    //g, h;
-    public private (set) var g, h, f: CGFloat;
-    
-    //position
-    public private (set) var position: T;
-    
-    //parent
-    public private(set) var parent: PFinderChainable?
-}
-extension PFinderElement: PFinderElementType
-{
-    public init(g: CGFloat, h: CGFloat, position: T, parent: PFinderChainable?) {
-        self.g = g;
-        self.h = h;
-        self.f = g + h;
-        self.position = position;
-        self.parent = parent;
-    }
-    
-    public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
-        self.g = g;
-        self.f = self.g + self.h;
-        self.parent = parent;
-    }
 }
 
 //next : tile break out(diagonal = false), check neighbor passable, multi start & multi goal ....

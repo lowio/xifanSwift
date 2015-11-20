@@ -8,6 +8,74 @@
 
 import Foundation
 
+//MARK: == PFinderElement ==
+public class PFinderElement2<T: Hashable>
+{
+    //'self' is closed default false
+    public var isClosed:Bool = false;
+    
+    //g, h;
+    public private (set) var g, h, f: CGFloat;
+    
+    //position
+    public private (set) var position: T;
+    
+    //parent
+    public private(set) var parent: PFinderChainable?
+    
+    public init(g: CGFloat, h: CGFloat, position: T){
+        self.g = g;
+        self.h = h;
+        self.f = g + h;
+        self.position = position;
+    }
+    
+    public convenience required init(g: CGFloat, h: CGFloat, position: T, parent: PFinderChainable?) {
+        self.init(g: g, h: h, position: position);
+        self.parent = parent;
+    }
+}
+extension PFinderElement2: PFinderElementType
+{
+    public func setParent(parent: PFinderChainable, g: CGFloat) {
+        self.g = g;
+        self.f = self.g + self.h;
+        self.parent = parent;
+    }
+}
+
+//MARK: == PFinderElement ==
+public struct PFinderElement<T: Hashable>
+{
+    //'self' is closed default false
+    public var isClosed:Bool = false;
+
+    //g, h;
+    public private (set) var g, h, f: CGFloat;
+
+    //position
+    public private (set) var position: T;
+
+    //parent
+    public private(set) var parent: PFinderChainable?
+}
+extension PFinderElement: PFinderElementType
+{
+    public init(g: CGFloat, h: CGFloat, position: T, parent: PFinderChainable?) {
+        self.g = g;
+        self.h = h;
+        self.f = g + h;
+        self.position = position;
+        self.parent = parent;
+    }
+
+    public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
+        self.g = g;
+        self.f = self.g + self.h;
+        self.parent = parent;
+    }
+}
+
 //MARK: == PFPriorityQueue ==
 public struct PFPriorityQueue<T: Hashable>{
     
@@ -70,7 +138,7 @@ extension GreedyBestPathFinder: PathFinderType{
     
     //search position
     public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
-        print("WARN: =======================check walkable");
+//        print("WARN: =======================check walkable");
         guard let _ = queue[position] else {
             let h = request.heuristicOf(position);
             let element = Element(g: 0, h: h, position: position, parent: parent as? PFinderChainable);
@@ -93,7 +161,7 @@ extension AstarPathFinder: PathFinderType{
     
     //search position
     public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
-        print("WARN: =======================check walkable");
+//        print("WARN: =======================check walkable");
 
         let h = request.heuristicOf(position);
         guard let p = parent else{
@@ -156,7 +224,7 @@ extension DijkstraPathFinder: PathFinderType{
 //MARK: == PFinderQueue ==
 public struct PFinderQueue<T: Hashable>{
     
-    public typealias Element = PFinderElement<T>
+    public typealias Element = PFinderElement2<T>
     
     //open list
     private(set) var openList: [Element];
@@ -183,9 +251,7 @@ extension PFinderQueue: PathFinderQueueType{
     //pop best element and set element closed
     mutating public func popBest() -> Element?{
         guard currentIndex < self.openList.count else{return nil;}
-        var element = self.openList[self.currentIndex++];
-        element.isClosed = true;
-        self.visiteList[element.position] = element;
+        let element = self.openList[self.currentIndex++];
         return element;
     }
     

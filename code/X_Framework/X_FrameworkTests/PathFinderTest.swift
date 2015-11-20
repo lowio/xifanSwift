@@ -9,9 +9,9 @@
 import UIKit
 @testable import X_Framework;
 
-private var isSingle: Bool = false;
+private var isSingle: Bool = true;
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true) {
     
     let finder = BreadthBestPathFinder<TestMap>();
 //    let finder = DijkstraPathFinder<TestMap>();
@@ -32,20 +32,21 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     var map = TestMap(goals: goals, heristic: h, passMode: m, conf);
     map.origin = start;
     
-    
     var visited:[PFPosition2D: PFPosition2D]?;
     var vsitation: (([PFPosition2D: PFPosition2D]) -> ())?
     if markVisited{
         vsitation = {visited = $0;}
     }
-    
-    guard markPath else {return;}
     var mp = Array2D(columns: size, rows: size, repeatValue: "✅");
     
     var path: [[PFPosition2D]] = [];
     finder.execute(request: map, findPath: {
         path.append($0);
     }, vsitation);
+    
+    
+    guard markPath else {return;}
+    
     
     if let v = visited{
         for (p, pp) in v{
@@ -74,15 +75,9 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     print(mp);
     
     
-    //CGflaot 比 Int 快？
-    //实现协议后 实现协议中已经实现的方法效率会高很多
-    
-    //具体文章：Enum链表 自定义一个2dgenerator
-    
     //    jump point search
-    //    dic不可取 效率太低 想其他办法 index ...
-    //    diagoanl算法有问题
-    //    load map config json 格式的
+    //    visited replace dictionary to index...
+    //    diagoanl
 }
 
 
