@@ -224,7 +224,7 @@ extension DijkstraPathFinder: PathFinderType{
 //MARK: == PFinderQueue ==
 public struct PFinderQueue<T: Hashable>{
     
-    public typealias Element = PFinderElement2<T>
+    public typealias Element = PFinderElement<T>
     
     //open list
     private(set) var openList: [Element];

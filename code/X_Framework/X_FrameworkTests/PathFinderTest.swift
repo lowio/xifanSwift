@@ -9,7 +9,7 @@
 import UIKit
 @testable import X_Framework;
 
-private var isSingle: Bool = true;
+private var isSingle: Bool = false;
 
 func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true) {
     

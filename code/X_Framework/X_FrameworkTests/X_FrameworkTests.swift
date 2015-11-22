@@ -48,35 +48,10 @@ class X_FrameworkTests: XCTestCase {
     
     private func waitForTest()
     {
-//        pathFinderTest();
+        pathFinderTest();
 //        commonTest();
-        
-        var arr: [S] = [];
-//        var arr: [C] = [];
-        for i in 0...9999{
-            attt(&arr, v: S(a: i))
-//            attt(&arr, v: C(a: i))
-        }
-    }
-    
-    private func attt<T:P>(inout arr: [T], v: T){
-        arr.insert(v, atIndex: 0);
     }
 }
 
 
-protocol P{
-    var a: Int{get set}
-}
-
-struct S : P{
-    var a = 0;
-}
-
-class C: P {
-    var a = 0;
-    init(a:Int){
-        self.a = a;
-    }
-}
 

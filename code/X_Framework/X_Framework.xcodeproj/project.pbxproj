@@ -20,7 +20,6 @@
 		65F37AE91BF1CE8C00D13BE3 /* PathFinder2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F37AE81BF1CE8C00D13BE3 /* PathFinder2DImpl.swift */; };
 		65F3EAC21BEC85F2002261CC /* PathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F3EAC11BEC85F2002261CC /* PathFinder.swift */; };
 		65F69B481BD9CEA300850B10 /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F69B471BD9CEA300850B10 /* Temp.swift */; };
-		65F9DB071BFEC461007D1134 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F9DB061BFEC461007D1134 /* File.swift */; };
 		65FC3B6B1BE0793900FF7EE9 /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +51,6 @@
 		65F3EAC11BEC85F2002261CC /* PathFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinder.swift; sourceTree = "<group>"; };
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65F69B471BD9CEA300850B10 /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
-		65F9DB061BFEC461007D1134 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,7 +139,6 @@
 				65F3EAC11BEC85F2002261CC /* PathFinder.swift */,
 				1BF42AA71BEDCCDB0070B13D /* PathFinderImpl.swift */,
 				65F37AE81BF1CE8C00D13BE3 /* PathFinder2DImpl.swift */,
-				65F9DB061BFEC461007D1134 /* File.swift */,
 			);
 			name = pathFinder;
 			sourceTree = "<group>";
@@ -282,7 +279,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				65F3EAC21BEC85F2002261CC /* PathFinder.swift in Sources */,
-				65F9DB071BFEC461007D1134 /* File.swift in Sources */,
 				65CCF36F1BAAB61A00BCCD5E /* Collection2D.swift in Sources */,
 				1BF42AA81BEDCCDB0070B13D /* PathFinderImpl.swift in Sources */,
 				65F37AE91BF1CE8C00D13BE3 /* PathFinder2DImpl.swift in Sources */,

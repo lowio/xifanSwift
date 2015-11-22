@@ -13,14 +13,16 @@ public struct PFPosition2D: Hashable
 {
     //x, y
     var x, y: Int;
+    private var _hashValue: Int;
     
     init(x: Int, y: Int)
     {
         self.x = x;
         self.y = y;
+        self._hashValue = "\(x)\(y)".hashValue;
     }
     
-    public var hashValue: Int{return self.x ^ self.y;}
+    public var hashValue: Int{return self._hashValue;}
 }
 public func ==(lsh: PFPosition2D, rsh: PFPosition2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
 
