@@ -9,42 +9,6 @@
 import Foundation
 
 //MARK: == PFinderElement ==
-public class PFinderElement2<T: Hashable>
-{
-    //'self' is closed default false
-    public var isClosed:Bool = false;
-    
-    //g, h;
-    public private (set) var g, h, f: CGFloat;
-    
-    //position
-    public private (set) var position: T;
-    
-    //parent
-    public private(set) var parent: PFinderChainable?
-    
-    public init(g: CGFloat, h: CGFloat, position: T){
-        self.g = g;
-        self.h = h;
-        self.f = g + h;
-        self.position = position;
-    }
-    
-    public convenience required init(g: CGFloat, h: CGFloat, position: T, parent: PFinderChainable?) {
-        self.init(g: g, h: h, position: position);
-        self.parent = parent;
-    }
-}
-extension PFinderElement2: PFinderElementType
-{
-    public func setParent(parent: PFinderChainable, g: CGFloat) {
-        self.g = g;
-        self.f = self.g + self.h;
-        self.parent = parent;
-    }
-}
-
-//MARK: == PFinderElement ==
 public struct PFinderElement<T: Hashable>
 {
     //'self' is closed default false
@@ -114,13 +78,12 @@ extension PFPriorityQueue: PathFinderQueueType{
     }
     
     //return all visited element
-    public func allVisitedList() -> [T: T] {
-        var list = [T: T]();
-        for (key, value) in self.visiteList{
-            guard let parent = value.parent as? Element else{continue;}
-            list[key] = parent.position;
-        }
-        return list;
+    public func allVisitedList() -> [Element] {
+        return self.visiteList.values.reverse()
+    }
+    
+    mutating public func update(element: Element){
+        
     }
 }
 
@@ -261,13 +224,12 @@ extension PFinderQueue: PathFinderQueueType{
     }
     
     //return all visited element
-    public func allVisitedList() -> [T: T] {
-        var list: [T: T] = [:];
-        for (key, value) in self.visiteList{
-            guard let parent = value.parent as? Element else{continue;}
-            list[key] = parent.position;
-        }
-        return list;
+    public func allVisitedList() -> [Element] {
+        return self.visiteList.values.reverse()
+    }
+    
+    mutating public func update(element: Element){
+        
     }
 }
 

@@ -19,11 +19,14 @@ public protocol PathFinderQueueType {
     //pop best element and set element closed
     mutating func popBest() -> Self.Element?
     
+    //update element
+    mutating func update(element: Self.Element)
+    
     //return visited element at position
     subscript(position: Self.Element.Position) -> Self.Element?{get}
     
     //return all visited element
-    func allVisitedList() -> [Self.Element.Position: Self.Element.Position]
+    func allVisitedList() -> [Self.Element]
 }
 
 //MARK: == PathFinderRequestType ==
@@ -69,7 +72,7 @@ public protocol PathFinderType {
     func searchPosition(position: Self.Position, _ parent: Self.Queue.Element?, _ request: Self.Request, inout _ queue: Self.Queue)
     
     //execute
-    func execute(request req: Self.Request, findPath:([Self.Position]) -> (), _ visitation: (([Self.Position: Self.Position]) -> ())?)
+    func execute(request req: Self.Request, findPath:([Self.Position]) -> (), _ completion: (([Self.Queue.Element]) -> ())?)
 }
 extension PathFinderType where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
     
@@ -90,7 +93,7 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
     }
     
     //execute
-    public func execute(request req: Self.Request, findPath: ([Self.Position]) -> (), _ completion: (([Self.Position: Self.Position]) -> ())? = nil) {
+    public func execute(request req: Self.Request, findPath: ([Self.Position]) -> (), _ completion: (([Self.Queue.Element]) -> ())? = nil) {
         guard let origin = req.origin else {return;}
         var request = req;
         var queue = self.queueGenerate();

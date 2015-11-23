@@ -11,14 +11,13 @@ import UIKit
 
 private var isSingle: Bool = false;
 
+typealias PF = BreadthBestPathFinder<TestMap>
+//typealias PF = DijkstraPathFinder<TestMap>
+//typealias PF = GreedyBestPathFinder<TestMap>
+//typealias PF = AstarPathFinder<TestMap>
+
 func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true) {
-    
-    let finder = BreadthBestPathFinder<TestMap>();
-//    let finder = DijkstraPathFinder<TestMap>();
-//    let finder = GreedyBestPathFinder<TestMap>();
-//    let finder = AstarPathFinder<TestMap>();
-    
-    
+    let finder = PF();
     
     let size = 35;
     var conf = Array2D(columns: size, rows: size, repeatValue: 1);
@@ -32,8 +31,8 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     var map = TestMap(goals: goals, heristic: h, passMode: m, conf);
     map.origin = start;
     
-    var visited:[PFPosition2D: PFPosition2D]?;
-    var vsitation: (([PFPosition2D: PFPosition2D]) -> ())?
+    var visited:[PF.Element]?;
+    var vsitation: (([PF.Element]) -> ())?
     if markVisited{
         vsitation = {visited = $0;}
     }
@@ -49,7 +48,9 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     
     
     if let v = visited{
-        for (p, pp) in v{
+        for e in v{
+            let p = e.position;
+            guard let pp = (e.parent as? PF.Element)?.position else{continue;}
             let arrow = TestArrow.getArrow(p.x, y1: p.y, x2: pp.x, y2: pp.y).description;
             mp[p.x, p.y] = arrow;
         }
