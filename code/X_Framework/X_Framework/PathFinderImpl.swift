@@ -31,6 +31,7 @@ extension PFinderElement: PFinderElementType
         self.f = g + h;
         self.position = position;
         self.parent = parent;
+        print(f, g, h);
     }
 
     public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
@@ -52,7 +53,9 @@ public struct PFPriorityQueue<T: Hashable>{
     private(set) var visiteList: [T: Element];
     
     init(){
-        self.openList = PriorityQueue{$0.f < $1.f}
+        self.openList = PriorityQueue{
+            return $0.f < $1.f
+        }
         self.visiteList = [:];
     }
 }

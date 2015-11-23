@@ -9,14 +9,14 @@
 import UIKit
 @testable import X_Framework;
 
-private var isSingle: Bool = false;
+private var isSingle: Bool = true;
 
-typealias PF = BreadthBestPathFinder<TestMap>
+//typealias PF = BreadthBestPathFinder<TestMap>
 //typealias PF = DijkstraPathFinder<TestMap>
 //typealias PF = GreedyBestPathFinder<TestMap>
-//typealias PF = AstarPathFinder<TestMap>
+typealias PF = AstarPathFinder<TestMap>
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false) {
     let finder = PF();
     
     let size = 35;
@@ -57,14 +57,7 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     }
     
     for ps in path{
-//        var last: PFPosition2D?;
         for p in ps{
-//            guard let lt = last else{
-//                last = p;
-//                continue;
-//            }
-//            last = p;
-//            let arrow = TestArrow.getArrow(p.x, y1: p.y, x2: lt.x, y2: lt.y).description;
             let arrow = "📍";
             mp[p.x, p.y] = arrow;
         }
@@ -128,7 +121,8 @@ extension TestMap: PathFinderRequestType{
     
     //return h value between position and toPosition
     func heuristicOf(position: PFPosition2D) -> CGFloat {
-        return self.heuristic.heuristicOf(position, self.goal);
+        let h = self.heuristic.heuristicOf(position, self.goal);
+        return h;
     }
     
     mutating func findTarget(position: PFPosition2D) -> Bool {
