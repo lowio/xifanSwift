@@ -9,14 +9,14 @@
 import UIKit
 @testable import X_Framework;
 
-private var isSingle: Bool = true;
+private var isSingle: Bool = false;
 
-//typealias PF = BreadthBestPathFinder<TestMap>
+typealias PF = BreadthBestPathFinder<TestMap>
 //typealias PF = DijkstraPathFinder<TestMap>
 //typealias PF = GreedyBestPathFinder<TestMap>
-typealias PF = AstarPathFinder<TestMap>
+//typealias PF = AstarPathFinder<TestMap>
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true) {
     let finder = PF();
     
     let size = 35;

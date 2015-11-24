@@ -11,7 +11,7 @@ import Foundation
 //MARK: == PathFinderQueueType ==
 public protocol PathFinderQueueType {
     //element type
-    typealias Element: PFinderElementType;
+    typealias Element: PathFinderElementType;
     
     //insert element and set element visited
     mutating func insert(element: Self.Element)
@@ -68,11 +68,11 @@ public protocol PathFinderType {
     //create queue
     func queueGenerate() -> Self.Queue;
     
-    //search position
-    func searchPosition(position: Self.Position, _ parent: Self.Queue.Element?, _ request: Self.Request, inout _ queue: Self.Queue)
+    //search position; if return nil do nothing otherwise return element, visited == nil ? insert(element) : update(element)
+    func searchPosition(position: Self.Position, _ parent: Self.Queue.Element?, _ visited: Self.Queue.Element?, _ request: Self.Request) -> Self.Queue.Element?
     
     //execute
-    func execute(request req: Self.Request, findPath:([Self.Position]) -> (), _ completion: (([Self.Queue.Element]) -> ())?)
+    func execute(request req: Self.Request, @noescape findPath:([Self.Position]) -> (), _ completion: (([Self.Queue.Element]) -> ())?)
 }
 extension PathFinderType where Self.Request.Position == Self.Position, Self.Queue.Element.Position == Self.Position {
     
@@ -93,11 +93,12 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
     }
     
     //execute
-    public func execute(request req: Self.Request, findPath: ([Self.Position]) -> (), _ completion: (([Self.Queue.Element]) -> ())? = nil) {
+    public func execute(request req: Self.Request, @noescape findPath: ([Self.Position]) -> (), _ completion: (([Self.Queue.Element]) -> ())? = nil) {
         guard let origin = req.origin else {return;}
+        guard let originElement = self.searchPosition(origin, nil, nil, req) else {return;}
         var request = req;
         var queue = self.queueGenerate();
-        self.searchPosition(origin, nil, request, &queue);
+        queue.insert(originElement);
         repeat{
             guard let current = queue.popBest() else {break;}
             let position = current.position;
@@ -113,21 +114,24 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
             
             let neighbors = request.neighborsOf(position);
             neighbors.forEach{
-                self.searchPosition($0, current, request, &queue);
+                let p = $0;
+                let visited = queue[p];
+                guard let ele = self.searchPosition(p, current, visited, request) else {return;}
+                visited == nil ? queue.insert(ele) : queue.update(ele);
             }
         }while true
     }
 }
 
-//MARK: == PFinderChainable ==
-public protocol PFinderChainable
+//MARK: == PathFinderChainable ==
+public protocol PathFinderChainable
 {
     //parent
-    var parent: PFinderChainable?{get}
+    var parent: PathFinderChainable?{get}
 }
 
-//MARK: == PFinderElementType ==
-public protocol PFinderElementType: PFinderChainable
+//MARK: == PathFinderElementType ==
+public protocol PathFinderElementType: PathFinderChainable
 {
     //Position type
     typealias Position: Hashable;
@@ -148,10 +152,18 @@ public protocol PFinderElementType: PFinderChainable
     var position: Self.Position{get}
     
     //init
-    init(g: CGFloat, h:CGFloat, position: Self.Position, parent: PFinderChainable?)
+    init(g: CGFloat, h:CGFloat, position: Self.Position, parent: PathFinderChainable?)
     
     //set parent, g
-    mutating func setParent(parent: PFinderChainable, g: CGFloat)
+    mutating func setParent(parent: PathFinderChainable, g: CGFloat)
 }
 
-//next : CGFloat int, tile break out(diagonal = false), check neighbor passable, multi start & multi goal ....
+/*
+next :
+    request recode. var func
+    CGFloat int, 
+    tile break out(diagonal = false), 
+    check neighbor passable
+    multi start & multi goal
+    ....
+**/

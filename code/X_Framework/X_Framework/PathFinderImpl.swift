@@ -8,8 +8,8 @@
 
 import Foundation
 
-//MARK: == PFinderElement ==
-public struct PFinderElement<T: Hashable>
+//MARK: == PathFinderElement ==
+public struct PathFinderElement<T: Hashable>
 {
     //'self' is closed default false
     public var isClosed:Bool = false;
@@ -21,20 +21,19 @@ public struct PFinderElement<T: Hashable>
     public private (set) var position: T;
 
     //parent
-    public private(set) var parent: PFinderChainable?
+    public private(set) var parent: PathFinderChainable?
 }
-extension PFinderElement: PFinderElementType
+extension PathFinderElement: PathFinderElementType
 {
-    public init(g: CGFloat, h: CGFloat, position: T, parent: PFinderChainable?) {
+    public init(g: CGFloat, h: CGFloat, position: T, parent: PathFinderChainable?) {
         self.g = g;
         self.h = h;
         self.f = g + h;
         self.position = position;
         self.parent = parent;
-        print(f, g, h);
     }
 
-    public mutating func setParent(parent: PFinderChainable, g: CGFloat) {
+    public mutating func setParent(parent: PathFinderChainable, g: CGFloat) {
         self.g = g;
         self.f = self.g + self.h;
         self.parent = parent;
@@ -44,7 +43,7 @@ extension PFinderElement: PFinderElementType
 //MARK: == PFPriorityQueue ==
 public struct PFPriorityQueue<T: Hashable>{
     
-    public typealias Element = PFinderElement<T>
+    public typealias Element = PathFinderElement<T>
     
     //open list
     private(set) var openList: PriorityQueue<Element>;
@@ -86,7 +85,9 @@ extension PFPriorityQueue: PathFinderQueueType{
     }
     
     mutating public func update(element: Element){
-        
+        guard let i = (self.openList.indexOf{$0.position == element.position}) else {return;}
+        self.openList.replaceElement(element, atIndex: i);
+        self.visiteList[element.position] = element;
     }
 }
 
@@ -103,14 +104,13 @@ extension GreedyBestPathFinder: PathFinderType{
     }
     
     //search position
-    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
+    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ visited: Queue.Element?, _ request: Request) -> Queue.Element? {
 //        print("WARN: =======================check walkable");
-        guard let _ = queue[position] else {
+        guard let _ = visited else {
             let h = request.heuristicOf(position);
-            let element = Element(g: 0, h: h, position: position, parent: parent as? PFinderChainable);
-            queue.insert(element);
-            return;
+            return Element(g: 0, h: h, position: position, parent: parent as? PathFinderChainable);
         }
+        return nil;
     }
 }
 
@@ -126,28 +126,21 @@ extension AstarPathFinder: PathFinderType{
     }
     
     //search position
-    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
+    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ visited: Queue.Element?, _ request: Request) -> Queue.Element? {
 //        print("WARN: =======================check walkable");
-
         let h = request.heuristicOf(position);
         guard let p = parent else{
-            let ele = Element(g: 0, h: h, position: position, parent: nil);
-            queue.insert(ele);
-            return;
+            return Element(g: 0, h: h, position: position, parent: nil);
         }
 
         let g = p.g + request.costOf(p.position, position)
-        guard let visited = queue[position] else {
-            let ele = Element(g: g, h: h, position: position, parent: p);
-            queue.insert(ele);
-            return;
+        guard let v = visited else {
+            return Element(g: g, h: h, position: position, parent: p);
         }
-        guard !visited.isClosed && g < visited.g else {return;}
-        var element = visited;
+        guard !v.isClosed && g < v.g else {return nil;}
+        var element = v;
         element.setParent(p, g: g);
-        guard let i = (queue.openList.indexOf{return $0.position == element.position;})else{return;}
-        queue.openList.replaceElement(element, atIndex: i);
-        queue.visiteList[element.position] = element;
+        return element;
     }
 }
 
@@ -163,34 +156,27 @@ extension DijkstraPathFinder: PathFinderType{
     }
     
     //search position
-    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
+    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ visited: Queue.Element?, _ request: Request) -> Queue.Element? {
 //        print("WARN: =======================check walkable");
         guard let p = parent else{
-            let ele = Element(g: 0, h: 0, position: position, parent: nil);
-            queue.insert(ele);
-            return;
+            return Element(g: 0, h: 0, position: position, parent: nil);
         }
 
         let g = p.g + request.costOf(p.position, position)
-        guard let visited = queue[position] else {
-            let ele = Element(g: g, h: 0, position: position, parent: p);
-            queue.insert(ele);
-            return;
+        guard let v = visited else {
+            return Element(g: g, h: 0, position: position, parent: p);
         }
-        guard !visited.isClosed && g < visited.g else {return;}
-        var element = visited;
+        guard !v.isClosed && g < v.g else {return nil;}
+        var element = v;
         element.setParent(p, g: g);
-        guard let i = (queue.openList.indexOf{return $0.position == element.position;})else{return;}
-        queue.openList.replaceElement(element, atIndex: i);
-        queue.visiteList[element.position] = element;
-
+        return element;
     }
 }
 
 //MARK: == PFinderQueue ==
 public struct PFinderQueue<T: Hashable>{
     
-    public typealias Element = PFinderElement<T>
+    public typealias Element = PathFinderElement<T>
     
     //open list
     private(set) var openList: [Element];
@@ -232,7 +218,7 @@ extension PFinderQueue: PathFinderQueueType{
     }
     
     mutating public func update(element: Element){
-        
+        //do nothing
     }
 }
 
@@ -248,12 +234,10 @@ extension BreadthBestPathFinder: PathFinderType{
     }
     
     //search position
-    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ request: Request, inout _ queue: Queue) {
-//        print("WARN: =======================check walkable");
-        guard let _ = queue[position] else {
-            let element = Element(g: 0, h: 0, position: position, parent: parent as? PFinderChainable);
-            queue.insert(element);
-            return;
+    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ visited: Queue.Element?, _ request: Request) -> Queue.Element? {
+        guard let _ = visited else {
+            return Queue.Element(g: 0, h: 0, position: position, parent: parent as? PathFinderChainable);
         }
+        return nil;
     }
 }
