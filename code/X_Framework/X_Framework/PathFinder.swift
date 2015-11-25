@@ -8,26 +8,6 @@
 
 import Foundation
 
-//MARK: == PathFinderQueueType ==
-public protocol PathFinderQueueType {
-    //element type
-    typealias Element: PathFinderElementType;
-    
-    //insert element and set element visited
-    mutating func insert(element: Self.Element)
-    
-    //pop best element and set element closed
-    mutating func popBest() -> Self.Element?
-    
-    //update element
-    mutating func update(element: Self.Element)
-    
-    //return visited element at position
-    subscript(position: Self.Element.Position) -> Self.Element?{get}
-    
-    //return all visited element
-    func allVisitedList() -> [Self.Element]
-}
 
 //MARK: == PathFinderRequestType ==
 public protocol PathFinderRequestType {
@@ -121,6 +101,27 @@ extension PathFinderType where Self.Request.Position == Self.Position, Self.Queu
             }
         }while true
     }
+}
+
+//MARK: == PathFinderQueueType ==
+public protocol PathFinderQueueType {
+    //element type
+    typealias Element: PathFinderElementType;
+    
+    //insert element and set element visited
+    mutating func insert(element: Self.Element)
+    
+    //pop best element and set element closed
+    mutating func popBest() -> Self.Element?
+    
+    //update element
+    mutating func update(element: Self.Element)
+    
+    //return visited element at position
+    subscript(position: Self.Element.Position) -> Self.Element?{get}
+    
+    //return all visited element
+    func allVisitedList() -> [Self.Element]
 }
 
 //MARK: == PathFinderChainable ==
