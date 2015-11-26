@@ -60,3 +60,5 @@ extension PathFindingType {
         return path.reverse();
     }
 }
+
+//change PathFindingType to struct + delegate protocol
