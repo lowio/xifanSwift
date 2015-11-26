@@ -128,6 +128,8 @@ public protocol PFRequestType {
 public protocol PFSingleGoalRequestType: PFRequestType {
     //goal position
     var goal: Self.Position{get}
+    
+    init(origin: Self.Position, goal: Self.Position)
 }
 extension PFSingleGoalRequestType {
     public func findGoal(position: Self.Position) -> Bool? {
@@ -140,9 +142,14 @@ extension PFSingleGoalRequestType {
 public protocol PFMultiGoalRequestType: PFRequestType {
     //goal position
     var goals: [Self.Position]{get set}
+    
+    init(origin: Self.Position, goals:[Self.Position])
 }
 extension PFMultiGoalRequestType {
     public mutating func findGoal(position: Self.Position) -> Bool? {
+        guard self.goals.count == 1 else {
+            return self.goals[0] == position ? true : nil;
+        }
         guard let i = self.goals.indexOf(position) else {return nil;}
         self.goals.removeAtIndex(i);
         return self.goals.isEmpty;

@@ -12,23 +12,11 @@ import Foundation
 //MARK: == PathFinderType ==
 public protocol PathFindingType {
     
-    //source type
-    typealias Source: PFSourceType;
-    
-    //request type
-    typealias Request: PFRequestType;
-    
-    //position Type
-    typealias Position: Hashable;
-    
-    //source
-    var source: Self.Source! {get}
-    
-    //request
-    var request: Self.Request! {get set}
+    //element Type
+    typealias Element: PFElementType;
     
     //return element
-    func elementOf<E: PFElementType where E.Position == Self.Position>(position: E.Position, _ parent: E, _ visited: E?) -> E?
+    func elementOf(position: Self.Element.Position, parent: Self.Element, visited: Self.Element?) -> Self.Element?
 }
 extension PathFindingType {
     //decompress path
@@ -44,31 +32,32 @@ extension PathFindingType {
         return path.reverse();
     }
 }
-extension PathFindingType where Self.Source.Position == Self.Position, Self.Request.Position == Self.Position {
+extension PathFindingType {
     
     //execute
-    mutating func execute<Q: PFQueueType where Q.Element.Position == Self.Position>(queue: Q, @noescape findPath: ([Self.Position]) -> ()) -> Q {
-        let originElement = Q.Element(g: 0, h: 0, position: self.request.origin, parent: nil);
-        var q = queue;
-        q.insert(originElement);
-        repeat{
-            guard let current = q.popBest() else {break;}
-            let position = current.position;
-            
-            if let flag = self.request.findGoal(position) {
-                let path = self.decompress(current);
-                findPath(path);
-                if flag {return q;}
-            }
-            
-            let neighbors = self.source.neighborsOf(position);
-            neighbors.forEach{
-                let p = $0;
-                let visited = queue[p];
-                guard let ele = self.elementOf(p, current, visited) else {return;}
-                visited == nil ? q.insert(ele) : q.update(ele);
-            }
-        }while true
-        return q;
+    func execute<Q: PFQueueType, S: PFSourceType where Q.Element == Self.Element, S.Position == Q.Element.Position>(origin: S.Position, queue: Q, source: S, @noescape findPath: ([S.Position]) -> ()) -> Q {
+        
+//        let originElement = Q.Element(g: 0, h: 0, position: origin, parent: nil);
+//        var q = queue;
+//        q.insert(originElement);
+//        repeat{
+//            guard let current = q.popBest() else {break;}
+//            let position = current.position;
+//            
+//            if let flag = req.findGoal(position) {
+//                let path = self.decompress(current);
+//                findPath(path);
+//                if flag {return q;}
+//            }
+//            
+//            let neighbors = self.source.neighborsOf(position);
+//            neighbors.forEach{
+//                let p = $0;
+//                let visited = queue[p];
+//                guard let ele = self.elementOf(p, current, visited) else {return;}
+//                visited == nil ? q.insert(ele) : q.update(ele);
+//            }
+//        }while true
+//        return q;
     }
 }
