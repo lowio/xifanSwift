@@ -94,6 +94,9 @@ public protocol PFQueueType {
     
     //return all visited element record
     func getRecording() -> [Self.Element]
+    
+    //init
+    init()
 }
 
 //MARK: == PFSourceType ==
