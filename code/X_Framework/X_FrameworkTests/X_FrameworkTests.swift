@@ -48,27 +48,10 @@ class X_FrameworkTests: XCTestCase {
     
     private func waitForTest()
     {
-        pathFinderTest();
+//        pathFinderTest();
 //        commonTest();
     }
 }
 
 
-struct S {
-    var a = 0;
-    var b = 0;
-    
-    mutating func setA(a:Int){
-        self.a = a;
-    }
-    
-    mutating func setB(b: Int){
-        self.b = b;
-    }
-    
-    mutating func setAB(a: Int, _ b: Int){
-        self.a = a;
-        self.b = b;
-    }
-}
 

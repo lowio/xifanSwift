@@ -36,8 +36,18 @@ public protocol FinderSourceType {
     func heuristicOf(point: Self.Point, _ toPoint: Self.Point) -> CGFloat
 }
 
-//MARK: == FinderQueueType ==
-public protocol FinderQueueType{
+//MARK: == FinderRequestType ==
+public protocol FinderRequestType{
+    
+    //point type
+    typealias Point;
+    
+    //origin
+    var origin: Self.Point{get}
+}
+
+//MARK: == FinderDelegateType ==
+public protocol FinderDelegateType{
     //element type
     typealias Element: FinderElementType;
     
@@ -58,41 +68,56 @@ public protocol FinderQueueType{
     
     //decompress path record
     func decompressPathRecord() -> [Self.Element]
-}
-
-//MARK: == FinderDelegateType ==
-public protocol FinderDelegateType {
     
-    //explore visited point's element
-    func explore<S: FinderSourceType, E: FinderElementType where S.Point == E.Point>(visited: E, ofParent: E, source: S) -> E?
+    //request type
+    typealias Request: FinderRequestType;
     
-    //explore unvisited point
-    func explore<S: FinderSourceType, E: FinderElementType where S.Point == E.Point>(point: S.Point, ofParent: E?, source: S, request: FinderRequest<S.Point>) -> E
+    //request
+    var request: Self.Request!{get set}
+    
+    //init with request
+    init<R where R == Self.Request, R.Point == Self.Element.Point>(request: R)
 }
-extension FinderDelegateType {
+extension FinderDelegateType where Self.Request == FinderSingleRequest<Self.Element.Point> {
     //execute
-    mutating func execute<S: FinderSourceType, Q: FinderQueueType where S.Point == Q.Element.Point>(var request: FinderRequest<S.Point>, inout queue: Q, source: S) -> [[S.Point]] {
-        let element: Q.Element = self.explore(request.origin, ofParent: nil, source: source, request: request);
-        queue.insert(element);
-        var paths: [[S.Point]] = [];
+    mutating public func execute<F: FinderType, S: FinderSourceType where F.Delegate == Self, S.Point == Self.Element.Point>(source: S, finder: F) -> [S.Point] {
+        let oe = Self.Element(point:self.request.origin);
+        var path:[S.Point] = [self.request.origin];
+        self.insert(oe);
         repeat{
-            guard let current = queue.popBest() else {break;}
+            guard let current = self.popBest() else {break;}
             let point = current.point;
-            if let flag = request.findGoal(point) {
-                let path = queue.decompressPath(current);
-                paths.append(path);
-                guard !flag else {break;}
+            guard point != self.request.goal else {
+                path = self.decompressPath(current);
+                break;
             }
             let neighbors = source.neighborsOf(point);
             neighbors.forEach{
-                let p = $0;
-                guard let visited = queue[p] else{
-                    let ele: Q.Element = self.explore(p, ofParent: nil, source: source, request: request);
-                    queue.insert(ele);
-                    return;
-                }
-                guard let ele = self.explore(visited, ofParent: current, source: source) else {return;}
-                queue.update(ele);
+                finder.explore($0, parent: current, delegate: &self);
+            }
+        }while true
+        return path;
+    }
+}
+
+extension FinderDelegateType where Self.Request == FinderMultiRequest<Self.Element.Point> {
+    //execute
+    mutating public func execute<F: FinderType, S: FinderSourceType where F.Delegate == Self, S.Point == Self.Element.Point>(source: S, finder: F) -> [[S.Point]] {
+        let oe = Self.Element(point:self.request.origin);
+        var paths:[[S.Point]];
+        self.insert(oe);
+        repeat{
+            guard let current = self.popBest() else {break;}
+            let point = current.point;
+            if let i = self.request.goals.indexOf(point) {
+                let path = self.decompressPath(current);
+                paths.append(path);
+                self.request.goals.removeAtIndex(i);
+                guard !self.request.goals.isEmpty else {break;}
+            }
+            let neighbors = source.neighborsOf(point);
+            neighbors.forEach{
+                finder.explore($0, parent: current, delegate: &self);
             }
         }while true
         return paths;
@@ -100,71 +125,129 @@ extension FinderDelegateType {
 }
 
 
+public struct FinderSingleRequest<T: Hashable>: FinderRequestType {
+    public var origin: T;
+    public var goal: T;
+    init(origin: T, goal: T){
+        self.origin = origin;
+        self.goal = goal;
+    }
+}
+
+public struct FinderMultiRequest<T: Hashable>: FinderRequestType {
+    public var origin: T;
+    public var goals: [T];
+    init(origin: T, goals: [T]){
+        self.origin = origin;
+        self.goals = goals;
+    }
+}
+
 //MARK: == FinderType ==
 public protocol FinderType {
     
-    //find path, return path from start to goal
-    mutating func find<S: FinderSourceType>(start: S.Point, goal: S.Point, source: S) -> [S.Point]
     
-    //find paths, return paths from start to goals
-    mutating func find<S: FinderSourceType>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]]
+    //delegate type
+    typealias Delegate: FinderDelegateType;
+//
+//    //explore point
+//    func explore<S: FinderSourceType>(point: Self.Delegate.Element.Point, parent: Self.Delegate.Element, source: S, inout delegate: Self.Delegate)
+//    
+//    //find path, return path from start to goal
+////    mutating func find(start: Self.Delegate.Element., goal: S.Point, source: S) -> [S.Point]
+////
+////    //find paths, return paths from start to goals
+////    mutating func find<S: FinderSourceType>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]]
 }
 
-//MARK: == FinderRequest ==
-public struct FinderRequest<P: Hashable> {
-    //origin
-    private var origin: P;
-    
-    //goals
-    private var goals: [P];
-    
-    //goal
-    private var goal: P?
-    
-    //single goal
-    init(origin: P, goal: P)
-    {
-        self.origin = origin;
-        self.goal = goal;
-        self.goals = [goal];
-    }
-    
-    //multi goal
-    init(origin: P, goals: [P]){
-        self.origin = origin;
-        self.goals = goals;
-        guard goals.count > 1 else {return;}
-        self.goal = goals[0];
-    }
-    
-    //multi goal
-    init(origin: P, goals: P...) {
-        self.init(origin: origin, goals: goals);
-    }
-    
-    //find goal
-    public mutating func findGoal(point: P) -> Bool? {
-        guard let g = self.goal else {
-            guard let i = self.goals.indexOf(point) else {return nil;}
-            self.goals.removeAtIndex(i);
-            return self.goals.isEmpty;
-        }
-        guard point == g else {return nil;}
-        return true;
-    }
-    
-    //for each goal
-    public func forEachGoal(@noescape callback: (P) -> ()) {
-        guard let g = self.goal else {
-            self.goals.forEach{
-                callback($0);
-            }
-            return;
-        }
-        callback(g);
-    }
-}
 
+
+////MARK: == FinderDelegateType ==
+//public protocol FinderDelegateType {
+//    //queue type
+//    typealias Element: FinderElementType;
+//    
+//    //is termination
+//    var isTermination: Bool{get}
+//    
+//    //find goal
+//    mutating func findGoal(point: Self.Element.Point) -> Bool
+//    
+//    //explore point
+//    @warn_unused_result
+//    func explore<S: FinderSourceType where S.Point == Self.Element.Point>(point: S.Point, ofParent: Self.Element, source: S) -> Self.Element
+//}
+//extension FinderDelegateType {
+//    
+//    //element type
+//    typealias E = Self.Element;
+//    
+//    //point type
+//    typealias P = Self.Element.Point;
+//    
+////    //execute
+////    mutating func execute<S: FinderSourceType, Q: FinderQueueType where S.Point == P, Q.Element == E>(origin: E, var goals: [P], inout queue: Q, source: S, findPath: ([P]) -> ()) {
+////        var _isComplete = goals.isEmpty;
+////        var _findGoal: (P) -> Bool;
+////        var _forEachGoal: ((P) -> ()) -> ();
+////        
+////        if goals.count == 1 {
+////            let _goal = goals[0];
+////            _forEachGoal = { $0(_goal); }
+////            _findGoal = {
+////                guard $0 == _goal else{return false;}
+////                _isComplete = true;
+////                return true;
+////            }
+////        }
+////        else {
+////            _forEachGoal = {
+////                let fc = $0;
+////                goals.forEach{ fc($0); };
+////            };
+////            _findGoal = {
+////                guard let i = goals.indexOf($0) else {return false;}
+////                goals.removeAtIndex(i);
+////                _isComplete = goals.isEmpty;
+////                return true;
+////            }
+////        }
+////        
+////        queue.insert(origin);
+////        repeat{
+////            guard let current = queue.popBest() else {break;}
+////            let point = current.point;
+////            
+////            if _findGoal(point) {
+////                let path = queue.decompressPath(current);
+////                findPath(path);
+////                guard !_isComplete else {return;}
+////            }
+////            let neighbors = source.neighborsOf(point);
+////            neighbors.forEach{
+////                let p = $0;
+////                guard let visited = queue[p] else{
+////                    let ele: Q.Element = self.explore(p, ofParent: current, source: source, forEachGoal: _forEachGoal);
+////                    queue.insert(ele);
+////                    return;
+////                }
+////                guard let ele = self.explore(visited, ofParent: current, source: source) else {return;}
+////                queue.update(ele);
+////            }
+////        }while true
+////    }
+//}
+//
+//
+////MARK: == FinderType ==
+//public protocol FinderType {
+//    
+//    //find path, return path from start to goal
+//    mutating func find<S: FinderSourceType>(start: S.Point, goal: S.Point, source: S) -> [S.Point]
+//    
+//    //find paths, return paths from start to goals
+//    mutating func find<S: FinderSourceType>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]]
+//}
 
 
 
