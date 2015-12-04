@@ -69,20 +69,17 @@ public protocol FinderType {
     typealias Element: FinderElementType;
     
     //explore point
-    func explore<S: FinderSourceType, D: FinderDelegateType where D.Element == Self.Element, S.Point == D.Element.Point>(point: S.Point, parent: D.Element, source: S, inout delegate: D)
+    func explore<S: FinderSourceType, D: FinderDelegateType where D.Element == Element, S.Point == D.Element.Point>(point: S.Point, parent: Element, source: S, inout delegate: D)
 
     //find path, return path from start to goal
-    mutating func find<S: FinderSourceType where S.Point == Self.Element.Point>(start: S.Point, goal: S.Point, source: S) -> [S.Point]
+    mutating func find<S: FinderSourceType where S.Point == Element.Point>(start: S.Point, goal: S.Point, source: S) -> [S.Point]
 
     //find paths, return paths from start to goals
-    mutating func find<S: FinderSourceType where S.Point == Self.Element.Point>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]]
+    mutating func find<S: FinderSourceType where S.Point == Element.Point>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]]
 }
 extension FinderType{
-    //point type
-    typealias P = Self.Element.Point;
-    
     //execute
-    mutating public func execute<D: FinderDelegateType, S: FinderSourceType where D.Element == Self.Element, S.Point == P>(origin: P, source: S, inout delegate: D, @noescape _ isTerminal: (Self.Element) -> Bool) {
+    mutating public func execute<D: FinderDelegateType, S: FinderSourceType where D.Element == Self.Element, S.Point == Self.Element.Point>(origin: S.Point, source: S, inout delegate: D, @noescape _ isTerminal: (Self.Element) -> Bool) {
         let oe = Self.Element(point: origin);
         delegate.insert(oe);
         repeat{
@@ -98,15 +95,26 @@ extension FinderType{
 }
 
 
-////MARK: == AstarPathFinder ==
-//public struct AstarPathFinder<FD: FinderDelegateType>
-//{
+//MARK: == AstarPathFinder ==
+public struct AstarPathFinder<FD: FinderDelegateType>
+{
 //    var heristics: ((FD.Element.Point) -> CGFloat)!
-//}
-//extension AstarPathFinder: FinderType{
-//    
-//    public typealias Element = FD.Element;
-//    
+    public typealias Element = FD.Element;
+}
+extension AstarPathFinder: FinderType{
+    
+    public func explore<S : FinderSourceType, D : FinderDelegateType where D.Element == Element, S.Point == D.Element.Point>(point: S.Point, parent: Element, source: S, inout delegate: D) {
+        
+    }
+    
+    public func find<S : FinderSourceType where S.Point == Element.Point>(start: S.Point, goal: S.Point, source: S) -> [S.Point] {
+        return [];
+    }
+    
+    public func find<S : FinderSourceType where S.Point == Element.Point>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]] {
+        return [];
+    }
+    
 //    public func explore<S : FinderSourceType, D : FinderDelegateType where D.Element == FD.Element, S.Point == D.Element.Point>(point: S.Point, parent: D.Element, source: S, inout delegate: D) {
 ////        let h = self.heristics(point);
 //////        let g = parent.g + source.costOf(parent.point, point);
@@ -118,39 +126,41 @@ extension FinderType{
 ////        element.setParent(p, g: g);
 ////        return element;
 //    }
-//    
+    
 //    mutating public func find<S : FinderSourceType where S.Point == AstarPathFinder.Element.Point>(start: S.Point, goal: S.Point, source: S) -> [S.Point] {
-//        self.heristics = {
-//            source.heuristicOf($0, goal);
-//        }
-//        
-//        var path:[S.Point]?;
-//        var delegate = FD();
-//        self.execute(start, source: source, delegate: &delegate){
-//            let ele = $0;
-//            guard ele.point == goal else {return false;}
-//            path = delegate.decompressPath(ele);
-//            return true;
-//        }
-//        
-//        return path ?? [];
+////        self.heristics = {
+////            source.heuristicOf($0, goal);
+////        }
+////        
+////        var path:[S.Point]?;
+////        var delegate = FD();
+////        self.execute(start, source: source, delegate: &delegate){
+////            let ele = $0;
+////            guard ele.point == goal else {return false;}
+////            path = delegate.decompressPath(ele);
+////            return true;
+////        }
+////        
+////        return path ?? [];
+//        return [];
 //    }
 //    
 //    mutating public func find<S : FinderSourceType where S.Point == AstarPathFinder.Element.Point>(start: S.Point, goals: [S.Point], source: S) -> [[S.Point]] {
-//        self.heristics = {
-//            source.heuristicOf($0, goals[0]);
-//        }
-//        
-//        var paths:[[S.Point]] = [];
-//        var delegate = FD();
-//        self.execute(start, source: source, delegate: &delegate){
-//            let ele = $0;
-//            guard ele.point == goals[0] else {return false;}
-//            let path = delegate.decompressPath(ele);
-//            paths.append(path);
-//            return true;
-//        }
-//        
-//        return paths;
+////        self.heristics = {
+////            source.heuristicOf($0, goals[0]);
+////        }
+////        
+////        var paths:[[S.Point]] = [];
+////        var delegate = FD();
+////        self.execute(start, source: source, delegate: &delegate){
+////            let ele = $0;
+////            guard ele.point == goals[0] else {return false;}
+////            let path = delegate.decompressPath(ele);
+////            paths.append(path);
+////            return true;
+////        }
+////        
+////        return paths;
+//        return [];
 //    }
-//}
+}
