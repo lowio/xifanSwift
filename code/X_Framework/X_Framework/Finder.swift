@@ -76,10 +76,10 @@ public protocol FinderType {
     ///otherwise return nil
     func exploreVisited(element: Element, parent: Element, cost: CGFloat) -> Element?
     
-    ///find
+    ///find goal
     mutating func find<Source: FinderSourceType where Source.Point == Element.Point>
         (form point: Element.Point, to goal: Element.Point, source: Source) -> [Element.Point]
-    ///find
+    ///find goals
     mutating func find<Source: FinderSourceType where Source.Point == Element.Point>
         (form point: Element.Point, to goals: [Element.Point], source: Source) -> [[Element.Point]]
 }
