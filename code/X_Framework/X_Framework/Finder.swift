@@ -16,8 +16,23 @@ public protocol FinderElementType {
     //point
     var point: Point {get}
     
+    //parent point
+    var parentPoint: Point? {get}
+    
     //is closed
     var isClosed: Bool{get set}
+    
+    //g
+    var g: Int{get}
+    
+    //h
+    var h: Int{get}
+    
+    //f
+    var f: Int{get}
+    
+    //set parent
+    mutating func setParent(g: Int, parentPoint: Point)
 }
 
 //MARK: == FinderSourceType ==
@@ -113,8 +128,46 @@ extension FinderType {
             return buffer;
     }
 }
+/*
+next :
+CGFloat int,
+tile break out(diagonal = false),
+check neighbor passable
+multi start & multi goal
+....
+**/
 
 
 
-
+////MARK: == FinderElement ==
+//public struct FinderElement<T: Hashable>
+//{
+//    //'self' is closed default false
+//    public var isClosed:Bool = false;
+//
+//    //g, h;
+//    public private (set) var g, h, f: CGFloat;
+//
+//    //position
+//    public private (set) var point: T;
+//
+//    //parent
+//    public private(set) var parent: PathFinderChainable?
+//}
+//extension FinderElement: FinderElementType
+//{
+//    public init(g: CGFloat, h: CGFloat, position: T, parent: PathFinderChainable?) {
+//        self.g = g;
+//        self.h = h;
+//        self.f = g + h;
+//        self.position = position;
+//        self.parent = parent;
+//    }
+//
+//    public mutating func setParent(parent: PathFinderChainable, g: CGFloat) {
+//        self.g = g;
+//        self.f = self.g + self.h;
+//        self.parent = parent;
+//    }
+//}
 
