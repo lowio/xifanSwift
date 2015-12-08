@@ -11,42 +11,30 @@ import Foundation
 //MARK: == FinderElementType ==
 public protocol FinderElementType {
     //point type
-    typealias Point: Hashable;
+    typealias Point;
+    
+    //is closed
+    var isClosed: Bool{get set}
     
     //point
     var point: Point {get}
     
     //parent point
     var parentPoint: Point? {get}
-    
-    //is closed
-    var isClosed: Bool{get set}
-    
-    //g
-    var g: Int{get}
-    
-    //h
-    var h: Int{get}
-    
-    //f
-    var f: Int{get}
-    
-    //set parent
-    mutating func setParent(g: Int, parentPoint: Point)
 }
 
 //MARK: == FinderSourceType ==
 public protocol FinderSourceType {
     
     //point type
-    typealias Point: Hashable;
+    typealias Point;
     
     //return neighbors of point
     func neighborsOf(point: Point) -> [Point];
     
-    ///return cost from f point to t point if it validate
+    ///return cost from f point to t point if it is passable
     ///otherwise return nil
-    func getCost(from f: Point, to t: Point) -> CGFloat?
+    func getCost(from f: Point, to t: Point) -> Int?
 }
 
 //MARK: == FinderBufferType ==
@@ -84,12 +72,12 @@ public protocol FinderType {
     
     ///explore point
     ///return element at point
-    func explorePoint(point: Element.Point, cost: CGFloat, parent: Element?) -> Element
+    func explorePoint(point: Element.Point, cost: Int, parent: Element?) -> Element
     
     ///explore visited element
     ///return element if need update
     ///otherwise return nil
-    func exploreVisited(element: Element, parent: Element, cost: CGFloat) -> Element?
+    func exploreVisited(element: Element, parent: Element, cost: Int) -> Element?
     
     ///find goal
     mutating func find<Source: FinderSourceType where Source.Point == Element.Point>
