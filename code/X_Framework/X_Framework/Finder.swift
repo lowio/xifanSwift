@@ -33,7 +33,7 @@ public protocol FinderElementType {
 public protocol FinderDataSourceType {
     
     //point type
-    typealias Point;
+    typealias Point: Hashable;
     
     //return neighbors of point
     func neighborsOf(point: Point) -> [Point];
@@ -41,16 +41,6 @@ public protocol FinderDataSourceType {
     ///return cost from f point to t point if it is passable
     ///otherwise return nil
     func getCost(from f: Point, to t: Point) -> Int?
-}
-
-//MARK: == FinderElementBuilding ==
-public protocol FinderElementBuilding {
-    
-    ///element type
-    typealias Element: FinderElementType;
-    
-    ///build element
-    func buildElement(cost c: Int, from parent: Element?, to point: Element.Point, inVisited: Element?) -> Element?
 }
 
 //MARK: == _FinderDelegateType ==
@@ -75,90 +65,37 @@ public protocol _FinderDelegateType:GeneratorType {
     ///return visited element at point
     subscript(point: Element.Point) -> Element?{get}
     
-    ///return track array
-    func backtrace(element: Element) -> [Element.Point]
-    
     ///trace visited record
     func backtraceRecord() -> [Element]
 }
 
-//MARK: == _FinderProcessorType ==
-public protocol _FinderProcessorType {
-    //source type
+//MARK: == FinderType ==
+public protocol FinderType{
+    //source
     typealias Source: FinderDataSourceType;
     
-    //delegate type
-    typealias Delegate: _FinderDelegateType;
+    ///element type
+    typealias Element: FinderElementType;
     
-    //finder type
-    typealias Building: FinderElementBuilding;
+    ///build element
+    func buildElement(cost c: Int, from parent: Element?, to point: Element.Point, inVisited: Element?) -> Element?
+    
+    //find
+    mutating func find(from f: Source.Point, to t: Source.Point, source: Source) -> [Source.Point]?
 }
-extension _FinderProcessorType
-where
-Self.Source.Point == Self.Building.Element.Point,
-Self.Delegate.Element == Self.Building.Element {
+
+//MARK: == FinderMultiType ==
+public protocol FinderMultiType: FinderType{
+    //find
+    mutating func find(from points: [Source.Point], to t: Source.Point, source: Source) -> [Source.Point: [Source.Point]]
+}
+
+//MARK: == FinderHeuristicType ==
+public protocol FinderHeuristicType{
+    typealias Point: Hashable;
     
-    //point type
-    typealias Point = Building.Element.Point;
-    
-    ///Return track array from origin to goal
-    @warn_unused_result
-    static public func execute(from origin: Point, to goal: Point, delegate: Delegate, builder: Building, source: Source) -> [Point: [Point]]{
-        return Self.execute(delegate, origin: origin, builder: builder, source: source){
-            guard $0 == goal else {return nil;}
-            return true;
-        };
-    }
-    
-    ///Return track dictionary from origin to goals
-    @warn_unused_result
-    static public func execute(inout from points: [Point], to goal: Point, delegate: Delegate, builder: Building, source: Source) -> [Point: [Point]]{
-        guard points.count > 1 else{
-            return Self.execute(from: goal, to: points[0], delegate: delegate, builder: builder, source: source)
-        }
-        
-        return Self.execute(delegate, origin: goal, builder: builder, source: source){
-            guard let i = points.indexOf($0) else {return nil;}
-            points.removeAtIndex(i);
-            return points.isEmpty;
-        };
-    }
-    
-    ///Return track dictionary
-    /// - Requires: isTerminal return nil if $0 is not a goal, otherwise if all goal was found return ture else return false
-    @warn_unused_result
-    static public func execute(var delegate: Delegate, origin: Point, builder: Building, source: Source,
-        @noescape _ isTerminal: (Point) -> Bool?) -> [Point: [Point]] {
-        guard let origin = builder.buildElement(cost: 0, from: .None, to: origin, inVisited: .None) else {return [:];}
-        delegate.insert(origin);
-        var paths:[Point: [Point]] = [:];
-        repeat{
-            guard var element = delegate.next() else{break;}
-            element.isClosed = true;
-            delegate.updateNoReorder(element);
-            let point = element.point;
-            if let flag = isTerminal(point){
-                let path = delegate.backtrace(element);
-                paths[point] = path;
-                guard !flag else{break;}
-            }
-            let neighbors = source.neighborsOf(element.point);
-            neighbors.forEach{
-                let p = $0;
-                guard let cost = source.getCost(from: point, to: p) else {return;}
-                guard let visited = delegate[p] else{
-                    guard let ele = builder.buildElement(cost: cost, from: element, to: p, inVisited: .None) else{return;}
-                    delegate.insert(ele);
-                    return;
-                }
-                guard !visited.isClosed else {return;}
-                guard let ele = builder.buildElement(cost: cost, from: element, to: p, inVisited: visited)else{return;}
-                delegate.updateAndReorder(ele);
-                print("WARN: _FinderProcessorType.execute - delegate.reorder =================");
-            }
-        }while true
-        return paths;
-    }
+    //heristic h value
+    static func heuristic(from f: Point, to t: Point) -> Int
 }
 
 //MARK: == _FinderProcessor ==
@@ -169,13 +106,13 @@ public struct _FinderProcessor {
         Point,
         Source: FinderDataSourceType,
         Delegate: _FinderDelegateType,
-        Building: FinderElementBuilding
+        Finder: FinderType
         where
         Point == Source.Point,
-        Source.Point == Building.Element.Point,
-        Delegate.Element == Building.Element
-    >(from origin: Point, to goal: Point, delegate: Delegate, builder: Building, source: Source) -> [Point: [Point]]{
-        return _FinderProcessor.execute(delegate, origin: origin, builder: builder, source: source){
+        Source.Point == Finder.Element.Point,
+        Delegate.Element == Finder.Element
+    >(from origin: Point, to goal: Point, delegate: Delegate, finder: Finder, source: Source) -> [Point: [Point]]{
+        return self.execute(delegate, origin: origin, finder: finder, source: source){
             guard $0 == goal else {return nil;}
             return true;
         };
@@ -187,17 +124,17 @@ public struct _FinderProcessor {
         Point,
         Source: FinderDataSourceType,
         Delegate: _FinderDelegateType,
-        Building: FinderElementBuilding
+        Finder: FinderType
         where
         Point == Source.Point,
-        Source.Point == Building.Element.Point,
-        Delegate.Element == Building.Element
-    >(inout from points: [Point], to goal: Point, delegate: Delegate, builder: Building, source: Source) -> [Point: [Point]]{
+        Source.Point == Finder.Element.Point,
+        Delegate.Element == Finder.Element
+    >(inout from points: [Point], to goal: Point, delegate: Delegate, finder: Finder, source: Source) -> [Point: [Point]]{
         guard points.count > 1 else{
-            return _FinderProcessor.execute(from: goal, to: points[0], delegate: delegate, builder: builder, source: source)
+            return self.execute(from: goal, to: points[0], delegate: delegate, finder: finder, source: source)
         }
         
-        return _FinderProcessor.execute(delegate, origin: goal, builder: builder, source: source){
+        return _FinderProcessor.execute(delegate, origin: goal, finder: finder, source: source){
             guard let i = points.indexOf($0) else {return nil;}
             points.removeAtIndex(i);
             return points.isEmpty;
@@ -211,14 +148,14 @@ public struct _FinderProcessor {
         Point,
         Source: FinderDataSourceType,
         Delegate: _FinderDelegateType,
-        Building: FinderElementBuilding
+        Finder: FinderType
         where
         Point == Source.Point,
-        Source.Point == Building.Element.Point,
-        Delegate.Element == Building.Element
-    >(var delegate: Delegate, origin: Point, builder: Building, source: Source,
+        Source.Point == Finder.Element.Point,
+        Delegate.Element == Finder.Element
+    >(var delegate: Delegate, origin: Point, finder: Finder, source: Source,
         @noescape _ isTerminal: (Point) -> Bool?) -> [Point: [Point]] {
-            guard let origin = builder.buildElement(cost: 0, from: .None, to: origin, inVisited: .None) else {return [:];}
+            guard let origin = finder.buildElement(cost: 0, from: .None, to: origin, inVisited: .None) else {return [:];}
             delegate.insert(origin);
             var paths:[Point: [Point]] = [:];
             repeat{
@@ -227,7 +164,7 @@ public struct _FinderProcessor {
                 delegate.updateNoReorder(element);
                 let point = element.point;
                 if let flag = isTerminal(point){
-                    let path = delegate.backtrace(element);
+                    let path = self.backtrace(element);
                     paths[point] = path;
                     guard !flag else{break;}
                 }
@@ -236,17 +173,29 @@ public struct _FinderProcessor {
                     let p = $0;
                     guard let cost = source.getCost(from: point, to: p) else {return;}
                     guard let visited = delegate[p] else{
-                        guard let ele = builder.buildElement(cost: cost, from: element, to: p, inVisited: .None) else{return;}
+                        guard let ele = finder.buildElement(cost: cost, from: element, to: p, inVisited: .None) else{return;}
                         delegate.insert(ele);
                         return;
                     }
                     guard !visited.isClosed else {return;}
-                    guard let ele = builder.buildElement(cost: cost, from: element, to: p, inVisited: visited)else{return;}
+                    guard let ele = finder.buildElement(cost: cost, from: element, to: p, inVisited: visited)else{return;}
                     delegate.updateAndReorder(ele);
                     print("WARN: _FinderProcessorType.execute - delegate.reorder =================");
                 }
             }while true
             return paths;
+    }
+    
+    ///return track array
+    static public func backtrace<Element: FinderElementType>(element: Element) -> [Element.Point]{
+        var ele = element;
+        var path = [ele.point];
+        repeat{
+            guard let p = ele.parent as? Element else {break;}
+            ele = p;
+            path.append(ele.point);
+        }while true
+        return path;
     }
 }
 
@@ -299,18 +248,6 @@ extension FinderDelegate: _FinderDelegateType{
         return self.openList.popBest();
     }
     
-    ///return track array
-    func backtrace(element: Element) -> [Element.Point]{
-        var ele = element;
-        var path = [ele.point];
-        repeat{
-            guard let p = ele.parent as? Element else {break;}
-            ele = p;
-            path.append(ele.point);
-        }while true
-        return path;
-    }
-    
     ///trace visited record
     func backtraceRecord() -> [Element]{
         return self.visiteList.values.reverse();
@@ -347,23 +284,12 @@ extension FinderElement: FinderElementType {
     }
 }
 
-
-public protocol FinderHeuristicType{
-    typealias Point: Hashable;
-    
-    //heristic h value
-    static func heuristic(from f: Point, to t: Point) -> Int
-}
-
 //MARK: == GreedyBestFinder ==
 public struct GreedyBestFinder<S: FinderDataSourceType, H: FinderHeuristicType where S.Point == H.Point>{
-    //delegate
-    private var delegate: FinderDelegate<Element>!;
-    
     //get h
     private var getH: ((S.Point) -> Int)!
 }
-extension GreedyBestFinder: FinderElementBuilding{
+extension GreedyBestFinder: FinderType{
     //element type
     public typealias Element = FinderElement<S.Point>;
     
@@ -379,17 +305,122 @@ extension GreedyBestFinder: FinderElementBuilding{
         return .None;
     }
     
-    
-    public mutating func find(start: S.Point, goal: S.Point, source: S) -> [S.Point]?{
+    //find
+    public mutating func find(from f: S.Point, to t: S.Point, source: S) -> [S.Point]? {
         self.getH = {
-            return H.heuristic(from: $0, to: goal);
+            return H.heuristic(from: $0, to: t);
         }
         let delegate = FinderDelegate<Element>();
-        let path = _FinderProcessor.execute(from: start, to: goal, delegate: delegate, builder: self, source: source);
-        return path[goal];
+        let path = _FinderProcessor.execute(from: f, to: t, delegate: delegate, finder: self, source: source);
+        return path[t];
     }
-
 }
+
+
+//MARK: == DijkstraPathFinder ==
+public struct DijkstraPathFinder<S: FinderDataSourceType, H: FinderHeuristicType where S.Point == H.Point>{}
+extension DijkstraPathFinder: FinderMultiType{
+    //element type
+    public typealias Element = FinderElement<S.Point>;
+    
+    public func buildElement(cost c: Int, from parent: Element?, to point: Element.Point, inVisited: Element?) -> Element? {
+        guard let p = parent else{
+            return Element(point: point, f: 0, parent: .None);
+        }
+        
+        let g = p.f + c;
+        guard var visited = inVisited else {
+            return Element(point: point, f: g, parent: p);
+        }
+        guard !visited.isClosed && g < visited.f else {return .None;}
+        visited.update(g, parent: p);
+        return visited;
+    }
+    
+    //find
+    public func find(from f: S.Point, to t: S.Point, source: S) -> [S.Point]? {
+        let delegate = FinderDelegate<Element>();
+        let path = _FinderProcessor.execute(from: f, to: t, delegate: delegate, finder: self, source: source);
+        return path[t];
+    }
+    
+    //find
+    public func find(from points: [S.Point], to t: S.Point, source: S) -> [S.Point : [S.Point]] {
+        let delegate = FinderDelegate<Element>();
+        var ps = points;
+        return _FinderProcessor.execute(from: &ps, to: t, delegate: delegate, finder: self, source: source);
+    }
+}
+//
+////MARK: == PFinderQueue ==
+//public struct PFinderQueue<T: Hashable>{
+//
+//    public typealias Element = PathFinderElement<T>
+//
+//    //open list
+//    private(set) var openList: [Element];
+//
+//    //visite list
+//    private(set) var visiteList: [T: Element];
+//
+//    //current index
+//    private var currentIndex: Int = 0;
+//
+//    init(){
+//        self.openList = [];
+//        self.visiteList = [:];
+//        self.currentIndex = 0;
+//    }
+//}
+//extension PFinderQueue: PathFinderQueueType{
+//    //insert element and set element visited
+//    mutating public func insert(element: Element){
+//        self.openList.append(element);
+//        self.visiteList[element.position] = element;
+//    }
+//
+//    //pop best element and set element closed
+//    mutating public func popBest() -> Element?{
+//        guard currentIndex < self.openList.count else{return nil;}
+//        let element = self.openList[self.currentIndex++];
+//        return element;
+//    }
+//
+//    //return visited element at position
+//    public subscript(position: T) -> Element? {
+//        return self.visiteList[position];
+//    }
+//
+//    //return all visited element
+//    public func allVisitedList() -> [Element] {
+//        return self.visiteList.values.reverse()
+//    }
+//
+//    mutating public func update(element: Element){
+//        //do nothing
+//    }
+//}
+//
+////MARK: == BreadthBestPathFinder ==
+//public struct BreadthBestPathFinder<Request: PathFinderRequestType>{}
+//extension BreadthBestPathFinder: PathFinderType{
+//    //queue type
+//    public typealias Queue = PFinderQueue<Request.Position>;
+//
+//    //create queue
+//    public func queueGenerate() -> Queue {
+//        return Queue.init();
+//    }
+//
+//    //search position
+//    public func searchPosition(position: Request.Position, _ parent: Queue.Element?, _ visited: Queue.Element?, _ request: Request) -> Queue.Element? {
+//        guard let _ = visited else {
+//            return Queue.Element(g: 0, h: 0, position: position, parent: parent as? PathFinderChainable);
+//        }
+//        return nil;
+//    }
+//}
+
 /*
 next :
 CGFloat int,
