@@ -54,8 +54,8 @@ class X_FrameworkTests: XCTestCase {
 }
 
 
-
-
-
-
-
+struct S {
+    static func test(inout a: [Int], _ i: Int){
+        a.append(i);
+    }
+}
