@@ -1,5 +1,5 @@
 //
-//  PathFinder2DImpl.swift
+//  Finder2DImpl.swift
 //  X_Framework
 //
 //  Created by xifanGame on 15/11/10.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-//MARK: == PFPosition2D ==
-public struct PFPosition2D: Hashable
+//MARK: == FinderPoint2D ==
+public struct FinderPoint2D: Hashable
 {
     //x, y
     var x, y: Int;
@@ -24,17 +24,17 @@ public struct PFPosition2D: Hashable
     
     public var hashValue: Int{return self._hashValue;}
 }
-public func ==(lsh: PFPosition2D, rsh: PFPosition2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
+public func ==(lsh: FinderPoint2D, rsh: FinderPoint2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
 
 
-//MARK: == PFinderHuristic2D ==
-public enum PFinderHuristic2D {
+//MARK: == FinderHeuristic2D ==
+public enum FinderHeuristic2D: FinderHeuristicType {
     case Manhattan, Euclidean, Octile, Chebyshev, None
 }
-extension PFinderHuristic2D {
-    public func heuristicOf(position: PFPosition2D, _ toPosition: PFPosition2D) -> CGFloat {
-        let dx = CGFloat(abs(position.x - toPosition.x));
-        let dy = CGFloat(abs(position.y - toPosition.y));
+extension FinderHeuristic2D {
+    public func heuristicOf(from f: FinderPoint2D, to t: FinderPoint2D) -> CGFloat {
+        let dx = CGFloat(abs(f.x - t.x));
+        let dy = CGFloat(abs(f.y - t.y));
         switch self{
         case .Manhattan:
             return dx + dy;
@@ -51,11 +51,11 @@ extension PFinderHuristic2D {
     }
 }
 
-//MARK: == PFinderPassMode2D ==
-public enum PFinderPassMode2D{
+//MARK: == FinderMode2D ==
+public enum FinderMode2D{
     case Straight, Diagonal
 }
-extension PFinderPassMode2D{
+extension FinderMode2D{
     
     //return neighbors
     public func neighborsOffset() -> [(Int, Int)]{
