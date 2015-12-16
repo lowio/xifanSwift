@@ -44,13 +44,13 @@ public protocol FinderDataSourceType {
 public protocol FinderDelegateType: GeneratorType{
     
     ///element type
-    typealias Point;
+    typealias Point: Hashable;
     
     ///back trace points
     func backtrace(element: Element) -> [Point]
     
-    ///back trace explored record
-    func backtraceRecord() -> [Element]
+    ///back trace explored record; return [point: came from point]
+    func backtraceRecord() -> [Point: Point]
     
     ///return point of element
     func pointOf(element: Element) -> Point
@@ -180,10 +180,7 @@ public protocol FinderHeuristicType{
 
 /*
 next :
-CGFloat int,
-tile break out(diagonal = false),
-check neighbor passable
-multi start & multi goal
+tile break out(diagonal = false)
 ....
 **/
 

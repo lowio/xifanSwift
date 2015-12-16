@@ -51,11 +51,11 @@ extension FinderHeuristic2D {
     }
 }
 
-//MARK: == FinderMode2D ==
-public enum FinderMode2D{
+//MARK: == FinderModel2D ==
+public enum FinderModel2D{
     case Straight, Diagonal
 }
-extension FinderMode2D{
+extension FinderModel2D{
     
     //return neighbors
     public func neighborsOffset() -> [(Int, Int)]{

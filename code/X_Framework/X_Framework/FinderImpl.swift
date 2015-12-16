@@ -21,6 +21,8 @@ public struct BreadthBestPathFinder<S: FinderDataSourceType>{
 
     //current index
     private var currentIndex: Int = 0;
+    
+    private var origin: S.Point?
 
     //init
     public init(source: S){
@@ -48,9 +50,9 @@ extension BreadthBestPathFinder: FinderMultiType, FinderDelegateType {
         return result;
     }
     
-    ///back trace explored record
-    public func backtraceRecord() -> [S.Point]{
-        return self.visiteList.keys.reverse();
+    ///back trace explored record; return [point: came from point]
+    public func backtraceRecord() -> [S.Point: S.Point]{
+        return self.visiteList;
     }
 
     ///return next element
@@ -62,7 +64,7 @@ extension BreadthBestPathFinder: FinderMultiType, FinderDelegateType {
     ///explore
     mutating public func explore(point: S.Point, from parent: S.Point?) {
         if let p = parent{
-            guard self.visiteList[point] == .None else {return;}
+            guard self.visiteList[point] == .None && point != origin else {return;}
             guard let _ = self.source.getCost(from: p, to: point) else {return;}
         }
         self.openList.append(point);
@@ -71,22 +73,23 @@ extension BreadthBestPathFinder: FinderMultiType, FinderDelegateType {
 
     ///find execute, return result from point to point
     mutating public func find(from f: S.Point, to t: S.Point) -> [S.Point] {
-        self.reset();
+        self.reset(f);
         return self.execute(f, target: t);
     }
 
     ///find result from f to t
     mutating public func find(from points: [S.Point], to point: S.Point) -> [S.Point: [S.Point]] {
-        self.reset();
+        self.reset(point);
         var targets = points;
         return self.execute(point, targets: &targets);
     }
 
     ///reset
-    mutating private func reset(){
+    mutating private func reset(o: S.Point){
         self.openList = [];
         self.visiteList = [:];
         self.currentIndex = 0;
+        self.origin = o;
     }
 }
 
@@ -161,11 +164,6 @@ extension FinderGenerator {
     public subscript(point: E.Point) -> E? {
         return self.visiteList[point];
     }
-    
-    ///trace visited record
-    public func backtraceRecord() -> [E]{
-        return self.visiteList.values.reverse();
-    }
 }
 extension FinderGenerator: GeneratorType{
     
@@ -204,9 +202,14 @@ extension GreedyBestFinder: FinderType, FinderDelegateType{
     ///element type
     public typealias Element = FinderElement<S.Point>;
     
-    ///backtrace record
-    public func backtraceRecord() -> [Element] {
-        return self.generator.backtraceRecord();
+    ///back trace explored record; return [point: came from point]
+    public func backtraceRecord() -> [S.Point: S.Point] {
+        var d: [S.Point: S.Point] = [:];
+        self.generator.visiteList.forEach{
+            guard let parent = $1.parent as? Element else{return;}
+            d[$0] = parent.point;
+        }
+        return d;
     }
     
     ///return next element
@@ -255,9 +258,14 @@ extension DijkstraPathFinder: FinderMultiType, FinderDelegateType{
     ///element type
     public typealias Element = FinderElement<S.Point>;
     
-    ///backtrace record
-    public func backtraceRecord() -> [Element] {
-        return self.generator.backtraceRecord();
+    ///back trace explored record; return [point: came from point]
+    public func backtraceRecord() -> [S.Point: S.Point] {
+        var d: [S.Point: S.Point] = [:];
+        self.generator.visiteList.forEach{
+            guard let parent = $1.parent as? Element else{return;}
+            d[$0] = parent.point;
+        }
+        return d;
     }
     
     ///return next element
@@ -370,9 +378,14 @@ extension AstarFinder: FinderType, FinderDelegateType{
     ///element type
     public typealias Element = FinderAstarElement<S.Point>;
     
-    ///backtrace record
-    public func backtraceRecord() -> [Element] {
-        return self.generator.backtraceRecord();
+    ///back trace explored record; return [point: came from point]
+    public func backtraceRecord() -> [S.Point: S.Point] {
+        var d: [S.Point: S.Point] = [:];
+        self.generator.visiteList.forEach{
+            guard let parent = $1.parent as? Element else{return;}
+            d[$0] = parent.point;
+        }
+        return d;
     }
     
     ///return next element

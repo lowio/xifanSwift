@@ -9,135 +9,98 @@
 import UIKit
 @testable import X_Framework;
 
-private var isSingle: Bool = false;
 
-//typealias PF = BreadthBestPathFinder<TestMap>
-//typealias PF = DijkstraPathFinder<TestMap>
-//typealias PF = GreedyBestPathFinder<TestMap>
-//typealias PF = AstarPathFinder<TestMap>
+typealias PF2 = BreadthBestPathFinder<TestFinderDataSource>
+//typealias PF2 = DijkstraPathFinder<TestFinderDataSource>
+//typealias PF = GreedyBestFinder<TestFinderDataSource, FinderHeuristic2D>
+typealias PF = AstarFinder<TestFinderDataSource, FinderHeuristic2D>
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true) {
-//    let finder = PF();
-//    
-//    let size = 35;
-//    var conf = Array2D(columns: size, rows: size, repeatValue: 1);
-//    conf[0,0] = 0;
-//    
-//    let h = PFinderHuristic2D.Euclidean;
-//    let m: PFinderPassMode2D = isDiagnal ? .Diagonal : .Straight;
-//    
-//    let start = PFPosition2D(x: 17, y: 17);
-//    let goals = [PFPosition2D(x: 7, y: 7), PFPosition2D(x: 7, y: 27), PFPosition2D(x: 27, y: 27), PFPosition2D(x: 27, y: 7)];
-//    var map = TestMap(goals: goals, heristic: h, passMode: m, conf);
-//    map.origin = start;
-//    
-//    var visited:[PF.Element]?;
-//    var vsitation: (([PF.Element]) -> ())?
-//    if markVisited{
-//        vsitation = {visited = $0;}
-//    }
-//    var mp = Array2D(columns: size, rows: size, repeatValue: "✅");
-//    
-//    var path: [[PFPosition2D]] = [];
-//    finder.execute(request: map, findPath: {
-//        path.append($0);
-//    }, vsitation);
-//    
-//    
-//    guard markPath else {return;}
-//    
-//    
-//    if let v = visited{
-//        for e in v{
-//            let p = e.position;
-//            guard let pp = (e.parent as? PF.Element)?.position else{continue;}
-//            let arrow = TestArrow.getArrow(p.x, y1: p.y, x2: pp.x, y2: pp.y).description;
-//            mp[p.x, p.y] = arrow;
-//        }
-//    }
-//    
-//    for ps in path{
-//        for p in ps{
-//            let arrow = "📍";
-//            mp[p.x, p.y] = arrow;
-//        }
-//    }
-//    mp[start.x, start.y] = "🚹";
-//    for g in goals{
-//        mp[g.x , g.y] = "🚺";
-//    }
-//    print(mp);
-//    
-//    
-//    //    jump point search
-//    //    visited replace dictionary to index...
-//    //    diagoanl
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true, multiGoals: Bool = true) {
+    let size = 35;
+    let conf = Array2D(columns: size, rows: size, repeatValue: 1);
+
+    let h = FinderHeuristic2D.Euclidean;
+    let m: FinderModel2D = isDiagnal ? .Diagonal : .Straight;
+    
+
+    let start = FinderPoint2D(x: 17, y: 17);
+    let goals = [FinderPoint2D(x: 7, y: 7), FinderPoint2D(x: 7, y: 27), FinderPoint2D(x: 27, y: 27), FinderPoint2D(x: 27, y: 7)];
+    let goal = goals[0];
+    
+    let source = TestFinderDataSource(conf: conf, m);
+    var path: [FinderPoint2D: [FinderPoint2D]] = [:];
+    var visited: [FinderPoint2D: FinderPoint2D]
+    if multiGoals {
+        var finder = PF2(source: source);
+        path = finder.find(from: goals, to: start);
+        visited = finder.backtraceRecord();
+    }
+    else{
+        var finder = PF(source: source, heuristic: h);
+        path[goal] = finder.find(from: start, to: goal);
+        visited = finder.backtraceRecord();
+    }
+    
+    
+    guard markPath else {return;}
+    
+    var printMap = Array2D(columns: size, rows: size, repeatValue: "✅");
+    if markVisited{
+        visited.forEach{
+            let point = $0;
+            let parentpoint = $1;
+            let arrow = TestArrow.getArrow(point.x, y1: point.y, x2: parentpoint.x, y2: parentpoint.y).description;
+            printMap[point.x , point.y] = arrow;
+        }
+    }
+    
+    path.forEach{
+        let _ = $0
+        let ps = $1;
+        ps.forEach{
+            let p = $0;
+            let arrow = "📍";
+            printMap[p.x, p.y] = arrow;
+        }
+    }
+    printMap[start.x, start.y] = "🚹";
+    
+    for g in goals{
+        printMap[g.x , g.y] = "🚺";
+        guard multiGoals else{break;}
+    }
+    
+    print(printMap);
 }
 
 
-//struct TestMap{
-//    let config: Array2D<Int>;
-//    
-//    let heuristic: PFinderHuristic2D;
-//    
-//    let passMode: PFinderPassMode2D;
-//    
-//    var goals: [PFPosition2D];
-//    var goal: PFPosition2D;
-//    var isComplete: Bool = false;
-//    
-//    var origin: PFPosition2D?;
-//    
-//    
-//    init(goals: [PFPosition2D], heristic: PFinderHuristic2D, passMode: PFinderPassMode2D = .Straight, _ conf: Array2D<Int>){
-//        self.config = conf;
-//        self.goals = goals;
-//        self.goal = goals[0];
-//        self.heuristic = heristic;
-//        self.passMode = passMode;
-//    }
-//}
-//extension TestMap: PathFinderRequestType{
-//    //return neighbors(passable) of position
-//    func neighborsOf(position: PFPosition2D) -> [PFPosition2D]{
-//        var arr: [PFPosition2D] = [];
-//        let ns = passMode.neighborsOffset();
-//        ns.forEach{
-//            let op = $0;
-//            let x = op.0 + position.x;
-//            let y = op.1 + position.y;
-//            guard config.columns > x && x > -1 && y > -1 && config.rows > y else {return;}
-//            let cst = config [x, y];
-//            guard cst > 0 else {return;}
-//            arr.append(PFPosition2D(x: x, y: y));
-//        }
-//        return arr;
-//    }
-//    
-//    //return cost between position and toPosition
-//    func costOf(position: PFPosition2D, _ toPosition: PFPosition2D) -> CGFloat {
-//        return CGFloat(config[toPosition.x, toPosition.y]);
-//    }
-//    
-//    //return h value between position and toPosition
-//    func heuristicOf(position: PFPosition2D) -> CGFloat {
-//        let h = self.heuristic.heuristicOf(position, self.goal);
-//        return h;
-//    }
-//    
-//    mutating func findTarget(position: PFPosition2D) -> Bool {
-//        if isSingle{
-//            guard position == self.goal else{return false;}
-//            self.isComplete = true;
-//            return true;
-//        }
-//        else{
-//            guard let i = self.goals.indexOf(position) else {return false;}
-//            self.goals.removeAtIndex(i);
-//            if self.goals.isEmpty{
-//                self.isComplete = true;
-//            }
-//            return true;
-//        }
-//    }
-//}
+struct TestFinderDataSource{
+    let config: Array2D<Int>;
+    
+    let model: FinderModel2D;
+    
+    
+    init(conf: Array2D<Int>, _ model: FinderModel2D = .Straight){
+        self.config = conf;
+        self.model = model;
+    }
+}
+extension TestFinderDataSource: FinderDataSourceType{
+    
+    func neighborsOf(point: FinderPoint2D) -> [FinderPoint2D] {
+        var neighbors: [FinderPoint2D] = [];
+        let ns = model.neighborsOffset();
+        ns.forEach{
+            let op = $0;
+            let x = op.0 + point.x;
+            let y = op.1 + point.y;
+            guard config.columns > x && x > -1 && y > -1 && config.rows > y else {return;}
+            neighbors.append(FinderPoint2D(x: x, y: y));
+        }
+        return neighbors;
+    }
+    
+    func getCost(from f: FinderPoint2D, to t: FinderPoint2D) -> Int? {
+        return self.config[t.x, t.y];
+    }
+}
