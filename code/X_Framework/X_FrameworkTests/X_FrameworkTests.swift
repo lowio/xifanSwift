@@ -44,11 +44,11 @@ class X_FrameworkTests: XCTestCase {
         }
     }
     
-    private var testPerformance:Bool = false;
+    private var testPerformance:Bool = true;
     
     private func waitForTest()
     {
-        pathFinderTest();
+//        pathFinderTest();
 //        commonTest();
     }
 }

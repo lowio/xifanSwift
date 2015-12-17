@@ -8,6 +8,121 @@
 
 import Foundation
 
+//MARK: == PriorityQueueDelegateType ==
+public protocol PriorityQueueDelegateType{
+    
+    ///source type
+    typealias Source: MutableIndexable;
+    
+    ///branch size, 2,4,8....
+    var size: Source.Index.Distance{get}
+    
+    ///source data
+    var source: Source{get set}
+    
+    ///is ordered before
+    var isOrderedBefore: (Source._Element, Source._Element) -> Bool{get}
+    
+    ///return trunk index of index
+    func trunkIndexOf(index: Source.Index) -> Source.Index
+    
+    ///return branch index of index
+    func branchIndexOf(index: Source.Index) -> Source.Index
+    
+    ///shift up of index
+    mutating func shiftUp(ofIndex: Source.Index)
+    
+    ///shift down of index
+    mutating func shiftDown(ofIndex: Source.Index)
+    
+    ///replace element at index
+    mutating func replace(element: Source._Element, at index: Source.Index)
+    
+    ///build source
+    mutating func build(source: Source)
+}
+extension PriorityQueueDelegateType {
+    
+    ///shift up of index
+    mutating public func shiftUp(ofIndex: Source.Index) {
+        let shiftElement = source[ofIndex];
+        var shiftIndex = ofIndex;
+        let sIndex = source.startIndex;
+        
+        repeat{
+            let trunkIndex = self.trunkIndexOf(shiftIndex);
+            guard sIndex.distanceTo(trunkIndex) >= 0 else{break;}
+            let trunkElement = source[trunkIndex];
+            
+            guard isOrderedBefore(shiftElement, trunkElement) else {break;}
+            source[shiftIndex] = source[trunkIndex];
+            source[trunkIndex] = shiftElement;
+            shiftIndex = trunkIndex;
+        }while true
+    }
+    
+    ///shift down of index
+    mutating public func shiftDown(ofIndex: Source.Index) {
+        let shiftElement = source[ofIndex];
+        var trunkIndex = ofIndex;
+        let eIndex = source.endIndex;
+        
+        repeat{
+            var shiftIndex = trunkIndex;
+            var branchIndex = self.branchIndexOf(shiftIndex);
+            let bIndex = branchIndex;
+            
+            repeat{
+                guard bIndex.distanceTo(branchIndex) > 0 && branchIndex.distanceTo(eIndex) > 0 else {break;}
+                if isOrderedBefore(source[branchIndex], source[shiftIndex]) {
+                    shiftIndex = branchIndex
+                }
+                branchIndex++;
+            }while true
+            
+            guard shiftIndex != trunkIndex else{break;}
+            source[trunkIndex] = source[shiftIndex];
+            source[shiftIndex] = shiftElement;
+            trunkIndex = shiftIndex;
+        }while true;
+    }
+    
+    ///replace element at index
+    mutating public func replace(element: Source._Element, at index: Source.Index) {
+        let tindex = self.trunkIndexOf(index);
+        let telement = self.source[tindex];
+        self.isOrderedBefore(element, telement) ? self.shiftUp(index) : self.shiftDown(index);
+    }
+    
+    ///build source
+    mutating public func build(s: Source) {
+        self.source = s;
+        let sindex = self.source.startIndex;
+        let eindex = self.source.endIndex;
+        guard sindex.distanceTo(eindex) > 1 else {return;}
+        
+        let lastIndex = eindex.advancedBy(-1);
+        var index = self.trunkIndexOf(lastIndex);
+        while sindex.distanceTo(index) > 0{
+            self.shiftDown(index);
+            index = index.advancedBy(-1);
+        }
+    }
+}
+extension PriorityQueueDelegateType where Self.Source.Index == Int{
+    //return trunk index of index
+    public func trunkIndexOf(index: Int) -> Int {
+        return (index - 1) / self.size;
+    }
+    
+    //return branch index of index
+    public func branchIndexOf(index: Int) -> Int {
+        return index * self.size + 1;
+    }
+}
+
+
+
 //MARK: == PriorityQueueTreeIndex ==
 public protocol PriorityQueueTreeIndex {
     
