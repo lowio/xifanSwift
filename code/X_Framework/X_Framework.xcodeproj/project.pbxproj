@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B0F4D5B1BD7EDB900148AE7 /* PathFinderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */; };
+		1B0F4D5B1BD7EDB900148AE7 /* FinderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF3831BAAC12100BCCD5E /* FinderTest.swift */; };
 		65CCF3501BAAB3D800BCCD5E /* X_Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CCF34F1BAAB3D800BCCD5E /* X_Framework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65CCF3571BAAB3D800BCCD5E /* X_Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCF34C1BAAB3D800BCCD5E /* X_Framework.framework */; };
 		65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */; };
 		65CCF36F1BAAB61A00BCCD5E /* Collection2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF36A1BAAB61A00BCCD5E /* Collection2D.swift */; };
-		65CCF37C1BAAB71C00BCCD5E /* CommonTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF37B1BAAB71C00BCCD5E /* CommonTest.swift */; };
+		65CCF37C1BAAB71C00BCCD5E /* CollectionNDTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF37B1BAAB71C00BCCD5E /* CollectionNDTest.swift */; };
 		65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF37E1BAAB8A200BCCD5E /* TestUtils.swift */; };
 		65CCF3821BAABDD600BCCD5E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65CCF3811BAABDD600BCCD5E /* TopApps.json */; };
 		65F217631BDF11F70051E3F2 /* TestArrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F217621BDF11F70051E3F2 /* TestArrow.swift */; };
@@ -20,6 +20,7 @@
 		65F55E001C0EC51100EF26B7 /* Finder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F55DFF1C0EC51100EF26B7 /* Finder.swift */; };
 		65F61EED1C210D7100057507 /* FinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F61EEC1C210D7100057507 /* FinderImpl.swift */; };
 		65F69B481BD9CEA300850B10 /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F69B471BD9CEA300850B10 /* Temp.swift */; };
+		65F7E84A1C23E08C0045B7C8 /* PriorityQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */; };
 		65FC3B6B1BE0793900FF7EE9 /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,16 +42,17 @@
 		65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = X_FrameworkTests.swift; sourceTree = "<group>"; };
 		65CCF35D1BAAB3D800BCCD5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65CCF36A1BAAB61A00BCCD5E /* Collection2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection2D.swift; sourceTree = "<group>"; };
-		65CCF37B1BAAB71C00BCCD5E /* CommonTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonTest.swift; sourceTree = "<group>"; };
+		65CCF37B1BAAB71C00BCCD5E /* CollectionNDTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionNDTest.swift; sourceTree = "<group>"; };
 		65CCF37E1BAAB8A200BCCD5E /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		65CCF3811BAABDD600BCCD5E /* TopApps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TopApps.json; sourceTree = "<group>"; };
-		65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFinderTest.swift; sourceTree = "<group>"; };
+		65CCF3831BAAC12100BCCD5E /* FinderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinderTest.swift; sourceTree = "<group>"; };
 		65F217621BDF11F70051E3F2 /* TestArrow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestArrow.swift; sourceTree = "<group>"; };
 		65F37AE81BF1CE8C00D13BE3 /* Finder2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Finder2DImpl.swift; sourceTree = "<group>"; };
 		65F55DFF1C0EC51100EF26B7 /* Finder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Finder.swift; sourceTree = "<group>"; };
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65F61EEC1C210D7100057507 /* FinderImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinderImpl.swift; sourceTree = "<group>"; };
 		65F69B471BD9CEA300850B10 /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
+		65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueueTest.swift; sourceTree = "<group>"; };
 		65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,8 +165,9 @@
 		65EC226B1BB245EC00422FE3 /* testcase */ = {
 			isa = PBXGroup;
 			children = (
-				65CCF3831BAAC12100BCCD5E /* PathFinderTest.swift */,
-				65CCF37B1BAAB71C00BCCD5E /* CommonTest.swift */,
+				65CCF3831BAAC12100BCCD5E /* FinderTest.swift */,
+				65CCF37B1BAAB71C00BCCD5E /* CollectionNDTest.swift */,
+				65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */,
 			);
 			name = testcase;
 			sourceTree = "<group>";
@@ -290,10 +293,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B0F4D5B1BD7EDB900148AE7 /* PathFinderTest.swift in Sources */,
-				65CCF37C1BAAB71C00BCCD5E /* CommonTest.swift in Sources */,
+				1B0F4D5B1BD7EDB900148AE7 /* FinderTest.swift in Sources */,
+				65CCF37C1BAAB71C00BCCD5E /* CollectionNDTest.swift in Sources */,
 				65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */,
 				65F217631BDF11F70051E3F2 /* TestArrow.swift in Sources */,
+				65F7E84A1C23E08C0045B7C8 /* PriorityQueueTest.swift in Sources */,
 				65F69B481BD9CEA300850B10 /* Temp.swift in Sources */,
 				65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */,
 			);

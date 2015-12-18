@@ -133,14 +133,14 @@ public func <<P>(lsh: FinderElement<P>, rsh: FinderElement<P>) -> Bool{
 public struct FinderGenerator<E: FinderElementType where E: Comparable>{
     
     //open list
-    private(set) var openList: PriorityQueue<E>;
+    private(set) var openList: PriorityArray<E>;
     
     //visite list
     private(set) var visiteList: [E.Point: E];
     
     //init with single target and source
     public init(){
-        self.openList = PriorityQueue{
+        self.openList = PriorityArray{
             return $0 < $1
         }
         self.visiteList = [:];
@@ -156,7 +156,7 @@ extension FinderGenerator {
     ///update element
     mutating public func update(element: E) {
         guard let i = (self.openList.indexOf{$0 == element}) else {return;}
-        self.openList.replaceElement(element, atIndex: i);
+        self.openList.replace(element, at: i);
         self.visiteList[element.point] = element;
     }
     

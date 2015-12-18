@@ -24,10 +24,12 @@ public protocol PriorityQueueDelegateType{
     var isOrderedBefore: (Source._Element, Source._Element) -> Bool{get}
     
     ///return trunk index of index
-    func trunkIndexOf(index: Source.Index) -> Source.Index
+    ///if trunk index < source.startIndex return nil otherwise return trunk index
+    func trunkIndexOf(index: Source.Index) -> Source.Index?
     
     ///return branch index of index
-    func branchIndexOf(index: Source.Index) -> Source.Index
+    ///if branch index < source.endIndex return branch index otherwise return nil
+    func branchIndexOf(index: Source.Index) -> Source.Index?
     
     ///shift up of index
     mutating func shiftUp(ofIndex: Source.Index)
@@ -47,11 +49,9 @@ extension PriorityQueueDelegateType {
     mutating public func shiftUp(ofIndex: Source.Index) {
         let shiftElement = source[ofIndex];
         var shiftIndex = ofIndex;
-        let sIndex = source.startIndex;
         
         repeat{
-            let trunkIndex = self.trunkIndexOf(shiftIndex);
-            guard sIndex.distanceTo(trunkIndex) >= 0 else{break;}
+            guard let trunkIndex = trunkIndexOf(shiftIndex) else {break;}
             let trunkElement = source[trunkIndex];
             
             guard isOrderedBefore(shiftElement, trunkElement) else {break;}
@@ -66,18 +66,16 @@ extension PriorityQueueDelegateType {
         let shiftElement = source[ofIndex];
         var trunkIndex = ofIndex;
         let eIndex = source.endIndex;
-        
         repeat{
+            guard var branchIndex = branchIndexOf(trunkIndex) else {break;}
             var shiftIndex = trunkIndex;
-            var branchIndex = self.branchIndexOf(shiftIndex);
             let bIndex = branchIndex;
-            
             repeat{
-                guard bIndex.distanceTo(branchIndex) > 0 && branchIndex.distanceTo(eIndex) > 0 else {break;}
                 if isOrderedBefore(source[branchIndex], source[shiftIndex]) {
                     shiftIndex = branchIndex
                 }
-                branchIndex++;
+                branchIndex = branchIndex.successor();
+                if branchIndex == eIndex || bIndex.distanceTo(branchIndex) >= size {break;}
             }while true
             
             guard shiftIndex != trunkIndex else{break;}
@@ -89,61 +87,41 @@ extension PriorityQueueDelegateType {
     
     ///replace element at index
     mutating public func replace(element: Source._Element, at index: Source.Index) {
-        let tindex = self.trunkIndexOf(index);
-        let telement = self.source[tindex];
-        self.isOrderedBefore(element, telement) ? self.shiftUp(index) : self.shiftDown(index);
+        guard let tindex = trunkIndexOf(index)else{
+            self.shiftDown(index);
+            return;
+        }
+        let telement = source[tindex];
+        self.isOrderedBefore(element, telement) ? shiftUp(index) : shiftDown(index);
     }
     
     ///build source
     mutating public func build(s: Source) {
         self.source = s;
         let sindex = self.source.startIndex;
-        let eindex = self.source.endIndex;
-        guard sindex.distanceTo(eindex) > 1 else {return;}
+        let lastIndex = self.source.endIndex.advancedBy(-1);
         
-        let lastIndex = eindex.advancedBy(-1);
-        var index = self.trunkIndexOf(lastIndex);
-        while sindex.distanceTo(index) > 0{
+        guard var index = self.trunkIndexOf(lastIndex) else {return;}
+        repeat{
             self.shiftDown(index);
+            guard index != sindex else {break;}
             index = index.advancedBy(-1);
-        }
+        }while true
     }
 }
 extension PriorityQueueDelegateType where Self.Source.Index == Int{
-    //return trunk index of index
-    public func trunkIndexOf(index: Int) -> Int {
-        return (index - 1) / self.size;
+    ///return trunk index of index
+    ///if trunk index < source.startIndex return nil otherwise return trunk index
+    public func trunkIndexOf(index: Int) -> Int? {
+        let i = (index - 1) / self.size;
+        return i < source.startIndex ? nil : i;
     }
     
-    //return branch index of index
-    public func branchIndexOf(index: Int) -> Int {
-        return index * self.size + 1;
-    }
-}
-
-
-
-//MARK: == PriorityQueueTreeIndex ==
-public protocol PriorityQueueTreeIndex {
-    
-    //size, 2,4,8....
-    var size: Int{get}
-    
-    //return trunk index of index
-    func trunkIndexOf(index: Int) -> Int
-    
-    //return branch index of index
-    func branchIndexOf(index: Int) -> Int
-}
-extension PriorityQueueTreeIndex {
-    //return trunk index of index
-    public func trunkIndexOf(index: Int) -> Int {
-        return (index - 1) / self.size;
-    }
-    
-    //return branch index of index
-    public func branchIndexOf(index: Int) -> Int {
-        return index * self.size + 1;
+    ///return branch index of index
+    ///if branch index < source.endIndex return branch index otherwise return nil
+    public func branchIndexOf(index: Int) -> Int? {
+        let i = index * self.size + 1;
+        return i < source.endIndex ? i : nil;
     }
 }
 
@@ -157,29 +135,117 @@ public protocol PriorityQueueType: CollectionType
     mutating func popBest() -> Self.Generator.Element?
     
     //replace element at index
-    mutating func replaceElement(element: Self.Generator.Element, atIndex: Self.Index)
+    mutating func replace(element: Self.Generator.Element, at index: Self.Index)
 }
 
-//MARK: == PriorityQueueDelegate ==
-public struct PriorityQueueDelegate {
+///MARK: == PriorityQueueBinaryDelegate ==
+public struct PriorityQueueBinaryDelegate<Source: MutableIndexable where Source.Index == Int> {
+    ///branch size, 2,4,8....
+    public let size = 2;
     
-    //index convertor
-    let indexConvertor: PriorityQueueTreeIndex;
+    ///source data
+    public var source: Source
     
-    //init
-    public init(indexConvertor: PriorityQueueTreeIndex) {
-        self.indexConvertor = indexConvertor;
+    ///is ordered before
+    public private(set) var isOrderedBefore: (Source._Element, Source._Element) -> Bool;
+    
+    ///init
+    public init(source: Source, _ isOrderedBefore: (Source._Element, Source._Element) -> Bool) {
+        self.isOrderedBefore = isOrderedBefore;
+        self.source = source;
+        self.build(source);
+    }
+}
+extension PriorityQueueBinaryDelegate {
+    ///return trunk index of index
+    ///if trunk index < source.startIndex return nil otherwise return trunk index
+    public func trunkIndexOf(index: Int) -> Int? {
+        let i = (index - 1) >> 1;
+        return i < source.startIndex ? nil : i;
     }
     
-    //shift up element at index
-    public func shiftUp<C: MutableIndexable where C.Index == Int>(inout source: C, index: Int, _ isOrderedBefore:(C._Element, C._Element) -> Bool) {
-        let shiftElement = source[index];
-        var shiftIndex = index;
-        let zero = source.startIndex;
+    ///return branch index of index
+    ///if branch index < source.endIndex return branch index otherwise return nil
+    public func branchIndexOf(index: Int) -> Int? {
+        let i = index << 1 + 1;
+        return i < source.endIndex ? i : nil;
+    }
+}
+extension PriorityQueueBinaryDelegate : PriorityQueueDelegateType {}
+
+
+//MARK: == PriorityArray ==
+public struct PriorityArray<T>
+{
+    ///delegate
+    public private(set) var delegate: PriorityQueueBinaryDelegate<Array<T>>;
+    
+    //init
+    public init(source: [T], _ isOrderedBefore: (T, T) -> Bool){
+        self.delegate = PriorityQueueBinaryDelegate(source: source, isOrderedBefore);
+    }
+    
+    //init
+    public init(_ isOrderedBefore: (T, T) -> Bool){
+        self.init(source: [], isOrderedBefore);
+    }
+}
+//MARK: extension PriorityQueueType
+extension PriorityArray: PriorityQueueType {
+    //append element and resort
+    mutating public func insert(element: T) {
+        delegate.source.append(element);
+        delegate.shiftUp(delegate.source.count - 1);
+    }
+    
+    //return(and remove) first element and resort
+    mutating public func popBest() -> T? {
+        if(delegate.source.isEmpty){return nil;}
+        let first = delegate.source[0];
+        let end = delegate.source.removeLast();
+        guard !delegate.source.isEmpty else{return first;}
+        delegate.source[0] = end;
+        delegate.shiftDown(0);
+        return first;
+    }
+    
+    //replace element at index
+    mutating public func replace(element: T, at index: Int) {
+        delegate.replace(element, at: index);
+    }
+}
+//MARK: extension CollectionType
+extension PriorityArray: CollectionType {
+    public var startIndex: Int{return delegate.source.startIndex;}
+    public var endIndex: Int{return delegate.source.endIndex;}
+    public subscript(position: Int) -> T{
+        return self.delegate.source[position];
+    }
+}
+extension PriorityArray where T: Comparable {
+    //minimum heap
+    public init(minimum source: [T] = [])
+    {
+        self.init(source: source){return $0 > $1;}
+    }
+    
+    //maximum heap
+    public init(maximum source: [T] = [])
+    {
+        self.init(source: source){return $0 < $1;}
+    }
+}
+
+
+///MARK: extension PriorityQueueBinaryDelegate, recode shiftUp shiftDown replace and build
+extension PriorityQueueBinaryDelegate{
+    ///shift up of index
+    mutating public func shiftUp(ofIndex: Source.Index) {
+        let shiftElement = source[ofIndex];
+        var shiftIndex = ofIndex;
         
         repeat{
-            let trunkIndex = self.indexConvertor.trunkIndexOf(shiftIndex);
-            guard trunkIndex >= zero else{break;}
+            guard let trunkIndex = trunkIndexOf(shiftIndex) else {break;}
             let trunkElement = source[trunkIndex];
             
             guard isOrderedBefore(shiftElement, trunkElement) else {break;}
@@ -189,24 +255,21 @@ public struct PriorityQueueDelegate {
         }while true
     }
     
-    //shift down element at index
-    public func shiftDown<C: MutableIndexable where C.Index == Int>(inout source: C, index: Int, _ isOrderedBefore:(C._Element, C._Element) -> Bool) {
-        let shiftElement = source[index];
-        var trunkIndex = index;
-        let end = source.endIndex;
-        
+    ///shift down of index
+    mutating public func shiftDown(ofIndex: Source.Index) {
+        let shiftElement = source[ofIndex];
+        var trunkIndex = ofIndex;
+        let eIndex = source.endIndex;
         repeat{
+            guard var branchIndex = branchIndexOf(trunkIndex) else {break;}
             var shiftIndex = trunkIndex;
-            var branchIndex = self.indexConvertor.branchIndexOf(shiftIndex);
-            var branchCount = self.indexConvertor.size;
-            
+            let bIndex = branchIndex;
             repeat{
-                guard branchCount > 0 && branchIndex < end else {break;}
                 if isOrderedBefore(source[branchIndex], source[shiftIndex]) {
                     shiftIndex = branchIndex
                 }
-                branchCount--;
-                branchIndex++;
+                branchIndex = branchIndex.successor();
+                if branchIndex == eIndex || branchIndex - bIndex >= size {break;}
             }while true
             
             guard shiftIndex != trunkIndex else{break;}
@@ -216,122 +279,38 @@ public struct PriorityQueueDelegate {
         }while true;
     }
     
-    //replace element at index
-    public func replace<C: MutableIndexable where C.Index == Int>(inout source: C, index: Int, element: C._Element, _ isOrderedBefore:(C._Element, C._Element) -> Bool) {
-        let trunkIndex = self.indexConvertor.trunkIndexOf(index);
-        guard isOrderedBefore(element, source[trunkIndex]) else{
-            self.shiftUp(&source, index: index, isOrderedBefore);
+    ///replace element at index
+    mutating public func replace(element: Source._Element, at index: Source.Index) {
+        guard let tindex = trunkIndexOf(index)else{
+            self.shiftDown(index);
             return;
         }
-        self.shiftDown(&source, index: index, isOrderedBefore);
+        let telement = source[tindex];
+        self.isOrderedBefore(element, telement) ? shiftUp(index) : shiftDown(index);
     }
     
-    //priority sequence use isOrderedBefore function
-    public func build<C: MutableIndexable where C.Index == Int>(inout source: C, _ isOrderedBefore:(C._Element, C._Element) -> Bool) {
-        guard source.endIndex > 1 else {return;}
-        let zero = source.startIndex;
-        var _index = self.indexConvertor.trunkIndexOf(source.endIndex - 1);
+    ///build source
+    mutating public func build(s: Source) {
+        self.source = s;
+        let sindex = self.source.startIndex;
+        let lastIndex = self.source.endIndex.advancedBy(-1);
+        
+        guard var index = self.trunkIndexOf(lastIndex) else {return;}
         repeat{
-            self.shiftDown(&source, index: _index, isOrderedBefore);
-            _index--;
-        }while _index >= zero
+            self.shiftDown(index);
+            guard index != sindex else {break;}
+            index = index.advancedBy(-1);
+        }while true
     }
 }
 
-//MARK: == PriorityQueueBinary ==
-public struct PriorityQueueBinary {
-    private init(){}
-    private struct _PQTreeIndex: PriorityQueueTreeIndex {
-        //size, 2,4,8....
-        let size = 2;
-        
-        //return trunk index of index
-        func trunkIndexOf(index: Int) -> Int {
-            return (index - 1) >> 1;
-        }
-        
-        //return branch index of index
-        func branchIndexOf(index: Int) -> Int {
-            return index << 1 + 1;
-        }
-    }
-    
-    //binary priority queue delegate
-    public static let delegate = PriorityQueueDelegate(indexConvertor: _PQTreeIndex());
-}
 
-//MARK: == PriorityQueue ==
-public struct PriorityQueue<T>
-{
-    //base array
-    private var base: [T];
-    
-    //sort according to isOrderedBefore
-    private(set) var isOrderedBefore: (T, T) -> Bool;
-    
-    //delegate
-    private var delegate: PriorityQueueDelegate {
-        return PriorityQueueBinary.delegate;
-    }
-    
-    //init
-    public init(_ base: [T], _ isOrderedBefore: (T, T) -> Bool){
-        self.base = base;
-        self.isOrderedBefore = isOrderedBefore;
-        self.delegate.build(&self.base, self.isOrderedBefore);
-    }
-    
-    //init
-    public init(_ isOrderedBefore: (T, T) -> Bool){
-        self.init([], isOrderedBefore);
-    }
-}
-//MARK: extension PriorityQueueType
-extension PriorityQueue: PriorityQueueType {
-    //append element and resort
-    mutating public func insert(element: T)
-    {
-        self.base.append(element);
-        self.delegate.shiftUp(&self.base, index: self.base.count - 1, self.isOrderedBefore);
-    }
-    
-    //return(and remove) first element and resort
-    mutating public func popBest() -> T?
-    {
-        if(self.base.isEmpty){return nil;}
-        let first = self.base[0];
-        let end = self.base.removeLast();
-        guard !self.base.isEmpty else{return first;}
-        self.base[0] = end;
-        self.delegate.shiftDown(&self.base, index: 0, self.isOrderedBefore);
-        return first;
-    }
-    
-    //replace element at index
-    public mutating func replaceElement(element: T, atIndex: Int)
-    {
-        self.delegate.replace(&self.base, index: atIndex, element: element, self.isOrderedBefore);
-    }
-}
-//MARK: extension CollectionType
-extension PriorityQueue: CollectionType {
-    public var startIndex: Int{return self.base.startIndex;}
-    public var endIndex: Int{return self.base.endIndex;}
-    public subscript(position: Int) -> T{
-        return self.base[position];
-    }
-}
-extension PriorityQueue where T: Comparable
-{
-    //minimum heap
-    public init(minimum source: [T] = [])
-    {
-        self.init(source){return $0 > $1;}
-    }
-    
-    //maximum heap
-    public init(maximum source: [T] = [])
-    {
-        self.init(source){return $0 < $1;}
-    }
-}
+
+
+
+
+
+
+
+
+
