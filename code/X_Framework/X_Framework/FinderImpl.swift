@@ -349,7 +349,10 @@ public func ==<P>(lsh: FinderAstarElement<P>, rsh: FinderAstarElement<P>) -> Boo
     return lsh.point == rsh.point;
 }
 public func <<P>(lsh: FinderAstarElement<P>, rsh: FinderAstarElement<P>) -> Bool{
-    return lsh.f < rsh.f;
+    guard lsh.f < rsh.f else{
+        return lsh.h < rsh.h;
+    }
+    return true;
 }
 
 //MARK: == AstarFinder ==

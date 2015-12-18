@@ -15,7 +15,7 @@ typealias PF2 = BreadthBestPathFinder<TestFinderDataSource>
 //typealias PF = GreedyBestFinder<TestFinderDataSource, FinderHeuristic2D>
 typealias PF = AstarFinder<TestFinderDataSource, FinderHeuristic2D>
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true, multiGoals: Bool = true) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false, multiGoals: Bool = false) {
     let size = 35;
     let conf = Array2D(columns: size, rows: size, repeatValue: 1);
 

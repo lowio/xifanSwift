@@ -181,6 +181,9 @@ public protocol FinderHeuristicType{
 /*
 next :
 tile break out(diagonal = false)
+guard lsh.f < rsh.f else{
+return lsh.h < rsh.h;
+}
 ....
 **/
 
