@@ -226,13 +226,13 @@ extension PriorityArray where T: Comparable {
     //minimum heap
     public init(minimum source: [T] = [])
     {
-        self.init(source: source){return $0 > $1;}
+        self.init(source: source){return $0 < $1;}
     }
     
     //maximum heap
     public init(maximum source: [T] = [])
     {
-        self.init(source: source){return $0 < $1;}
+        self.init(source: source){return $0 > $1;}
     }
 }
 

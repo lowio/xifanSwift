@@ -48,7 +48,7 @@ class X_FrameworkTests: XCTestCase {
     
     private func waitForTest()
     {
-        pathFinderTest();
+//        pathFinderTest();
 //        collectionNDTest();
 //        priorityQueueTest();
     }
