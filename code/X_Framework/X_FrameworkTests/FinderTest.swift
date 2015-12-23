@@ -24,7 +24,8 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     
 
     let start = FinderPoint2D(x: 17, y: 17);
-    let goals = [FinderPoint2D(x: 7, y: 7), FinderPoint2D(x: 7, y: 27), FinderPoint2D(x: 27, y: 27), FinderPoint2D(x: 27, y: 7)];
+    let goals = [FinderPoint2D(x: 0, y: 0), FinderPoint2D(x: 34, y: 0), FinderPoint2D(x: 0, y: 34), FinderPoint2D(x: 34, y: 34)];
+//    let goals = [FinderPoint2D(x: 7, y: 7), FinderPoint2D(x: 7, y: 27), FinderPoint2D(x: 27, y: 27), FinderPoint2D(x: 27, y: 7)];
     let goal = goals[0];
     
     let source = TestFinderDataSource(conf: conf, m);
