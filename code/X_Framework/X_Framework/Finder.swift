@@ -56,9 +56,9 @@ public protocol FinderDataSourceType {
     //return neighbors of point
     func neighborsOf(point: Point) -> [Point];
     
-    ///return cost from f point to t point if it is passable
+    ///return cost of point if it is passable
     ///otherwise return nil
-    func getCost(from f: Point, to t: Point) -> Int?
+    func getCost(point: Point) -> Int?
 }
 
 //MARK: == FinderRequestType ==
@@ -143,14 +143,32 @@ extension FinderDelegateType
 
 //MARK: == FinderType ==
 public protocol FinderType{
-//    ///delegate type
-//    typealias Delegate: FinderDelegateType;
-//    
-//    ///Returns result of request from source -- [start point: [path point]]
-//    /// - Parameters: 
-//    ///     - request: request
-//    ///     - source: data source
-//    mutating func find(request: Delegate.Request, source: Delegate.Source) -> [Delegate.Point: [Delegate.Point]]
+    ///request type
+    typealias Request: FinderRequestType;
+    
+    ///source type
+    typealias Source: FinderDataSourceType;
+    
+    ///Returns result of request from source -- [start point: [path point]]
+    /// - Parameters: 
+    ///     - request: request
+    ///     - source: data source
+    mutating func find(request: Request, source: Source) -> [Source.Point: [Source.Point]]
+    
+    ///Returns result from start to goal -- [start point: [path point]]
+    /// - Parameters:
+    ///     - request: request
+    ///     - source: data source
+    mutating func find(from start: Source.Point, to goal: Source.Point, source: Source) -> [Source.Point: [Source.Point]]
+}
+
+//MARK: == FinderMultiType ==
+public protocol FinderMultiType: FinderType {
+    ///Returns result list from start to goal -- [start point: [path point]]
+    /// - Parameters:
+    ///     - request: request
+    ///     - source: data source
+    mutating func find(from points: [Source.Point], to goal: Source.Point, source: Source) -> [Source.Point: [Source.Point]]
 }
 
 
