@@ -32,12 +32,12 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     var path: [FinderPoint2D: [FinderPoint2D]] = [:];
     var visited: [FinderPoint2D: FinderPoint2D]
     if multiGoals {
-        var finder = PF2();
+        let finder = PF2();
         path = finder.find(from: goals, to: start, source: source);
 //        visited = finder.backtraceRecord();
     }
     else{
-        var finder = PF(heuristic: h);
+        let finder = PF(heuristic: h);
         path = finder.find(from: start, to: goal, source: source);
 //        visited = finder.backtraceRecord();
     }

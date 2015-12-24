@@ -97,25 +97,25 @@ extension FinderRequest: FinderRequestType {
 }
 
 ///MARK: extension FinderType where 'Self'.Request == FinderRequest
-extension FinderType where Self.Request == FinderRequest<Self.Point> {
+extension FinderSingleType where Self: FinderType, Self.Request == FinderRequest<Self.Point> {
     ///Returns result from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start point
     ///     - to: goal point
     ///     - source: data source
-    mutating public func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]] {
+    public func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]] {
         let request = FinderRequest(origin: start, goal: goal);
         return self.find(request, source: source);
     }
 }
 ///MARK: extension FinderMultiType where 'Self'.Request == FinderRequest
-extension FinderMultiType where Self.Request == FinderRequest<Self.Point> {
+extension FinderMultiType where Self: FinderType, Self.Request == FinderRequest<Self.Point> {
     ///Returns result list from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start points
     ///     - to: goal point
     ///     - source: data source
-    mutating public func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]] {
+    public func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]] {
         guard points.count > 1 else {
             return self.find(from: points[0], to: goal, source: source);
         }
@@ -125,13 +125,16 @@ extension FinderMultiType where Self.Request == FinderRequest<Self.Point> {
 }
 
 //MARK: == GreedyBestFinder ==
-public struct GreedyBestFinder<Point: Hashable, H: FinderHeuristicType where Point == H.Point> {
+public struct GreedyBestFinder<P: Hashable, H: FinderHeuristicType where P == H.Point> {
     
     private var _heuristic: H
     
     public init(heuristic: H){
         self._heuristic = heuristic;
     }
+}
+extension GreedyBestFinder: FinderSingleType{
+    public typealias Point = P;
 }
 extension GreedyBestFinder: FinderType {
     ///Returns result of request in source
@@ -153,7 +156,7 @@ extension GreedyBestFinder: FinderType {
 }
 
 //MARK: == AstarFinder ==
-public struct AstarFinder<Point: Hashable, H: FinderHeuristicType where Point == H.Point> {
+public struct AstarFinder<P: Hashable, H: FinderHeuristicType where P == H.Point> {
     
     private var _heuristic: H
     
@@ -161,7 +164,10 @@ public struct AstarFinder<Point: Hashable, H: FinderHeuristicType where Point ==
         self._heuristic = heuristic;
     }
 }
-extension AstarFinder: FinderType {
+extension AstarFinder: FinderSingleType{
+    public typealias Point = P;
+}
+extension AstarFinder:  FinderType {
     ///Returns result of request in source
     /// - Parameters:
     ///     - explore: explore point function
@@ -193,8 +199,11 @@ extension AstarFinder: FinderType {
 }
 
 //MARK: == DijkstraPathFinder ==
-public struct DijkstraPathFinder<Point: Hashable> {}
-extension DijkstraPathFinder: FinderMultiType {
+public struct DijkstraPathFinder<P: Hashable> {}
+extension DijkstraPathFinder: FinderMultiType{
+    public typealias Point = P;
+}
+extension DijkstraPathFinder:  FinderType {
     ///Returns result of request in source
     /// - Parameters:
     ///     - explore: explore point function
@@ -224,8 +233,11 @@ extension DijkstraPathFinder: FinderMultiType {
 }
 
 //MARK: == BreadthBestPathFinder ==
-public struct BreadthBestPathFinder<Point: Hashable> {}
-extension BreadthBestPathFinder: FinderMultiType {
+public struct BreadthBestPathFinder<P: Hashable> {}
+extension BreadthBestPathFinder: FinderMultiType{
+    public typealias Point = P;
+}
+extension BreadthBestPathFinder:  FinderType {
     ///Returns result of request in source
     /// - Parameters:
     ///     - explore: explore point function

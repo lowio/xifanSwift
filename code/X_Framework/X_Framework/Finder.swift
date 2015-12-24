@@ -138,10 +138,6 @@ extension FinderDelegateType {
 
 //MARK: == FinderType ==
 public protocol FinderType{
-    
-    ///point type
-    typealias Point: Hashable;
-    
     ///request type
     typealias Request: FinderRequestType;
     
@@ -150,7 +146,13 @@ public protocol FinderType{
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    mutating func find<Source: FinderDataSourceType where Source.Point == Point>(request: Request, source: Source) -> [Point: [Point]]
+    func find<Source: FinderDataSourceType where Source.Point == Request.Point>(request: Request, source: Source) -> [Source.Point: [Source.Point]]
+}
+
+//MARK: == FinderSingleType ==
+public protocol FinderSingleType {
+    ///point type
+    typealias Point: Hashable;
     
     ///Returns result from start to goal -- [start point: [path point]]
     /// - Parameters:
@@ -158,18 +160,18 @@ public protocol FinderType{
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    mutating func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]]
+    func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]]
 }
 
 //MARK: == FinderMultiType ==
-public protocol FinderMultiType: FinderType {
+public protocol FinderMultiType: FinderSingleType {
     ///Returns result list from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start points
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    mutating func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]]
+    func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]]
 }
 
 //MARK: == FinderHeuristicType ==
