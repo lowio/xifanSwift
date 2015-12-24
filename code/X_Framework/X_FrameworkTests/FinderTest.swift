@@ -10,10 +10,10 @@ import UIKit
 @testable import X_Framework;
 
 
-typealias PF2 = BreadthBestPathFinder<TestFinderDataSource>
-//typealias PF2 = DijkstraPathFinder<TestFinderDataSource>
-//typealias PF = GreedyBestFinder<TestFinderDataSource, FinderHeuristic2D>
-typealias PF = AstarFinder<TestFinderDataSource, FinderHeuristic2D>
+//typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
+typealias PF2 = DijkstraPathFinder<FinderPoint2D>
+//typealias PF = GreedyBestFinder<FinderPoint2D, FinderHeuristic2D>
+typealias PF = AstarFinder<FinderPoint2D, FinderHeuristic2D>
 
 func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false, multiGoals: Bool = true) {
     let size = 35;

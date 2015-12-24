@@ -48,7 +48,7 @@ public func <<P>(lsh: FinderElement<P>, rsh: FinderElement<P>) -> Bool{
     return true;
 }
 
-//MARK: == FinderDataSource ==
+//MARK: == FinderDataSourceType ==
 public protocol FinderDataSourceType {
     //point type
     typealias Point: Hashable;
@@ -64,7 +64,7 @@ public protocol FinderDataSourceType {
 //MARK: == FinderRequestType ==
 public protocol FinderRequestType{
     ///point type
-    typealias Point;
+    typealias Point: Hashable;
     
     ///origin point
     var origin: Point {get}
@@ -79,16 +79,7 @@ public protocol FinderRequestType{
 //MARK: == FinderDelegateType ==
 public protocol FinderDelegateType: GeneratorType{
     ///point type
-    typealias Point: Hashable = Request.Point;
-    
-    ///request type
-    typealias Request: FinderRequestType;
-    
-    ///finder request
-    var request: Request{set get}
-    
-    ///init
-    init(request: Request)
+    typealias Point: Hashable;
     
     ///return next element
     /// - Requires: set element closed
@@ -112,19 +103,23 @@ extension FinderDelegateType{
         return result;
     }
 }
-extension FinderDelegateType
-    where
-    Self.Request.Point == Self.Point
-{
+extension FinderDelegateType {
     ///Returns result of request in source
     /// - Parameters: 
     ///     - explore: explore point function
-    mutating public func _execute<Source: FinderDataSourceType where Source.Point == Point>
-        (source: Source, @noescape explore: (point: Point, backwardElement: FinderElement<Point>?) -> Void) -> [Point: [Point]]?
+    @warn_unused_result
+    mutating public func _execute<
+        Source: FinderDataSourceType,
+        Request: FinderRequestType
+        where
+        Source.Point == Point,
+        Request.Point == Point
+        >
+        (inout request: Request, source: Source, @noescape explore: (point: Point, backwardElement: FinderElement<Point>?) -> Void) -> [Point: [Point]]
     {
-        guard !request.isCompletion else {return .None;}
-        explore(point: request.origin, backwardElement: .None);
         var result: [Point: [Point]] = [:];
+        guard !request.isCompletion else {return result;}
+        explore(point: request.origin, backwardElement: .None);
         repeat{
             guard let element = self.next() else{break;}
             let point = element.point;
@@ -143,32 +138,38 @@ extension FinderDelegateType
 
 //MARK: == FinderType ==
 public protocol FinderType{
+    
+    ///point type
+    typealias Point: Hashable;
+    
     ///request type
     typealias Request: FinderRequestType;
-    
-    ///source type
-    typealias Source: FinderDataSourceType;
     
     ///Returns result of request from source -- [start point: [path point]]
     /// - Parameters: 
     ///     - request: request
     ///     - source: data source
-    mutating func find(request: Request, source: Source) -> [Source.Point: [Source.Point]]
+    @warn_unused_result
+    mutating func find<Source: FinderDataSourceType where Source.Point == Point>(request: Request, source: Source) -> [Point: [Point]]
     
     ///Returns result from start to goal -- [start point: [path point]]
     /// - Parameters:
-    ///     - request: request
+    ///     - from: start point
+    ///     - to: goal point
     ///     - source: data source
-    mutating func find(from start: Source.Point, to goal: Source.Point, source: Source) -> [Source.Point: [Source.Point]]
+    @warn_unused_result
+    mutating func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]]
 }
 
 //MARK: == FinderMultiType ==
 public protocol FinderMultiType: FinderType {
     ///Returns result list from start to goal -- [start point: [path point]]
     /// - Parameters:
-    ///     - request: request
+    ///     - from: start points
+    ///     - to: goal point
     ///     - source: data source
-    mutating func find(from points: [Source.Point], to goal: Source.Point, source: Source) -> [Source.Point: [Source.Point]]
+    @warn_unused_result
+    mutating func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]]
 }
 
 //MARK: == FinderHeuristicType ==
@@ -178,13 +179,3 @@ public protocol FinderHeuristicType{
     //heristic h value
     func heuristicOf(from f: Point, to t: Point) -> CGFloat
 }
-
-/*
-next :
-tile break out(diagonal = false)
-guard lsh.f < rsh.f else{
-return lsh.h < rsh.h;
-}
-....
-**/
-

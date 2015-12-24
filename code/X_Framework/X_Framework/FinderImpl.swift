@@ -9,22 +9,18 @@
 import Foundation
 
 //MARK: == FinderDelegate ==
-public struct FinderDelegate<Request: FinderRequestType where Request.Point: Hashable> {
+public struct FinderDelegate<Point: Hashable> {
     ///element type
-    public typealias Element = FinderElement<Request.Point>;
+    public typealias Element = FinderElement<Point>;
 
     ///open list
     private(set) var openList: PriorityArray<Element>;
 
     ///visite list
-    private(set) var visiteList: [Request.Point: Element];
-    
-    ///finder request
-    public var request: Request;
+    private(set) var visiteList: [Point: Element];
     
     ///init
-    public init(request: Request){
-        self.request = request;
+    public init(){
         self.openList = PriorityArray.init(minimum: []);
         self.visiteList = [:];
     }
@@ -45,7 +41,7 @@ extension FinderDelegate {
 }
 extension FinderDelegate: FinderDelegateType{
     ///get the visited element and return it, or nil if no visited element exists at point.
-    public subscript(point: Request.Point) -> Element? {
+    public subscript(point: Point) -> Element? {
         return self.visiteList[point];
     }
 
@@ -101,23 +97,25 @@ extension FinderRequest: FinderRequestType {
 }
 
 ///MARK: extension FinderType where 'Self'.Request == FinderRequest
-extension FinderType where Self.Request == FinderRequest<Self.Source.Point> {
+extension FinderType where Self.Request == FinderRequest<Self.Point> {
     ///Returns result from start to goal -- [start point: [path point]]
     /// - Parameters:
-    ///     - request: request
+    ///     - from: start point
+    ///     - to: goal point
     ///     - source: data source
-    mutating public func find(from start: Source.Point, to goal: Source.Point, source: Source) -> [Source.Point: [Source.Point]] {
+    mutating public func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]] {
         let request = FinderRequest(origin: start, goal: goal);
         return self.find(request, source: source);
     }
 }
 ///MARK: extension FinderMultiType where 'Self'.Request == FinderRequest
-extension FinderMultiType where Self.Request == FinderRequest<Self.Source.Point> {
-    ///Returns result from start to goal -- [start point: [path point]]
+extension FinderMultiType where Self.Request == FinderRequest<Self.Point> {
+    ///Returns result list from start to goal -- [start point: [path point]]
     /// - Parameters:
-    ///     - request: request
+    ///     - from: start points
+    ///     - to: goal point
     ///     - source: data source
-    mutating public func find(from points: [Source.Point], to goal: Source.Point, source: Source) -> [Source.Point: [Source.Point]] {
+    mutating public func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]] {
         guard points.count > 1 else {
             return self.find(from: points[0], to: goal, source: source);
         }
@@ -126,10 +124,8 @@ extension FinderMultiType where Self.Request == FinderRequest<Self.Source.Point>
     }
 }
 
-
-
 //MARK: == GreedyBestFinder ==
-public struct GreedyBestFinder <S: FinderDataSourceType, H: FinderHeuristicType where S.Point == H.Point>{
+public struct GreedyBestFinder<Point: Hashable, H: FinderHeuristicType where Point == H.Point> {
     
     private var _heuristic: H
     
@@ -138,21 +134,26 @@ public struct GreedyBestFinder <S: FinderDataSourceType, H: FinderHeuristicType 
     }
 }
 extension GreedyBestFinder: FinderType {
-    public func find(request: FinderRequest<S.Point>, source: S) -> [S.Point : [S.Point]] {
+    ///Returns result of request in source
+    /// - Parameters:
+    ///     - explore: explore point function
+    @warn_unused_result
+    public func find<Source: FinderDataSourceType where Source.Point == Point>(request: FinderRequest<Point>, source: Source) -> [Point: [Point]] {
         guard let goal = request.goal else {return [:];}
-        var delegate = FinderDelegate(request: request);
-        return delegate._execute(source){
+        var request = request;
+        var delegate = FinderDelegate<Point>();
+        return delegate._execute(&request, source: source){
             let point = $0;
             guard delegate[point] == .None || source.getCost(point) == .None else {return;}
             let h = Int(self._heuristic.heuristicOf(from: point, to: goal) * 10);
             let ele = FinderElement(point: point, g: 0, h: h, backward: $1?.point);
             delegate.insert(ele);
-        } ?? [:];
+        };
     }
 }
 
 //MARK: == AstarFinder ==
-public struct AstarFinder <S: FinderDataSourceType, H: FinderHeuristicType where S.Point == H.Point>{
+public struct AstarFinder<Point: Hashable, H: FinderHeuristicType where Point == H.Point> {
     
     private var _heuristic: H
     
@@ -161,10 +162,15 @@ public struct AstarFinder <S: FinderDataSourceType, H: FinderHeuristicType where
     }
 }
 extension AstarFinder: FinderType {
-    public func find(request: FinderRequest<S.Point>, source: S) -> [S.Point : [S.Point]] {
+    ///Returns result of request in source
+    /// - Parameters:
+    ///     - explore: explore point function
+    @warn_unused_result
+    public func find<Source: FinderDataSourceType where Source.Point == Point>(request: FinderRequest<Point>, source: Source) -> [Point: [Point]] {
         guard let goal = request.goal else {return [:];}
-        var delegate = FinderDelegate(request: request);
-        return delegate._execute(source){
+        var request = request;
+        var delegate = FinderDelegate<Point>();
+        return delegate._execute(&request, source: source){
             let point = $0;
             guard let cost = source.getCost(point) else {return;}
             let parent = $1;
@@ -182,16 +188,21 @@ extension AstarFinder: FinderType {
             guard !visited.closed && g < visited.g else {return;}
             let ele = FinderElement(point: point, g: g, h: visited.h, backward: parent?.point);
             delegate.update(ele);
-        } ?? [:];
+        };
     }
 }
 
 //MARK: == DijkstraPathFinder ==
-public struct DijkstraPathFinder<S: FinderDataSourceType> {}
+public struct DijkstraPathFinder<Point: Hashable> {}
 extension DijkstraPathFinder: FinderMultiType {
-    public func find(request: FinderRequest<S.Point>, source: S) -> [S.Point : [S.Point]] {
-        var delegate = FinderDelegate(request: request);
-        return delegate._execute(source){
+    ///Returns result of request in source
+    /// - Parameters:
+    ///     - explore: explore point function
+    @warn_unused_result
+    public func find<Source: FinderDataSourceType where Source.Point == Point>(request: FinderRequest<Point>, source: Source) -> [Point: [Point]] {
+        var request = request;
+        var delegate = FinderDelegate<Point>();
+        return delegate._execute(&request, source: source){
             let point = $0;
             guard let cost = source.getCost(point) else {return;}
             let parent = $1;
@@ -208,16 +219,21 @@ extension DijkstraPathFinder: FinderMultiType {
             guard !visited.closed && g < visited.g else {return;}
             let ele = FinderElement(point: point, g: g, h: 0, backward: parent?.point);
             delegate.update(ele);
-        } ?? [:];
+        };
     }
 }
 
 //MARK: == BreadthBestPathFinder ==
-public struct BreadthBestPathFinder<S: FinderDataSourceType> {}
+public struct BreadthBestPathFinder<Point: Hashable> {}
 extension BreadthBestPathFinder: FinderMultiType {
-    public func find(request: FinderRequest<S.Point>, source: S) -> [S.Point : [S.Point]] {
-        var delegate = FinderDelegate(request: request);
-        return delegate._execute(source){
+    ///Returns result of request in source
+    /// - Parameters:
+    ///     - explore: explore point function
+    @warn_unused_result
+    public func find<Source: FinderDataSourceType where Source.Point == Point>(request: FinderRequest<Point>, source: Source) -> [Point: [Point]] {
+        var request = request;
+        var delegate = FinderDelegate<Point>();
+        return delegate._execute(&request, source: source){
             let point = $0;
             guard let _ = source.getCost(point) where delegate[point] == .None else {return;}
             let parent = $1;
@@ -227,6 +243,6 @@ extension BreadthBestPathFinder: FinderMultiType {
             }
             let ele = FinderElement(point: point, g: g, h: 0, backward: parent?.point);
             delegate.insert(ele);
-        } ?? [:];
+        };
     }
 }
