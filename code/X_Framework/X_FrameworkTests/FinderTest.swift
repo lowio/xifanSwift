@@ -10,22 +10,23 @@ import UIKit
 @testable import X_Framework;
 
 
-//typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
-typealias PF2 = DijkstraPathFinder<FinderPoint2D>
-//typealias PF = GreedyBestFinder<FinderPoint2D, FinderHeuristic2D>
-typealias PF = AstarFinder<FinderPoint2D, FinderHeuristic2D>
+typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
+//typealias PF2 = DijkstraPathFinder<FinderPoint2D>
+typealias PF = AstarFinder<FinderPoint2D>
+//typealias PF = GreedyBestFinder<FinderPoint2D>
 
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false, multiGoals: Bool = true) {
-    let size = 35;
+let h2d = FinderHeuristic2D.Manhattan;
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = false, isDiagnal: Bool = false, multiGoals: Bool = false) {
+    let size = 50;
+    let mp = size - 1;
     let conf = Array2D(columns: size, rows: size, repeatValue: 1);
 
-    let h = FinderHeuristic2D.Manhattan;
-    let m: FinderModel2D = isDiagnal ? .Diagonal : .Straight;
+    
+    let m: FinderModel = isDiagnal ? .Diagonal : .Straight;
     
 
     var start = FinderPoint2D(x: 17, y: 17);
-    let goals = [FinderPoint2D(x: 0, y: 0), FinderPoint2D(x: 34, y: 0), FinderPoint2D(x: 0, y: 34), FinderPoint2D(x: 34, y: 34)];
-//    let goals = [FinderPoint2D(x: 7, y: 7), FinderPoint2D(x: 7, y: 27), FinderPoint2D(x: 27, y: 27), FinderPoint2D(x: 27, y: 7)];
+    let goals = [FinderPoint2D(x: 0, y: 0), FinderPoint2D(x: mp, y: 0), FinderPoint2D(x: 0, y: mp), FinderPoint2D(x: mp, y: mp)];
     let goal = goals[0];
     
     let source = TestFinderDataSource(conf: conf, m);
@@ -33,13 +34,13 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     var visited: [FinderPoint2D: FinderPoint2D]
     if multiGoals {
         let finder = PF2();
-        path = finder.find(from: goals, to: start, source: source);
+        path = finder.find(from: goals, to: start, option: source);
 //        visited = finder.backtraceRecord();
     }
     else{
         start = goals[3];
-        let finder = PF(heuristic: h);
-        path = finder.find(from: start, to: goal, source: source);
+        let finder = PF();
+        path = finder.find(from: start, to: goal, option: source);
 //        visited = finder.backtraceRecord();
     }
     
@@ -75,34 +76,58 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     print(printMap);
 }
 
+//MARK: == FinderPoint2D ==
+public struct FinderPoint2D: FinderPoint2DType
+{
+    //x, y
+    public let x: Int;
+    public let y: Int;
+    private var _hashValue: Int;
+    
+    init(x: Int, y: Int)
+    {
+        self.x = x;
+        self.y = y;
+        self._hashValue = "\(x)\(y)".hashValue;
+    }
+    
+    public var hashValue: Int{return self._hashValue;}
+}
+public func ==(lsh: FinderPoint2D, rsh: FinderPoint2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
 
 struct TestFinderDataSource{
     let config: Array2D<Int>;
     
-    let model: FinderModel2D;
+    let model: FinderModel;
+    
+    typealias Point = FinderPoint2D;
     
     
-    init(conf: Array2D<Int>, _ model: FinderModel2D = .Straight){
+    init(conf: Array2D<Int>, _ model: FinderModel = .Straight){
         self.config = conf;
         self.model = model;
     }
 }
-extension TestFinderDataSource: FinderDataSourceType{
+extension TestFinderDataSource: FinderOption2DType{
     
-    func neighborsOf(point: FinderPoint2D) -> [FinderPoint2D] {
-        var neighbors: [FinderPoint2D] = [];
-        let ns = model.neighborsOffset();
+    func neighborsOf(point: Point) -> [Point] {
+        var neighbors: [Point] = [];
+        let ns = self.neighborsOffset();
         ns.forEach{
             let op = $0;
             let x = op.0 + point.x;
             let y = op.1 + point.y;
             guard config.columns > x && x > -1 && y > -1 && config.rows > y else {return;}
-            neighbors.append(FinderPoint2D(x: x, y: y));
+            neighbors.append(Point(x: x, y: y));
         }
         return neighbors;
     }
     
-    func getCost(point: FinderPoint2D) -> CGFloat? {
-        return CGFloat(self.config[point.x, point.y]);
+    func calculateCost(from f: Point, to t: Point) -> CGFloat? {
+        return CGFloat(self.config[t.x, t.y]);
+    }
+    
+    func estimateCost(from f: Point, to t: Point) -> CGFloat {
+        return h2d.heuristicOf(from: f, to: t);
     }
 }

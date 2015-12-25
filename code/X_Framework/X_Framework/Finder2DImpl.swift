@@ -6,13 +6,15 @@
 //  Copyright © 2015年 yeah. All rights reserved.
 //
 
-//import Foundation
+import Foundation
 
+///default 2d point struct
 //MARK: == FinderPoint2D ==
-public struct FinderPoint2D: Hashable
+public struct FinderPoint2D: FinderPoint2DType
 {
     //x, y
-    var x, y: Int;
+    public let x: Int;
+    public let y: Int;
     private var _hashValue: Int;
     
     init(x: Int, y: Int)
@@ -26,13 +28,12 @@ public struct FinderPoint2D: Hashable
 }
 public func ==(lsh: FinderPoint2D, rsh: FinderPoint2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
 
-
 //MARK: == FinderHeuristic2D ==
-public enum FinderHeuristic2D: FinderHeuristicType {
+public enum FinderHeuristic2D {
     case Manhattan, Euclidean, Octile, Chebyshev, None
 }
 extension FinderHeuristic2D {
-    public func heuristicOf(from f: FinderPoint2D, to t: FinderPoint2D) -> CGFloat {
+    public func heuristicOf<T: FinderPoint2DType>(from f: T, to t: T) -> CGFloat {
         let dx = CGFloat(abs(f.x - t.x));
         let dy = CGFloat(abs(f.y - t.y));
         let h: CGFloat!;
@@ -53,19 +54,27 @@ extension FinderHeuristic2D {
     }
 }
 
-//MARK: == FinderModel2D ==
-public enum FinderModel2D{
-    case Straight, Diagonal
-}
-extension FinderModel2D{
+//MARK: == FinderPoint2DType ==
+public protocol FinderPoint2DType: Hashable{
+    ///x
+    var x: Int{get}
     
-    //return neighbors
-    public func neighborsOffset() -> [(Int, Int)]{
-        switch self{
-        case .Straight:
-            return [(-1, 0), (0, 1), (1, 0), (0, -1)];
+    ///y
+    var y: Int{get}
+}
+
+//MARK:  == FinderOption2DType ==
+public protocol FinderOption2DType: FinderOptionType{
+    typealias Point: FinderPoint2DType;
+}
+extension FinderOption2DType {
+    ///return neighbors offset
+    internal func neighborsOffset() -> [(Int, Int)]{
+        switch self.model{
         case .Diagonal:
             return [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, -1), (1, 1)];
+        case .Straight:
+            return [(-1, 0), (0, 1), (1, 0), (0, -1)];
         }
     }
 }

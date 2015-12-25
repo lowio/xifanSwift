@@ -49,26 +49,34 @@ public func <<P>(lsh: FinderElement<P>, rsh: FinderElement<P>) -> Bool{
     return true;
 }
 
-//MARK: == FinderDataSourceType ==
-public protocol FinderDataSourceType {
-    //point type
+//MARK: == FinderModel ==
+public enum FinderModel {
+    case Straight, Diagonal
+}
+
+//MARK: == FinderOptionType ==
+public protocol FinderOptionType{
+    ///point type
     typealias Point: Hashable;
     
-    //return neighbors of point
-    func neighborsOf(point: Point) -> [Point];
+    ///model
+    var model: FinderModel{get}
     
-    ///return cost of point if it is passable
+    ///return neighbors of point
+    func neighborsOf(point: Point) -> [Point]
+    
+    ///return calculate movement cost from f to t if it is validity
     ///otherwise return nil
-    func getCost(point: Point) -> CGFloat?
+    func calculateCost(from f: Point, to t: Point) -> CGFloat?
+    
+    ///return estimate h value from f point to t point
+    func estimateCost(from f: Point, to t: Point) -> CGFloat
 }
 
 //MARK: == FinderRequestType ==
 public protocol FinderRequestType{
     ///point type
     typealias Point: Hashable;
-    
-    ///origin point
-    var origin: Point {get}
     
     ///is completion
     var isCompletion: Bool{get}
@@ -85,6 +93,13 @@ public protocol FinderDelegateType: GeneratorType{
     ///return next element
     /// - Requires: set element closed
     mutating func next() -> FinderElement<Point>?
+    
+    ///insert element
+    /// - Requires: set element visited
+    mutating func insert(element: FinderElement<Point>)
+
+    ///update element
+    mutating func update(element: FinderElement<Point>)
     
     ///get the visited element and return it, or nil if no visited element exists at point.
     subscript(point: Point) -> FinderElement<Point>? {get}
@@ -105,22 +120,24 @@ extension FinderDelegateType{
     }
 }
 extension FinderDelegateType {
-    ///Returns result of request in source
+    ///Returns result of request use option start exploring at orign
     /// - Parameters: 
-    ///     - explore: explore point function
+    ///     - origin: point of start exploring
+    ///     - request: FinderRequestType
+    ///     - option: FinderOptionType
+    ///     - explore: explore function, 'self'.insert 'self'.update etc...; point - current explore point; backward: backward element
     @warn_unused_result
-    mutating public func _execute<
-        Source: FinderDataSourceType,
-        Request: FinderRequestType
+    mutating public func find<
+        Opt: FinderOptionType,
+        Req: FinderRequestType
         where
-        Source.Point == Point,
-        Request.Point == Point
-        >
-        (inout request: Request, source: Source, @noescape explore: (point: Point, backwardElement: FinderElement<Point>?) -> Void) -> [Point: [Point]]
+        Opt.Point == Point,
+        Req.Point == Point>
+        (origin: Point, inout request: Req, option: Opt, @noescape explore: (point: Point, backward: FinderElement<Point>?) -> Void) -> [Point: [Point]]
     {
         var result: [Point: [Point]] = [:];
         guard !request.isCompletion else {return result;}
-        explore(point: request.origin, backwardElement: .None);
+        explore(point: origin, backward: .None);
         repeat{
             guard let element = self.next() else{break;}
             let point = element.point;
@@ -128,9 +145,47 @@ extension FinderDelegateType {
                 result[point] = self.backtrace(element);
                 guard !request.isCompletion else {break;}
             }
-            let neighbors = source.neighborsOf(point);
+            let neighbors = option.neighborsOf(point);
             neighbors.forEach{
-                explore(point: $0, backwardElement: element);
+                explore(point: $0, backward: element);
+            }
+        }while true
+        return result;
+    }
+    
+    ///generate element
+    public typealias GElement = (element: FinderElement<Point>, visited: Bool)
+    
+    ///Returns result of request use option start exploring at orign
+    /// - Parameters:
+    ///     - origin: point of start exploring
+    ///     - request: FinderRequestType
+    ///     - option: FinderOptionType
+    ///     - generate: return (element: element of point, visited: point is visited)?; visited is true update else insert
+    @warn_unused_result
+    mutating public func find<
+        Opt: FinderOptionType,
+        Req: FinderRequestType
+        where
+        Opt.Point == Point,
+        Req.Point == Point>
+        (origin: Point, inout request: Req, option: Opt, @noescape generate: (point: Point, backward: FinderElement<Point>?) -> GElement?) -> [Point: [Point]]
+    {
+        var result: [Point: [Point]] = [:];
+        guard !request.isCompletion else {return result;}
+        guard let ge = generate(point: origin, backward: .None) where !ge.visited else {return result;}
+        self.insert(ge.0);
+        repeat{
+            guard let element = self.next() else{break;}
+            let point = element.point;
+            if request.findTarget(point){
+                result[point] = self.backtrace(element);
+                guard !request.isCompletion else {break;}
+            }
+            let neighbors = option.neighborsOf(point);
+            neighbors.forEach{
+                guard let ge = generate(point: $0, backward: element) else {return;}
+                ge.1 ? self.update(ge.0) : self.insert(ge.0);
             }
         }while true
         return result;
@@ -147,40 +202,46 @@ public protocol FinderType{
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    func find<Source: FinderDataSourceType where Source.Point == Request.Point>(request: Request, source: Source) -> [Source.Point: [Source.Point]]
+    func find<Opt: FinderOptionType where Opt.Point == Request.Point>(request: Request, option: Opt) -> [Opt.Point: [Opt.Point]]
 }
 
 //MARK: == FinderSingleType ==
-public protocol FinderSingleType {
+public protocol FinderSingleType: FinderType {
     ///point type
     typealias Point: Hashable;
     
+    ///return request
+    func requestGenerate(from: Point, to: Point) -> Request
+}
+extension FinderSingleType where Self.Point == Self.Request.Point{
     ///Returns result from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start point
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    func find<Source: FinderDataSourceType where Source.Point == Point>(from start: Point, to goal: Point, source: Source) -> [Point: [Point]]
+    public func find<Opt: FinderOptionType where Opt.Point == Point>(from start: Point, to goal: Point, option: Opt) -> [Point: [Point]]{
+        let request = self.requestGenerate(start, to: goal);
+        return self.find(request, option: option);
+    }
 }
-
+//
 //MARK: == FinderMultiType ==
 public protocol FinderMultiType: FinderSingleType {
+    ///return request
+    func requestGenerate(from: [Point], to: Point) -> Request
+}
+extension FinderMultiType  where Self.Point == Self.Request.Point{
     ///Returns result list from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start points
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    func find<Source: FinderDataSourceType where Source.Point == Point>(from points: [Point], to goal: Point, source: Source) -> [Point: [Point]]
-}
-
-//MARK: == FinderHeuristicType ==
-public protocol FinderHeuristicType{
-    typealias Point;
-    
-    //heristic h value
-    func heuristicOf(from f: Point, to t: Point) -> CGFloat
+    func find<Opt: FinderOptionType where Opt.Point == Point>(from points: [Point], to goal: Point, option: Opt) -> [Point: [Point]] {
+        let request = self.requestGenerate(points, to: goal);
+        return self.find(request, option: option);
+    }
 }
 
 
