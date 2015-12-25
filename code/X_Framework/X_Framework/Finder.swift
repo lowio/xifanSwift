@@ -246,4 +246,4 @@ extension FinderMultiType  where Self.Point == Self.Request.Point{
 
 
 ////get cost  1 ?? 1.4 (3d?)
-////cgfloat
+////scale g and h
