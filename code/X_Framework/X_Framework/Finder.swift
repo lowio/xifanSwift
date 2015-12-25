@@ -8,19 +8,20 @@
 
 import Foundation
 
+
 //MARK: == FinderElement ==
 public struct FinderElement<Point: Hashable> {
     ///element is closed
     public internal(set) var closed: Bool = false;
 
     ///g
-    public private(set) var g: Int;
+    public private(set) var g: CGFloat;
 
     ///h
-    public private(set) var h: Int;
+    public private(set) var h: CGFloat;
 
     ///f = g + h
-    public private(set) var f: Int;
+    public private(set) var f: CGFloat;
     
     ///point
     public private(set) var point: Point;
@@ -29,7 +30,7 @@ public struct FinderElement<Point: Hashable> {
     public private(set) var backward: Point?;
 
     ///init
-    public init(point: Point, g: Int, h: Int, backward: Point?){
+    public init(point: Point, g: CGFloat, h: CGFloat, backward: Point?){
         self.g = g;
         self.h = h;
         self.f = g + h;
@@ -58,7 +59,7 @@ public protocol FinderDataSourceType {
     
     ///return cost of point if it is passable
     ///otherwise return nil
-    func getCost(point: Point) -> Int?
+    func getCost(point: Point) -> CGFloat?
 }
 
 //MARK: == FinderRequestType ==
@@ -181,3 +182,7 @@ public protocol FinderHeuristicType{
     //heristic h value
     func heuristicOf(from f: Point, to t: Point) -> CGFloat
 }
+
+
+////get cost  1 ?? 1.4 (3d?)
+////cgfloat

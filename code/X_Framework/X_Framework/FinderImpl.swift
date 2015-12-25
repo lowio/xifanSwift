@@ -94,6 +94,17 @@ extension FinderRequest: FinderRequestType {
         self.isCompletion = true;
         return true;
     }
+    
+    public func test(callback: (Point) -> Bool){
+        guard let g = self.goal else{
+            self.goals?.forEach{
+                callback($0);
+            }
+            return;
+        }
+        
+        callback(g);
+    }
 }
 
 ///MARK: extension FinderType where 'Self'.Request == FinderRequest
@@ -148,7 +159,7 @@ extension GreedyBestFinder: FinderType {
         return delegate._execute(&request, source: source){
             let point = $0;
             guard delegate[point] == .None || source.getCost(point) == .None else {return;}
-            let h = Int(self._heuristic.heuristicOf(from: point, to: goal) * 10);
+            let h = self._heuristic.heuristicOf(from: point, to: goal);
             let ele = FinderElement(point: point, g: 0, h: h, backward: $1?.point);
             delegate.insert(ele);
         };
@@ -180,12 +191,12 @@ extension AstarFinder:  FinderType {
             let point = $0;
             guard let cost = source.getCost(point) else {return;}
             let parent = $1;
-            var g = 0;
+            var g: CGFloat = 0;
             if let _parent = parent {
                 g = _parent.g + cost;
             }
             guard let visited = delegate[point] else {
-                let h = Int(self._heuristic.heuristicOf(from: point, to: goal) * 10);
+                let h = self._heuristic.heuristicOf(from: point, to: goal);
                 let ele = FinderElement(point: point, g: g, h: h, backward: parent?.point);
                 delegate.insert(ele);
                 return;
@@ -215,7 +226,7 @@ extension DijkstraPathFinder:  FinderType {
             let point = $0;
             guard let cost = source.getCost(point) else {return;}
             let parent = $1;
-            var g = 0;
+            var g: CGFloat = 0;
             if let _parent = parent {
                 g = _parent.g + cost;
             }
@@ -224,7 +235,6 @@ extension DijkstraPathFinder:  FinderType {
                 delegate.insert(ele);
                 return;
             }
-            
             guard !visited.closed && g < visited.g else {return;}
             let ele = FinderElement(point: point, g: g, h: 0, backward: parent?.point);
             delegate.update(ele);
@@ -249,7 +259,7 @@ extension BreadthBestPathFinder:  FinderType {
             let point = $0;
             guard let _ = source.getCost(point) where delegate[point] == .None else {return;}
             let parent = $1;
-            var g = 0;
+            var g: CGFloat = 0;
             if let _parent = parent {
                 g = _parent.g + 1;
             }

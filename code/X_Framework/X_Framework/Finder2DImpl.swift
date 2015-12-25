@@ -35,19 +35,21 @@ extension FinderHeuristic2D {
     public func heuristicOf(from f: FinderPoint2D, to t: FinderPoint2D) -> CGFloat {
         let dx = CGFloat(abs(f.x - t.x));
         let dy = CGFloat(abs(f.y - t.y));
+        let h: CGFloat!;
         switch self{
         case .Manhattan:
-            return dx + dy;
+            h = dx + dy;
         case .Euclidean:
-            return sqrt(dx * dx + dy * dy);
+            h = sqrt(dx * dx + dy * dy);
         case .Octile:
             let f:CGFloat = CGFloat(M_SQRT2) - 1;
-            return dx < dy ? f * dx + dy : f * dy + dx;
+            h = dx < dy ? f * dx + dy : f * dy + dx;
         case .Chebyshev:
-            return max(dx, dy);
+            h = max(dx, dy);
         case .None:
-            return 0;
+            h = 0;
         }
+        return h;
     }
 }
 

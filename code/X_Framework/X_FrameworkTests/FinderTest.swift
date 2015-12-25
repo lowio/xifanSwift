@@ -19,11 +19,11 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     let size = 35;
     let conf = Array2D(columns: size, rows: size, repeatValue: 1);
 
-    let h = FinderHeuristic2D.Euclidean;
+    let h = FinderHeuristic2D.Manhattan;
     let m: FinderModel2D = isDiagnal ? .Diagonal : .Straight;
     
 
-    let start = FinderPoint2D(x: 17, y: 17);
+    var start = FinderPoint2D(x: 17, y: 17);
     let goals = [FinderPoint2D(x: 0, y: 0), FinderPoint2D(x: 34, y: 0), FinderPoint2D(x: 0, y: 34), FinderPoint2D(x: 34, y: 34)];
 //    let goals = [FinderPoint2D(x: 7, y: 7), FinderPoint2D(x: 7, y: 27), FinderPoint2D(x: 27, y: 27), FinderPoint2D(x: 27, y: 7)];
     let goal = goals[0];
@@ -37,6 +37,7 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
 //        visited = finder.backtraceRecord();
     }
     else{
+        start = goals[3];
         let finder = PF(heuristic: h);
         path = finder.find(from: start, to: goal, source: source);
 //        visited = finder.backtraceRecord();
@@ -101,7 +102,7 @@ extension TestFinderDataSource: FinderDataSourceType{
         return neighbors;
     }
     
-    func getCost(point: FinderPoint2D) -> Int? {
-        return self.config[point.x, point.y];
+    func getCost(point: FinderPoint2D) -> CGFloat? {
+        return CGFloat(self.config[point.x, point.y]);
     }
 }
