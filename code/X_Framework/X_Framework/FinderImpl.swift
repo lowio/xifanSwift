@@ -126,17 +126,18 @@ extension GreedyBestFinder: FinderType {
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> [Point: [Point]] {
-        guard let goal = request.goal else {return [:];}
+    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
+        guard let goal = request.goal else {return .None;}
         var request = request;
         var delegate = FinderDelegate<Point>();
-        return delegate.find(request.origin, request: &request, option: option, generate: {
+        let result = delegate.find(request.origin, request: &request, option: option, generate: {
             let point = $0;
             guard delegate[point] == .None else {return .None;}
             if let bp = $1?.point where option.calculateCost(from: bp, to: point) == .None{return .None;}
             let h = option.estimateCost(from: point, to: goal);
             return (FinderElement(point: point, g: 0, h: h, backward: $1?.point), false);
         });
+        return FinderResult(result: result, delegate: delegate);
     }
 }
 
@@ -151,11 +152,11 @@ extension AstarFinder:  FinderType {
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> [Point: [Point]] {
-        guard let goal = request.goal else {return [:];}
+    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
+        guard let goal = request.goal else {return .None;}
         var request = request;
         var delegate = FinderDelegate<Point>();
-        return delegate.find(request.origin, request: &request, option: option, generate: {
+        let result = delegate.find(request.origin, request: &request, option: option, generate: {
             let point = $0;
             let parent = $1;
             var g: CGFloat = 0;
@@ -170,6 +171,7 @@ extension AstarFinder:  FinderType {
             guard !visited.closed && g < visited.g else {return .None;}
             return (FinderElement(point: point, g: g, h: visited.h, backward: parent?.point), true);
         });
+        return FinderResult(result: result, delegate: delegate);
     }
 }
 
@@ -184,10 +186,10 @@ extension DijkstraPathFinder:  FinderType {
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> [Point: [Point]] {
+    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
         var request = request;
         var delegate = FinderDelegate<Point>();
-        return delegate.find(request.origin, request: &request, option: option, generate: {
+        let result = delegate.find(request.origin, request: &request, option: option, generate: {
             let point = $0;
             let parent = $1;
             var g: CGFloat = 0;
@@ -201,6 +203,7 @@ extension DijkstraPathFinder:  FinderType {
             guard !visited.closed && g < visited.g else {return .None;}
             return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), true);
         });
+        return FinderResult(result: result, delegate: delegate);
     }
 }
 
@@ -215,10 +218,10 @@ extension BreadthBestPathFinder:  FinderType {
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> [Point: [Point]] {
+    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
         var request = request;
         var delegate = FinderDelegate<Point>();
-        return delegate.find(request.origin, request: &request, option: option, generate: {
+        let result = delegate.find(request.origin, request: &request, option: option, generate: {
             let point = $0;
             guard delegate[point] == .None else {return .None;}
             let parent = $1;
@@ -229,5 +232,6 @@ extension BreadthBestPathFinder:  FinderType {
             }
             return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), false);
         });
+        return FinderResult(result: result, delegate: delegate);
     }
 }

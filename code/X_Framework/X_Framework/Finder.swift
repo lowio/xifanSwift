@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 //MARK: == FinderElement ==
 public struct FinderElement<Point: Hashable> {
     ///element is closed
@@ -103,6 +102,9 @@ public protocol FinderDelegateType: GeneratorType{
     
     ///get the visited element and return it, or nil if no visited element exists at point.
     subscript(point: Point) -> FinderElement<Point>? {get}
+    
+    ///return visited record
+    func backtraceRecord() -> [FinderElement<Point>]
 }
 extension FinderDelegateType{
     ///back trace points
@@ -202,7 +204,7 @@ public protocol FinderType{
     ///     - request: request
     ///     - source: data source
     @warn_unused_result
-    func find<Opt: FinderOptionType where Opt.Point == Request.Point>(request: Request, option: Opt) -> [Opt.Point: [Opt.Point]]
+    func find<Opt: FinderOptionType where Opt.Point == Request.Point>(request: Request, option: Opt) -> FinderResult<Opt.Point>?
 }
 
 //MARK: == FinderSingleType ==
@@ -220,7 +222,7 @@ extension FinderSingleType where Self.Point == Self.Request.Point{
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(from start: Point, to goal: Point, option: Opt) -> [Point: [Point]]{
+    public func find<Opt: FinderOptionType where Opt.Point == Point>(from start: Point, to goal: Point, option: Opt) -> FinderResult<Point>? {
         let request = self.requestGenerate(start, to: goal);
         return self.find(request, option: option);
     }
@@ -238,9 +240,30 @@ extension FinderMultiType  where Self.Point == Self.Request.Point{
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    func find<Opt: FinderOptionType where Opt.Point == Point>(from points: [Point], to goal: Point, option: Opt) -> [Point: [Point]] {
+    func find<Opt: FinderOptionType where Opt.Point == Point>(from points: [Point], to goal: Point, option: Opt) -> FinderResult<Point>? {
         let request = self.requestGenerate(points, to: goal);
         return self.find(request, option: option);
+    }
+}
+
+
+//MARK: == FinderResult ==
+public struct FinderResult<Point: Hashable> {
+    
+    ///result
+    public private(set) var result: [Point: [Point]]
+    
+    ///delegate
+    private var delegate: FinderDelegate<Point>?;
+    
+    internal init(result: [Point: [Point]], delegate: FinderDelegate<Point>? = nil){
+        self.delegate = delegate;
+        self.result = result;
+    }
+    
+    ///backtrace record
+    public func backtraceRecord() -> [FinderElement<Point>]?{
+        return self.delegate?.backtraceRecord();
     }
 }
 

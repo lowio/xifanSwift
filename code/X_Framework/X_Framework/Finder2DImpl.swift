@@ -83,7 +83,7 @@ extension FinderOption2DType {
     ///otherwise return nil
     public func calculateCost(from f: Point, to t: Point) -> CGFloat? {
         guard let cost = self.getCost(t.x, y: t.y) else {return .None;}
-        guard self.model == .Diagonal else{return cost;}
+        guard self.model == .Diagonal && f.x != t.x && f.y != t.y else{return cost;}
         return cost * 1.4;
     }
     
