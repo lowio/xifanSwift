@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "DijkstraPathFinder.(find&lt;A&gt;&lt;B where ...&gt; (DijkstraPathFinder&lt;A&gt;) -&gt; (FinderRequest&lt;A&gt;, option : B) -&gt; FinderResult&lt;A&gt;?).(closure #1):FinderImpl.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "(X_Framework.FinderElement&lt;P&gt;?)parent">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

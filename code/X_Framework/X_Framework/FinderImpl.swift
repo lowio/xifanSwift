@@ -53,6 +53,7 @@ extension FinderDelegate: FinderDelegateType{
     
     ///update element
     mutating public func update(element: Element) {
+        print("WARN: FinderDelegate.update ===============")
         guard let i = (self.openList.indexOf{$0 == element}) else {return;}
         self.openList.replace(element, at: i);
         self.visiteList[element.point] = element;
@@ -201,6 +202,7 @@ extension DijkstraPathFinder:  FinderType {
                 return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), false);
             }
             guard !visited.closed && g < visited.g else {return .None;}
+            print(g == visited.g, g - visited.g);
             return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), true);
         });
         return FinderResult(result: result, delegate: delegate);
@@ -221,6 +223,7 @@ extension BreadthBestPathFinder:  FinderType {
     public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
         var request = request;
         var delegate = FinderDelegate<Point>();
+        var h: CGFloat = 0;
         let result = delegate.find(request.origin, request: &request, option: option, generate: {
             let point = $0;
             guard delegate[point] == .None else {return .None;}
@@ -230,7 +233,7 @@ extension BreadthBestPathFinder:  FinderType {
                 g = _parent.g + 1;
                 guard let _ = option.calculateCost(from: _parent.point, to: point) else {return .None;}
             }
-            return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), false);
+            return (FinderElement(point: point, g: g, h: h++, backward: parent?.point), false);
         });
         return FinderResult(result: result, delegate: delegate);
     }

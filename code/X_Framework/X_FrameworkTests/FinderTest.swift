@@ -16,7 +16,7 @@ typealias PF = AstarFinder<FinderPoint2D>
 //typealias PF = GreedyBestFinder<FinderPoint2D>
 
 let h2d = FinderHeuristic2D.Chebyshev;
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true, multiGoals: Bool = false) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true, multiGoals: Bool = true) {
     let size = 50;
     let mp = size - 1;
     let conf = Array2D(columns: size, rows: size, repeatValue: 1);
