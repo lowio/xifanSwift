@@ -24,6 +24,11 @@ public struct FinderDelegate<Point: Hashable> {
         self.openList = PriorityArray.init(minimum: []);
         self.visiteList = [:];
     }
+    
+    ///backtrace record
+    public func backtraceRecord() -> [Element] {
+        return visiteList.values.reverse();
+    }
 }
 extension FinderDelegate: FinderDelegateType{
     ///get the visited element and return it, or nil if no visited element exists at point.

@@ -65,7 +65,7 @@ public protocol FinderOptionType{
     ///return neighbors of point
     func neighborsOf(point: Point) -> [Point]
     
-    ///return calculate movement cost from f to t if it is validity
+    ///return calculate movement cost from f to t if it is validity(and exist)
     ///otherwise return nil
     func calculateCost(from f: Point, to t: Point) -> CGFloat?
     

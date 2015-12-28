@@ -16,7 +16,7 @@ typealias PF = AstarFinder<FinderPoint2D>
 //typealias PF = GreedyBestFinder<FinderPoint2D>
 
 let h2d = FinderHeuristic2D.Manhattan;
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = false, isDiagnal: Bool = false, multiGoals: Bool = false) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true, multiGoals: Bool = false) {
     let size = 50;
     let mp = size - 1;
     let conf = Array2D(columns: size, rows: size, repeatValue: 1);
@@ -76,32 +76,14 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = false, isDiagnal:
     print(printMap);
 }
 
-//MARK: == FinderPoint2D ==
-public struct FinderPoint2D: FinderPoint2DType
-{
-    //x, y
-    public let x: Int;
-    public let y: Int;
-    private var _hashValue: Int;
-    
-    init(x: Int, y: Int)
-    {
-        self.x = x;
-        self.y = y;
-        self._hashValue = "\(x)\(y)".hashValue;
-    }
-    
-    public var hashValue: Int{return self._hashValue;}
-}
-public func ==(lsh: FinderPoint2D, rsh: FinderPoint2D) -> Bool{return lsh.x == rsh.x && lsh.y == rsh.y;}
-
 struct TestFinderDataSource{
     let config: Array2D<Int>;
     
     let model: FinderModel;
     
-    typealias Point = FinderPoint2D;
+    let heuristic = h2d;
     
+    typealias Point = FinderPoint2D;
     
     init(conf: Array2D<Int>, _ model: FinderModel = .Straight){
         self.config = conf;
@@ -109,25 +91,10 @@ struct TestFinderDataSource{
     }
 }
 extension TestFinderDataSource: FinderOption2DType{
-    
-    func neighborsOf(point: Point) -> [Point] {
-        var neighbors: [Point] = [];
-        let ns = self.neighborsOffset();
-        ns.forEach{
-            let op = $0;
-            let x = op.0 + point.x;
-            let y = op.1 + point.y;
-            guard config.columns > x && x > -1 && y > -1 && config.rows > y else {return;}
-            neighbors.append(Point(x: x, y: y));
-        }
-        return neighbors;
-    }
-    
-    func calculateCost(from f: Point, to t: Point) -> CGFloat? {
-        return CGFloat(self.config[t.x, t.y]);
-    }
-    
-    func estimateCost(from f: Point, to t: Point) -> CGFloat {
-        return h2d.heuristicOf(from: f, to: t);
+    ///return calculate movement cost from f to t if it is validity(and exist)
+    ///otherwise return nil
+    func getCost(x: Int, y: Int) -> CGFloat? {
+        guard x < self.config.columns && y < self.config.rows else {return .None;}
+        return CGFloat(self.config[x, y]);
     }
 }

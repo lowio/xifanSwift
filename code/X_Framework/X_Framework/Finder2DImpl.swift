@@ -17,7 +17,7 @@ public struct FinderPoint2D: FinderPoint2DType
     public let y: Int;
     private var _hashValue: Int;
     
-    init(x: Int, y: Int)
+    public init(x: Int, y: Int)
     {
         self.x = x;
         self.y = y;
@@ -61,23 +61,58 @@ public protocol FinderPoint2DType: Hashable{
     
     ///y
     var y: Int{get}
+    
+    ///init
+    init(x: Int, y: Int)
 }
 
 //MARK:  == FinderOption2DType ==
 public protocol FinderOption2DType: FinderOptionType{
+    ///point type
     typealias Point: FinderPoint2DType;
+    
+    ///heuristic
+    var heuristic: FinderHeuristic2D{get}
+    
+    ///return calculate movement cost from f to t if it is validity(and exist)
+    ///otherwise return nil
+    func getCost(x: Int, y: Int) -> CGFloat?
 }
 extension FinderOption2DType {
-    ///return neighbors offset
-    internal func neighborsOffset() -> [(Int, Int)]{
+    ///return calculate movement cost from f to t if it is validity(and exist)
+    ///otherwise return nil
+    public func calculateCost(from f: Point, to t: Point) -> CGFloat? {
+        guard let cost = self.getCost(t.x, y: t.y) else {return .None;}
+        guard self.model == .Diagonal else{return cost;}
+        return cost * 1.4;
+    }
+    
+    ///return neighbors of point
+    public func neighborsOf(point: Point) -> [Point] {
+        var neighbors: [Point] = [];
+        let ns: [(Int, Int)]!
         switch self.model{
         case .Diagonal:
-            return [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, -1), (1, 1)];
+            ns = [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, -1), (1, 1)];
         case .Straight:
-            return [(-1, 0), (0, 1), (1, 0), (0, -1)];
+            ns =  [(-1, 0), (0, 1), (1, 0), (0, -1)];
         }
+        ns.forEach{
+            let op = $0;
+            let x = op.0 + point.x;
+            let y = op.1 + point.y;
+            guard let _ = self.getCost(x, y: y) else {return;}
+            neighbors.append(Point(x: x, y: y));
+        }
+        return neighbors;
+    }
+    
+    ///return estimate h value from f point to t point
+    public func estimateCost(from f: Point, to t: Point) -> CGFloat {
+        return self.heuristic.heuristicOf(from: f, to: t);
     }
 }
+
 
 
 

@@ -19,7 +19,6 @@
 		65F37AE91BF1CE8C00D13BE3 /* Finder2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F37AE81BF1CE8C00D13BE3 /* Finder2DImpl.swift */; };
 		65F55E001C0EC51100EF26B7 /* Finder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F55DFF1C0EC51100EF26B7 /* Finder.swift */; };
 		65F61EED1C210D7100057507 /* FinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F61EEC1C210D7100057507 /* FinderImpl.swift */; };
-		65F69B481BD9CEA300850B10 /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F69B471BD9CEA300850B10 /* Temp.swift */; };
 		65F7E84A1C23E08C0045B7C8 /* PriorityQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */; };
 		65FC3B6B1BE0793900FF7EE9 /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */; };
 /* End PBXBuildFile section */
@@ -51,7 +50,6 @@
 		65F55DFF1C0EC51100EF26B7 /* Finder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Finder.swift; sourceTree = "<group>"; };
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65F61EEC1C210D7100057507 /* FinderImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinderImpl.swift; sourceTree = "<group>"; };
-		65F69B471BD9CEA300850B10 /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueueTest.swift; sourceTree = "<group>"; };
 		65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,7 +109,6 @@
 				65CCF37D1BAAB87700BCCD5E /* components */,
 				65CCF35B1BAAB3D800BCCD5E /* X_FrameworkTests.swift */,
 				65CCF35D1BAAB3D800BCCD5E /* Info.plist */,
-				65F69B471BD9CEA300850B10 /* Temp.swift */,
 				65F5A9CE1BAC080D005E74CE /* temp.playground */,
 			);
 			path = X_FrameworkTests;
@@ -298,7 +295,6 @@
 				65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */,
 				65F217631BDF11F70051E3F2 /* TestArrow.swift in Sources */,
 				65F7E84A1C23E08C0045B7C8 /* PriorityQueueTest.swift in Sources */,
-				65F69B481BD9CEA300850B10 /* Temp.swift in Sources */,
 				65CCF35C1BAAB3D800BCCD5E /* X_FrameworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
