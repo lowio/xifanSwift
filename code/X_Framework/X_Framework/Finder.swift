@@ -266,7 +266,3 @@ public struct FinderResult<Point: Hashable> {
         return self.delegate?.backtraceRecord();
     }
 }
-
-
-////get cost  1 ?? 1.4 (3d?)
-////scale g and h

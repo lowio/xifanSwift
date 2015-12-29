@@ -10,8 +10,8 @@ import UIKit
 @testable import X_Framework;
 
 
-//typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
-typealias PF2 = DijkstraPathFinder<FinderPoint2D>
+typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
+//typealias PF2 = DijkstraPathFinder<FinderPoint2D>
 typealias PF = AstarFinder<FinderPoint2D>
 //typealias PF = GreedyBestFinder<FinderPoint2D>
 
@@ -37,6 +37,7 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     }
     else{
         start = goals[3];
+//        start = FinderPoint2D(x: 30, y: 17)
         let finder = PF();
         result = finder.find(from: start, to: goal, option: source);
     }
