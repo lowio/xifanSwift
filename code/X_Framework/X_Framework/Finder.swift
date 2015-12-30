@@ -89,6 +89,9 @@ public protocol FinderDelegateType: GeneratorType{
     ///point type
     typealias Point: Hashable;
     
+    ///init
+    init()
+    
     ///return next element
     /// - Requires: set element closed
     mutating func next() -> FinderElement<Point>?

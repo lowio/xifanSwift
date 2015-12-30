@@ -35,14 +35,42 @@ class X_FrameworkTests: XCTestCase {
         }
     }
     
-    private var testPerformance:Bool = false;
+    private var testPerformance:Bool = true;
     
     private func waitForTest()
     {
-        pathFinderTest();
+//        pathFinderTest();
 //        collectionNDTest();
 //        priorityQueueTest();
+        
+        var s = S();
+        for _ in 0...9999{
+//            s.test1();
+            s.test2();
+        }
+        print(s.a.count);
     }
+}
+
+
+struct S {
+    var a: [Int] = [];
+    mutating func test1(){
+        self.a = [];
+        for i in 0...999{
+            self.a.append(i);
+        }
+    }
+    
+    mutating func test2(){
+        var b: [Int] = [];
+        for i in 0...999{
+            b.append(i);
+        }
+        self.a = b;
+    }
+    
+    
 }
 
 
