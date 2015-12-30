@@ -20,7 +20,6 @@
 		65F55E001C0EC51100EF26B7 /* Finder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F55DFF1C0EC51100EF26B7 /* Finder.swift */; };
 		65F61EED1C210D7100057507 /* FinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F61EEC1C210D7100057507 /* FinderImpl.swift */; };
 		65F7E84A1C23E08C0045B7C8 /* PriorityQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */; };
-		65FA12581C3252A50075AE57 /* Finder2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FA12571C3252A50075AE57 /* Finder2.swift */; };
 		65FC3B6B1BE0793900FF7EE9 /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +51,6 @@
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
 		65F61EEC1C210D7100057507 /* FinderImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinderImpl.swift; sourceTree = "<group>"; };
 		65F7E8491C23E08C0045B7C8 /* PriorityQueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueueTest.swift; sourceTree = "<group>"; };
-		65FA12571C3252A50075AE57 /* Finder2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Finder2.swift; sourceTree = "<group>"; };
 		65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,7 +138,6 @@
 				65F55DFF1C0EC51100EF26B7 /* Finder.swift */,
 				65F61EEC1C210D7100057507 /* FinderImpl.swift */,
 				65F37AE81BF1CE8C00D13BE3 /* Finder2DImpl.swift */,
-				65FA12571C3252A50075AE57 /* Finder2.swift */,
 			);
 			name = finder;
 			sourceTree = "<group>";
@@ -281,7 +278,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65FA12581C3252A50075AE57 /* Finder2.swift in Sources */,
 				65F55E001C0EC51100EF26B7 /* Finder.swift in Sources */,
 				65CCF36F1BAAB61A00BCCD5E /* Collection2D.swift in Sources */,
 				65F37AE91BF1CE8C00D13BE3 /* Finder2DImpl.swift in Sources */,

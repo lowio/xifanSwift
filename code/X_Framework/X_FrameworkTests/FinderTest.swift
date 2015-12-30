@@ -10,13 +10,13 @@ import UIKit
 @testable import X_Framework;
 
 
-typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
-//typealias PF2 = DijkstraPathFinder<FinderPoint2D>
+//typealias PF2 = BreadthBestPathFinder<FinderPoint2D>
+typealias PF2 = DijkstraPathFinder<FinderPoint2D>
 typealias PF = AstarFinder<FinderPoint2D>
 //typealias PF = GreedyBestFinder<FinderPoint2D>
 
 let h2d = FinderHeuristic2D.Chebyshev;
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = true, multiGoals: Bool = true) {
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false, multiGoals: Bool = true) {
     let size = 50;
     let mp = size - 1;
     let conf = Array2D(columns: size, rows: size, repeatValue: 1);
@@ -30,16 +30,19 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     let goal = goals[0];
     
     let source = TestFinderDataSource(conf: conf, m);
-    let result: FinderResult<FinderPoint2D>!;
+    let result: [FinderPoint2D: [FinderPoint2D]]!;
+    let getVisited: (() -> [FinderElement<FinderPoint2D>])!
     if multiGoals {
-        let finder = PF2();
+        var finder = PF2(delegate: FinderDelegate<FinderPoint2D>());
         result = finder.find(from: goals, to: start, option: source);
+        getVisited = {return finder.backtraceRecord();}
     }
     else{
         start = goals[3];
 //        start = FinderPoint2D(x: 30, y: 17)
-        let finder = PF();
+        var finder = PF(delegate: FinderDelegate<FinderPoint2D>());
         result = finder.find(from: start, to: goal, option: source);
+        getVisited = {return finder.backtraceRecord();}
     }
     
     
@@ -47,7 +50,7 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     
     var printMap = Array2D(columns: size, rows: size, repeatValue: "✅");
     if markVisited{
-        guard let visited = result?.backtraceRecord() else {return;}
+        let visited = getVisited()
         visited.forEach{
             let point = $0.point;
             guard let parentpoint = $0.backward else {return;}
@@ -56,7 +59,7 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
         }
     }
     
-    result.result.forEach{
+    result.forEach{
         let _ = $0
         let ps = $1;
         ps.forEach{

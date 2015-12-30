@@ -32,27 +32,6 @@ public func ==(lsh: FinderPoint2D, rsh: FinderPoint2D) -> Bool{return lsh.x == r
 public enum FinderHeuristic2D {
     case Manhattan, Euclidean, Octile, Chebyshev, None
 }
-extension FinderHeuristic2D {
-    public func heuristicOf<T: FinderPoint2DType>(from f: T, to t: T) -> CGFloat {
-        let dx = CGFloat(abs(f.x - t.x));
-        let dy = CGFloat(abs(f.y - t.y));
-        let h: CGFloat!;
-        switch self{
-        case .Manhattan:
-            h = dx + dy;
-        case .Euclidean:
-            h = sqrt(dx * dx + dy * dy);
-        case .Octile:
-            let f:CGFloat = CGFloat(M_SQRT2) - 1;
-            h = dx < dy ? f * dx + dy : f * dy + dx;
-        case .Chebyshev:
-            h = max(dx, dy);
-        case .None:
-            h = 0;
-        }
-        return h;
-    }
-}
 
 //MARK: == FinderPoint2DType ==
 public protocol FinderPoint2DType: Hashable{
@@ -109,7 +88,23 @@ extension FinderOption2DType {
     
     ///return estimate h value from f point to t point
     public func estimateCost(from f: Point, to t: Point) -> CGFloat {
-        return self.heuristic.heuristicOf(from: f, to: t) * 10;
+        let dx = CGFloat(abs(f.x - t.x));
+        let dy = CGFloat(abs(f.y - t.y));
+        let h: CGFloat!;
+        switch self.heuristic{
+        case .Manhattan:
+            h = dx + dy;
+        case .Euclidean:
+            h = sqrt(dx * dx + dy * dy);
+        case .Octile:
+            let f:CGFloat = CGFloat(M_SQRT2) - 1;
+            h = dx < dy ? f * dx + dy : f * dy + dx;
+        case .Chebyshev:
+            h = max(dx, dy);
+        case .None:
+            h = 0;
+        }
+        return h * 10;
     }
 }
 

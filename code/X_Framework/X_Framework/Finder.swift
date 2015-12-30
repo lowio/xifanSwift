@@ -89,29 +89,29 @@ public protocol FinderDelegateType: GeneratorType{
     ///point type
     typealias Point: Hashable;
     
-    ///init
-    init()
+    ///element type
+    typealias Element = FinderElement<Point>;
     
     ///return next element
     /// - Requires: set element closed
-    mutating func next() -> FinderElement<Point>?
+    mutating func next() -> Element?
     
     ///insert element
     /// - Requires: set element visited
-    mutating func insert(element: FinderElement<Point>)
+    mutating func insert(element: Element)
 
     ///update element
-    mutating func update(element: FinderElement<Point>)
+    mutating func update(element: Element)
     
     ///get the visited element and return it, or nil if no visited element exists at point.
-    subscript(point: Point) -> FinderElement<Point>? {get}
+    subscript(point: Point) -> Element? {get}
     
     ///return visited record
-    func backtraceRecord() -> [FinderElement<Point>]
+    func backtraceRecord() -> [Element]
 }
-extension FinderDelegateType{
+extension FinderDelegateType where Self.Element == FinderElement<Point> {
     ///back trace points
-    func backtrace(element: FinderElement<Point>) -> [Point]{
+    func backtrace(element: Element) -> [Point]{
         let point = element.point;
         var result: [Point] = [point]
         var e = element;
@@ -124,42 +124,38 @@ extension FinderDelegateType{
         return result;
     }
 }
-extension FinderDelegateType {
-    ///Returns result of request use option start exploring at orign
-    /// - Parameters: 
-    ///     - origin: point of start exploring
-    ///     - request: FinderRequestType
-    ///     - option: FinderOptionType
-    ///     - explore: explore function, 'self'.insert 'self'.update etc...; point - current explore point; backward: backward element
+
+//MARK: == FinderType ==
+public protocol FinderType{
+    ///delegate type
+    typealias Delegate: FinderDelegateType;
+    
+    ///delegate
+    var delegate: Delegate{get set}
+    
+    ///Returns result of request with option -- [start point: [path point]]
+    /// - Parameters:
+    ///     - request: request
+    ///     - with option: option
     @warn_unused_result
-    mutating public func find<
+    mutating func find<
         Opt: FinderOptionType,
         Req: FinderRequestType
         where
-        Opt.Point == Point,
-        Req.Point == Point>
-        (origin: Point, inout request: Req, option: Opt, @noescape explore: (point: Point, backward: FinderElement<Point>?) -> Void) -> [Point: [Point]]
-    {
-        var result: [Point: [Point]] = [:];
-        guard !request.isCompletion else {return result;}
-        explore(point: origin, backward: .None);
-        repeat{
-            guard let element = self.next() else{break;}
-            let point = element.point;
-            if request.findTarget(point){
-                result[point] = self.backtrace(element);
-                guard !request.isCompletion else {break;}
-            }
-            let neighbors = option.neighborsOf(point);
-            neighbors.forEach{
-                explore(point: $0, backward: element);
-            }
-        }while true
-        return result;
+        Opt.Point == Delegate.Point,
+        Opt.Point == Delegate.Point
+        >(request: Req, with option: Opt) -> [Opt.Point: [Opt.Point]]
+}
+extension FinderType {
+    ///return visited record
+    public func backtraceRecord() -> [Delegate.Element] {
+        return self.delegate.backtraceRecord();
     }
-    
-    ///generate element
-    public typealias GElement = (element: FinderElement<Point>, visited: Bool)
+}
+extension FinderType where Self.Delegate.Element == FinderElement<Self.Delegate.Point> {
+    ///Generate element at point from element
+    ///Return touple that .visited is true self.update(.element) else self.insert(.element)
+    public typealias Generation = (point: Delegate.Point, from: Delegate.Element?) -> (element: Delegate.Element, visited: Bool)?
     
     ///Returns result of request use option start exploring at orign
     /// - Parameters:
@@ -172,100 +168,81 @@ extension FinderDelegateType {
         Opt: FinderOptionType,
         Req: FinderRequestType
         where
-        Opt.Point == Point,
-        Req.Point == Point>
-        (origin: Point, inout request: Req, option: Opt, @noescape generate: (point: Point, backward: FinderElement<Point>?) -> GElement?) -> [Point: [Point]]
+        Opt.Point == Delegate.Point,
+        Req.Point == Delegate.Point>
+        (inout request: Req, from origin: Opt.Point, with option: Opt, @noescape generation: Generation) -> [Opt.Point: [Opt.Point]]
     {
-        var result: [Point: [Point]] = [:];
+        var result: [Opt.Point: [Opt.Point]] = [:];
         guard !request.isCompletion else {return result;}
-        guard let ge = generate(point: origin, backward: .None) where !ge.visited else {return result;}
-        self.insert(ge.0);
+        guard let ge = generation(point: origin, from: .None) where !ge.visited else {return result;}
+        self.delegate.insert(ge.element);
         repeat{
-            guard let element = self.next() else{break;}
+            guard let element = self.delegate.next() else{break;}
             let point = element.point;
             if request.findTarget(point){
-                result[point] = self.backtrace(element);
-                guard !request.isCompletion else {break;}
+                result[point] = self.delegate.backtrace(element);
             }
+            guard !request.isCompletion else {break;}
             let neighbors = option.neighborsOf(point);
             neighbors.forEach{
-                guard let ge = generate(point: $0, backward: element) else {return;}
-                ge.1 ? self.update(ge.0) : self.insert(ge.0);
+                guard let ge = generation(point: $0, from: element) else {return;}
+                ge.visited ? self.delegate.update(ge.element) : self.delegate.insert(ge.element);
             }
         }while true
         return result;
     }
 }
 
-//MARK: == FinderType ==
-public protocol FinderType{
+//MARK: == FinderSingleType ==
+public protocol FinderSingleType: FinderType {
+    
     ///request type
     typealias Request: FinderRequestType;
     
-    ///Returns result of request from source -- [start point: [path point]]
-    /// - Parameters: 
-    ///     - request: request
-    ///     - source: data source
-    @warn_unused_result
-    func find<Opt: FinderOptionType where Opt.Point == Request.Point>(request: Request, option: Opt) -> FinderResult<Opt.Point>?
-}
-
-//MARK: == FinderSingleType ==
-public protocol FinderSingleType: FinderType {
-    ///point type
-    typealias Point: Hashable;
-    
     ///return request
-    func requestGenerate(from: Point, to: Point) -> Request
+    func requestGenerate(from: Request.Point, to: Request.Point) -> Request
 }
-extension FinderSingleType where Self.Point == Self.Request.Point{
+extension FinderSingleType where Self.Request.Point == Self.Delegate.Point {
     ///Returns result from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start point
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(from start: Point, to goal: Point, option: Opt) -> FinderResult<Point>? {
+    mutating public func find<
+        Opt: FinderOptionType
+        where
+        Opt.Point == Request.Point
+        >(from start: Opt.Point, to goal: Opt.Point, option: Opt) -> [Opt.Point: [Opt.Point]]
+    {
         let request = self.requestGenerate(start, to: goal);
-        return self.find(request, option: option);
+        return self.find(request, with: option);
     }
 }
 //
 //MARK: == FinderMultiType ==
 public protocol FinderMultiType: FinderSingleType {
     ///return request
-    func requestGenerate(from: [Point], to: Point) -> Request
+    func requestGenerate(from: [Request.Point], to: Request.Point) -> Request
 }
-extension FinderMultiType  where Self.Point == Self.Request.Point{
+extension FinderMultiType where Self.Request.Point == Self.Delegate.Point {
     ///Returns result list from start to goal -- [start point: [path point]]
     /// - Parameters:
     ///     - from: start points
     ///     - to: goal point
     ///     - source: data source
     @warn_unused_result
-    func find<Opt: FinderOptionType where Opt.Point == Point>(from points: [Point], to goal: Point, option: Opt) -> FinderResult<Point>? {
+    mutating public func find<
+        Opt: FinderOptionType
+        where
+        Opt.Point == Request.Point
+        >(from points: [Opt.Point], to goal: Opt.Point, option: Opt) -> [Opt.Point: [Opt.Point]]
+    {
         let request = self.requestGenerate(points, to: goal);
-        return self.find(request, option: option);
+        return self.find(request, with: option);
     }
 }
 
-
-//MARK: == FinderResult ==
-public struct FinderResult<Point: Hashable> {
-    
-    ///result
-    public private(set) var result: [Point: [Point]]
-    
-    ///delegate
-    private var delegate: FinderDelegate<Point>?;
-    
-    internal init(result: [Point: [Point]], delegate: FinderDelegate<Point>? = nil){
-        self.delegate = delegate;
-        self.result = result;
-    }
-    
-    ///backtrace record
-    public func backtraceRecord() -> [FinderElement<Point>]?{
-        return self.delegate?.backtraceRecord();
-    }
-}
+/**
+next DijkstraPathFinder print result
+**/

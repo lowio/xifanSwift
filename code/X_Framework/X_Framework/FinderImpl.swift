@@ -102,62 +102,75 @@ extension FinderRequest: FinderRequestType {
 }
 
 ///MARK: extension FinderType where 'Self'.Request == FinderRequest
-extension FinderSingleType where Self: FinderType, Self.Request == FinderRequest<Self.Point> {
+extension FinderSingleType where Self.Request == FinderRequest<Self.Delegate.Point> {
     ///return request
-    public func requestGenerate(from: Point, to: Point) -> Request{
+    public func requestGenerate(from: Request.Point, to: Request.Point) -> FinderRequest<Self.Delegate.Point>{
         return FinderRequest(origin: from, goal: to);
     }
 }
 ///MARK: extension FinderMultiType where 'Self'.Request == FinderRequest
-extension FinderMultiType where Self: FinderType, Self.Request == FinderRequest<Self.Point> {
+extension FinderMultiType where Self.Request == FinderRequest<Self.Delegate.Point> {
     ///return request
-    public func requestGenerate(from: [Point], to: Point) -> Request{
+    public func requestGenerate(from: [Request.Point], to: Request.Point) -> FinderRequest<Self.Delegate.Point>{
         return FinderRequest(origin: to, goals: from);
     }
 }
 
 //MARK: == GreedyBestFinder ==
-public struct GreedyBestFinder<P: Hashable> {}
-extension GreedyBestFinder: FinderSingleType{
-    public typealias Point = P;
+public struct GreedyBestFinder<Point: Hashable> {
+    ///delegate
+    public var delegate: FinderDelegate<Point>;
 }
+extension GreedyBestFinder: FinderSingleType{}
 extension GreedyBestFinder: FinderType {
-    ///Returns result of request from source -- [start point: [path point]]
+    ///Returns result of request with option -- [start point: [path point]]
     /// - Parameters:
     ///     - request: request
-    ///     - source: data source
+    ///     - with option: option
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
-        guard let goal = request.goal else {return .None;}
-        var request = request;
-        var delegate = FinderDelegate<Point>();
-        let result = delegate.find(request.origin, request: &request, option: option, generate: {
+    mutating public func find<
+        Opt: FinderOptionType,
+        Req: FinderRequestType
+        where
+        Opt.Point == Point,
+        Opt.Point == Point
+        >(request: Req, with option: Opt) -> [Point: [Point]]
+    {
+        guard var request = request as? FinderRequest<Point>, let goal = request.goal else {return [:]}
+        self.delegate = FinderDelegate<Point>();
+        return self.find(&request, from: request.origin, with: option){
             let point = $0;
             guard delegate[point] == .None else {return .None;}
             if let bp = $1?.point where option.calculateCost(from: bp, to: point) == .None{return .None;}
             let h = option.estimateCost(from: point, to: goal);
             return (FinderElement(point: point, g: 0, h: h, backward: $1?.point), false);
-        });
-        return FinderResult(result: result, delegate: delegate);
+        }
     }
 }
 
 //MARK: == AstarFinder ==
-public struct AstarFinder<P: Hashable> {}
-extension AstarFinder: FinderSingleType{
-    public typealias Point = P;
+public struct AstarFinder<Point: Hashable> {
+    ///delegate
+    public var delegate: FinderDelegate<Point>;
 }
+extension AstarFinder: FinderSingleType{}
 extension AstarFinder:  FinderType {
-    ///Returns result of request from source -- [start point: [path point]]
+    ///Returns result of request with option -- [start point: [path point]]
     /// - Parameters:
     ///     - request: request
-    ///     - source: data source
+    ///     - with option: option
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
-        guard let goal = request.goal else {return .None;}
-        var request = request;
-        var delegate = FinderDelegate<Point>();
-        let result = delegate.find(request.origin, request: &request, option: option, generate: {
+    mutating public func find<
+        Opt: FinderOptionType,
+        Req: FinderRequestType
+        where
+        Opt.Point == Point,
+        Opt.Point == Point
+        >(request: Req, with option: Opt) -> [Point: [Point]]
+    {
+        guard var request = request as? FinderRequest<Point>, let goal = request.goal else {return [:]}
+        self.delegate = FinderDelegate<Point>();
+        return self.find(&request, from: request.origin, with: option){
             let point = $0;
             let parent = $1;
             var g: CGFloat = 0;
@@ -171,26 +184,33 @@ extension AstarFinder:  FinderType {
             }
             guard !visited.closed && g < visited.g else {return .None;}
             return (FinderElement(point: point, g: g, h: visited.h, backward: parent?.point), true);
-        });
-        return FinderResult(result: result, delegate: delegate);
+        }
     }
 }
 
 //MARK: == DijkstraPathFinder ==
-public struct DijkstraPathFinder<P: Hashable> {}
-extension DijkstraPathFinder: FinderMultiType{
-    public typealias Point = P;
+public struct DijkstraPathFinder<Point: Hashable> {
+    ///delegate
+    public var delegate: FinderDelegate<Point>;
 }
+extension DijkstraPathFinder: FinderMultiType{}
 extension DijkstraPathFinder:  FinderType {
-    ///Returns result of request from source -- [start point: [path point]]
+    ///Returns result of request with option -- [start point: [path point]]
     /// - Parameters:
     ///     - request: request
-    ///     - source: data source
+    ///     - with option: option
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
-        var request = request;
-        var delegate = FinderDelegate<Point>();
-        let result = delegate.find(request.origin, request: &request, option: option, generate: {
+    mutating public func find<
+        Opt: FinderOptionType,
+        Req: FinderRequestType
+        where
+        Opt.Point == Point,
+        Opt.Point == Point
+        >(request: Req, with option: Opt) -> [Point: [Point]]
+    {
+        guard var request = request as? FinderRequest<Point> else {return [:]}
+        self.delegate = FinderDelegate<Point>();
+        return self.find(&request, from: request.origin, with: option){
             let point = $0;
             let parent = $1;
             var g: CGFloat = 0;
@@ -202,39 +222,45 @@ extension DijkstraPathFinder:  FinderType {
                 return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), false);
             }
             guard !visited.closed && g < visited.g else {return .None;}
-            print(g == visited.g, g - visited.g);
             return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), true);
-        });
-        return FinderResult(result: result, delegate: delegate);
+        }
     }
 }
 
 //MARK: == BreadthBestPathFinder ==
-public struct BreadthBestPathFinder<P: Hashable> {}
-extension BreadthBestPathFinder: FinderMultiType{
-    public typealias Point = P;
+public struct BreadthBestPathFinder<Point: Hashable> {
+    ///delegate
+    public var delegate: FinderDelegate<Point>;
 }
+extension BreadthBestPathFinder: FinderMultiType{}
 extension BreadthBestPathFinder:  FinderType {
-    ///Returns result of request from source -- [start point: [path point]]
+    ///Returns result of request with option -- [start point: [path point]]
     /// - Parameters:
     ///     - request: request
-    ///     - source: data source
+    ///     - with option: option
     @warn_unused_result
-    public func find<Opt: FinderOptionType where Opt.Point == Point>(request: FinderRequest<Point>, option: Opt) -> FinderResult<Point>? {
-        var request = request;
-        var delegate = FinderDelegate<Point>();
+    mutating public func find<
+        Opt: FinderOptionType,
+        Req: FinderRequestType
+        where
+        Opt.Point == Point,
+        Opt.Point == Point
+        >(request: Req, with option: Opt) -> [Point: [Point]]
+    {
+        guard var request = request as? FinderRequest<Point> else {return [:]}
+        self.delegate = FinderDelegate<Point>();
         var h: CGFloat = 0;
-        let result = delegate.find(request.origin, request: &request, option: option, generate: {
+        return self.find(&request, from: request.origin, with: option){
             let point = $0;
-            guard delegate[point] == .None else {return .None;}
+            guard self.delegate[point] == .None else {return .None;}
             let parent = $1;
             var g: CGFloat = 0;
             if let _parent = parent {
                 g = _parent.g + 1;
                 guard let _ = option.calculateCost(from: _parent.point, to: point) else {return .None;}
             }
-            return (FinderElement(point: point, g: g, h: h++, backward: parent?.point), false);
-        });
-        return FinderResult(result: result, delegate: delegate);
+            h += 1;
+            return (FinderElement(point: point, g: g, h: h, backward: parent?.point), false);
+        }
     }
 }
