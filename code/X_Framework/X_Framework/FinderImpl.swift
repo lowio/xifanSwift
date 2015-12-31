@@ -182,6 +182,7 @@ extension AstarFinder:  FinderType {
                 let h = option.estimateCost(from: point, to: goal);
                 return (FinderElement(point: point, g: g, h: h, backward: parent?.point), false);
             }
+//            return .None;
             guard !visited.closed && g < visited.g else {return .None;}
             return (FinderElement(point: point, g: g, h: visited.h, backward: parent?.point), true);
         }
@@ -210,19 +211,21 @@ extension DijkstraPathFinder:  FinderType {
     {
         guard var request = request as? FinderRequest<Point> else {return [:]}
         self.delegate = FinderDelegate<Point>();
+        var h: CGFloat = 0;
         return self.find(&request, from: request.origin, with: option){
             let point = $0;
             let parent = $1;
             var g: CGFloat = 0;
+            h += 1;
             if let _parent = parent {
                 guard let cost = option.calculateCost(from: _parent.point, to: point) else {return .None;}
                 g = _parent.g + cost;
             }
             guard let visited = delegate[point] else {
-                return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), false);
+                return (FinderElement(point: point, g: g, h: h, backward: parent?.point), false);
             }
             guard !visited.closed && g < visited.g else {return .None;}
-            return (FinderElement(point: point, g: g, h: 0, backward: parent?.point), true);
+            return (FinderElement(point: point, g: g, h: h, backward: parent?.point), true);
         }
     }
 }

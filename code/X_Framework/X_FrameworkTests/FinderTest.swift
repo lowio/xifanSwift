@@ -15,13 +15,21 @@ typealias PF2 = DijkstraPathFinder<FinderPoint2D>
 typealias PF = AstarFinder<FinderPoint2D>
 //typealias PF = GreedyBestFinder<FinderPoint2D>
 
-let h2d = FinderHeuristic2D.Chebyshev;
-func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false, multiGoals: Bool = true) {
+
+func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: Bool = false, multiGoals: Bool = false) {
     let size = 50;
     let mp = size - 1;
-    let conf = Array2D(columns: size, rows: size, repeatValue: 1);
-
-    
+    var conf = Array2D<Int?>(columns: size, rows: size, repeatValue: 1);
+    var hinder = [FinderPoint2D]();
+    for i in 10...49{
+        if i < 30{
+            hinder.append(FinderPoint2D(x: i, y: 15))
+            conf[i, 15] = .None;
+        }
+        hinder.append(FinderPoint2D(x: 15, y: i));
+        conf[15, i] = .None;
+    }
+    let h2d: FinderHeuristic2D = isDiagnal ? .Chebyshev : .Manhattan;
     let m: FinderModel = isDiagnal ? .Diagonal : .Straight;
     
 
@@ -29,7 +37,7 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
     let goals = [FinderPoint2D(x: 0, y: 0), FinderPoint2D(x: mp, y: 0), FinderPoint2D(x: 0, y: mp), FinderPoint2D(x: mp, y: mp)];
     let goal = goals[0];
     
-    let source = TestFinderDataSource(conf: conf, m);
+    let source = TestFinderDataSource(conf: conf, m, h2d);
     let result: [FinderPoint2D: [FinderPoint2D]]!;
     let getVisited: (() -> [FinderElement<FinderPoint2D>])!
     if multiGoals {
@@ -59,6 +67,10 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
         }
     }
     
+    for hinderPoint in hinder{
+        printMap[hinderPoint.x, hinderPoint.y] = "❌";
+    }
+    
     result.forEach{
         let _ = $0
         let ps = $1;
@@ -79,17 +91,18 @@ func pathFinderTest(markVisited: Bool = true, markPath: Bool = true, isDiagnal: 
 }
 
 struct TestFinderDataSource{
-    let config: Array2D<Int>;
+    let config: Array2D<Int?>;
     
     let model: FinderModel;
     
-    let heuristic = h2d;
+    let heuristic:FinderHeuristic2D
     
     typealias Point = FinderPoint2D;
     
-    init(conf: Array2D<Int>, _ model: FinderModel = .Straight){
+    init(conf: Array2D<Int?>, _ model: FinderModel = .Straight, _ h2d: FinderHeuristic2D){
         self.config = conf;
         self.model = model;
+        self.heuristic = h2d;
     }
 }
 extension TestFinderDataSource: FinderOption2DType{
@@ -97,6 +110,7 @@ extension TestFinderDataSource: FinderOption2DType{
     ///otherwise return nil
     func getCost(x: Int, y: Int) -> CGFloat? {
         guard x > -1 && x < self.config.columns && y > -1 && y < self.config.rows else {return .None;}
-        return CGFloat(self.config[x, y]);
+        guard let cost = self.config[x, y] else {return .None;}
+        return CGFloat(cost);
     }
 }

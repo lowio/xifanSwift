@@ -244,5 +244,5 @@ extension FinderMultiType where Self.Request.Point == Self.Delegate.Point {
 }
 
 /**
-next DijkstraPathFinder print result
+a star path
 **/
