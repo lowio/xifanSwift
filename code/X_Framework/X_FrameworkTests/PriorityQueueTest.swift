@@ -10,7 +10,8 @@ import Foundation
 @testable import X_Framework;
 
 
-typealias PQ = PriorityArray<Int>;
+//typealias PQ = PriorityArray<Int>;
+typealias PQ = PriorityArray2<Int>;
 
 //XPriorityQueue test
 func priorityQueueTest(testRebuild:Bool = false)

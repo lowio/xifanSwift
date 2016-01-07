@@ -8,8 +8,8 @@
 
 import Foundation
 
-//MARK: == PriorityQueueDelegateType ==
-public protocol PriorityQueueDelegateType{
+//MARK: == PriorityQueueSortable ==
+public protocol PriorityQueueSortable{
     
     ///source type
     typealias Source: MutableIndexable;
@@ -43,7 +43,7 @@ public protocol PriorityQueueDelegateType{
     ///build source
     mutating func build(source: Source)
 }
-extension PriorityQueueDelegateType {
+extension PriorityQueueSortable {
     
     ///shift up of index
     mutating public func shiftUp(ofIndex: Source.Index) {
@@ -109,7 +109,7 @@ extension PriorityQueueDelegateType {
         }while true
     }
 }
-extension PriorityQueueDelegateType where Self.Source.Index == Int{
+extension PriorityQueueSortable where Self.Source.Index == Int{
     ///return trunk index of index
     ///if trunk index < source.startIndex return nil otherwise return trunk index
     public func trunkIndexOf(index: Int) -> Int? {
@@ -138,8 +138,8 @@ public protocol PriorityQueueType: CollectionType
     mutating func replace(element: Self.Generator.Element, at index: Self.Index)
 }
 
-///MARK: == PriorityQueueBinaryDelegate ==
-public struct PriorityQueueBinaryDelegate<Source: MutableIndexable where Source.Index == Int> {
+///MARK: == PriorityQueueBinarySort ==
+public struct PriorityQueueBinarySort<Source: MutableIndexable where Source.Index == Int> {
     ///branch size, 2,4,8....
     public let size = 2;
     
@@ -156,7 +156,7 @@ public struct PriorityQueueBinaryDelegate<Source: MutableIndexable where Source.
         self.build(source);
     }
 }
-extension PriorityQueueBinaryDelegate {
+extension PriorityQueueBinarySort {
     ///return trunk index of index
     ///if trunk index < source.startIndex return nil otherwise return trunk index
     public func trunkIndexOf(index: Int) -> Int? {
@@ -171,18 +171,18 @@ extension PriorityQueueBinaryDelegate {
         return i < source.endIndex ? i : nil;
     }
 }
-extension PriorityQueueBinaryDelegate : PriorityQueueDelegateType {}
+extension PriorityQueueBinarySort : PriorityQueueSortable {}
 
 
 //MARK: == PriorityArray ==
 public struct PriorityArray<T>
 {
     ///delegate
-    public private(set) var delegate: PriorityQueueBinaryDelegate<Array<T>>;
+    public private(set) var delegate: PriorityQueueBinarySort<Array<T>>;
     
     //init
     public init(source: [T], _ isOrderedBefore: (T, T) -> Bool){
-        self.delegate = PriorityQueueBinaryDelegate(source: source, isOrderedBefore);
+        self.delegate = PriorityQueueBinarySort(source: source, isOrderedBefore);
     }
     
     //init
@@ -238,7 +238,7 @@ extension PriorityArray where T: Comparable {
 
 
 ///MARK: extension PriorityQueueBinaryDelegate, recode shiftUp shiftDown replace and build
-extension PriorityQueueBinaryDelegate{
+extension PriorityQueueBinarySort{
     ///shift up of index
     mutating public func shiftUp(ofIndex: Source.Index) {
         let shiftElement = source[ofIndex];
