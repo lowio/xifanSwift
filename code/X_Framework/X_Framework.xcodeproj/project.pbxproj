@@ -16,7 +16,6 @@
 		65CCF37F1BAAB8A200BCCD5E /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CCF37E1BAAB8A200BCCD5E /* TestUtils.swift */; };
 		65CCF3821BAABDD600BCCD5E /* TopApps.json in Resources */ = {isa = PBXBuildFile; fileRef = 65CCF3811BAABDD600BCCD5E /* TopApps.json */; };
 		65F217631BDF11F70051E3F2 /* TestArrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F217621BDF11F70051E3F2 /* TestArrow.swift */; };
-		65F35B231C3E6792002F79E3 /* PriorityQueue2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F35B221C3E6792002F79E3 /* PriorityQueue2.swift */; };
 		65F37AE91BF1CE8C00D13BE3 /* Finder2DImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F37AE81BF1CE8C00D13BE3 /* Finder2DImpl.swift */; };
 		65F55E001C0EC51100EF26B7 /* Finder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F55DFF1C0EC51100EF26B7 /* Finder.swift */; };
 		65F61EED1C210D7100057507 /* FinderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F61EEC1C210D7100057507 /* FinderImpl.swift */; };
@@ -47,7 +46,6 @@
 		65CCF3811BAABDD600BCCD5E /* TopApps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TopApps.json; sourceTree = "<group>"; };
 		65CCF3831BAAC12100BCCD5E /* FinderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinderTest.swift; sourceTree = "<group>"; };
 		65F217621BDF11F70051E3F2 /* TestArrow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestArrow.swift; sourceTree = "<group>"; };
-		65F35B221C3E6792002F79E3 /* PriorityQueue2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityQueue2.swift; sourceTree = "<group>"; };
 		65F37AE81BF1CE8C00D13BE3 /* Finder2DImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Finder2DImpl.swift; sourceTree = "<group>"; };
 		65F55DFF1C0EC51100EF26B7 /* Finder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Finder.swift; sourceTree = "<group>"; };
 		65F5A9CE1BAC080D005E74CE /* temp.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = temp.playground; sourceTree = "<group>"; };
@@ -130,7 +128,6 @@
 			children = (
 				65CCF36A1BAAB61A00BCCD5E /* Collection2D.swift */,
 				65FC3B6A1BE0793900FF7EE9 /* PriorityQueue.swift */,
-				65F35B221C3E6792002F79E3 /* PriorityQueue2.swift */,
 			);
 			name = collection;
 			sourceTree = "<group>";
@@ -285,7 +282,6 @@
 				65CCF36F1BAAB61A00BCCD5E /* Collection2D.swift in Sources */,
 				65F37AE91BF1CE8C00D13BE3 /* Finder2DImpl.swift in Sources */,
 				65F61EED1C210D7100057507 /* FinderImpl.swift in Sources */,
-				65F35B231C3E6792002F79E3 /* PriorityQueue2.swift in Sources */,
 				65FC3B6B1BE0793900FF7EE9 /* PriorityQueue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,14 +14,14 @@ public struct FinderDelegate<Point: Hashable> {
     public typealias Element = FinderElement<Point>;
 
     ///open list
-    private(set) var openList: PriorityArray<Element>;
+    private(set) var openList: PriorityQueue<Element>;
 
     ///visite list
     private(set) var visiteList: [Point: Element];
     
     ///init
     public init(){
-        self.openList = PriorityArray.init(minimum: []);
+        self.openList = PriorityQueue.init(minimum: []);
         self.visiteList = [:];
     }
     
