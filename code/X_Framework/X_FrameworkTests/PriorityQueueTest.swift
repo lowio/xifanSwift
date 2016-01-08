@@ -65,7 +65,7 @@ func priorityQueueTest(testRebuild:Bool = false, testReplace: Bool = false)
     var a = 0;
     repeat{
         let e = queue.popBest()!;
-        print("current:", e, "last:", a, "current-last=", e - a);
+//        print("current:", e, "last:", a, "current-last=", e - a);
         a = e;
     }
         while !queue.isEmpty
